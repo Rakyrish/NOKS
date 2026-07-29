@@ -1,0 +1,35 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ BRAND.name }} {{ BRAND.division }}{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  {# Brand tokens come straight from the root .env — never hardcoded. #}
+  <style>
+    :root {
+      --noks-primary: {{ BRAND.primary }};
+      --noks-primary-dark: {{ BRAND.primary_dark }};
+      --noks-navy: {{ BRAND.navy }};
+      --noks-emerald: {{ BRAND.emerald }};
+    }
+  </style>
+  <link rel="stylesheet" href="{% static 'admin/css/noks-admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+  <div id="site-name">
+    <a href="{% url 'admin:index' %}" class="noks-brand">
+      <span class="noks-mark">{{ BRAND.name|slice:":2"|upper }}</span>
+      <span class="noks-brand-text">
+        <span class="noks-brand-name">{{ BRAND.name }}</span><br>
+        <span class="noks-brand-sub">{{ BRAND.division }}</span>
+      </span>
+    </a>
+  </div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

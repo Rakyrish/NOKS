@@ -1,0 +1,249 @@
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════════════════
+   NOKS — Chemical Division · design tokens
+   The blue scale is built around #0C48E6, sampled from the logo.
+   Runtime values are injected as CSS variables by <BrandTokens/>,
+   so changing the root .env reskins the entire site.
+   ══════════════════════════════════════════════════════════════ */
+
+@theme {
+  --color-brand-50: #eef3ff;
+  --color-brand-100: #dbe5ff;
+  --color-brand-200: #bfd0ff;
+  --color-brand-300: #93b0ff;
+  --color-brand-400: #6086ff;
+  --color-brand-500: #2f5efa;
+  --color-brand-600: #0c48e6;
+  --color-brand-700: #0a38c2;
+  --color-brand-800: #0d2f9c;
+  --color-brand-900: #112b7b;
+  --color-brand-950: #0a1b4d;
+
+  --color-navy-50: #f3f5fa;
+  --color-navy-100: #e4e8f3;
+  --color-navy-400: #4a5b86;
+  --color-navy-600: #1c2f5e;
+  --color-navy-800: #0e1e45;
+  --color-navy-900: #071233;
+  --color-navy-950: #040b1f;
+
+  --color-emerald-brand: #059669;
+  --color-emerald-light: #10b981;
+
+  --color-ink: #0f172a;
+  --color-muted-fg: #64748b;
+  --color-line: #e6eaf2;
+  --color-surface-muted: #f5f7fb;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-sora), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xl2: 1.25rem;
+  --radius-xl3: 1.75rem;
+
+  --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 24px -12px rgb(15 23 42 / 0.12);
+  --shadow-lift: 0 20px 45px -20px rgb(12 72 230 / 0.35);
+  --shadow-glass: 0 8px 32px rgb(7 18 51 / 0.10);
+
+  --animate-marquee: marquee 42s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-drift: drift 24s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.4s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(28px, -22px) scale(1.06); }
+  66%      { transform: translate(-20px, 16px) scale(0.96); }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+
+/* ── Base ──────────────────────────────────────────────────── */
+
+:root {
+  --brand-primary: #0c48e6;
+  --brand-primary-dark: #0a38c2;
+  --brand-navy: #071233;
+  --brand-emerald: #059669;
+  --brand-accent: #2f5efa;
+}
+
+* { border-color: var(--color-line); }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: #fff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+p { text-wrap: pretty; }
+
+::selection {
+  background: color-mix(in srgb, var(--brand-primary) 20%, transparent);
+  color: var(--color-navy-900);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Respect users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: var(--color-surface-muted); }
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+  border: 3px solid var(--color-surface-muted);
+}
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ── Utilities ─────────────────────────────────────────────── */
+
+@utility container-noks {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  max-width: 88rem;
+  @media (min-width: 640px) { padding-inline: 2rem; }
+  @media (min-width: 1280px) { padding-inline: 3rem; }
+}
+
+@utility text-gradient-brand {
+  background: linear-gradient(
+    100deg,
+    var(--brand-primary) 0%,
+    var(--brand-accent) 45%,
+    var(--brand-emerald) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility glass {
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgb(255 255 255 / 0.6);
+}
+
+@utility glass-dark {
+  background: rgb(7 18 51 / 0.55);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgb(255 255 255 / 0.12);
+}
+
+@utility surface-card {
+  background: #fff;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-xl2);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Fine dot grid used behind hero and CTA sections. */
+@utility bg-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgb(12 72 230 / 0.10) 1px, transparent 0);
+  background-size: 32px 32px;
+}
+
+@utility bg-grid-light {
+  background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.14) 1px, transparent 0);
+  background-size: 34px 34px;
+}
+
+@utility skeleton {
+  background: linear-gradient(90deg, #eef1f7 25%, #f7f9fc 37%, #eef1f7 63%);
+  background-size: 400% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* Long-form article typography (Knowledge Centre). */
+@utility prose-noks {
+  color: #334155;
+  line-height: 1.78;
+  font-size: 1.0625rem;
+
+  & > * + * { margin-top: 1.35em; }
+
+  & h2 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--color-navy-900);
+    margin-top: 2.4em;
+    margin-bottom: 0.65em;
+    letter-spacing: -0.02em;
+  }
+  & h3 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-navy-900);
+    margin-top: 1.9em;
+    margin-bottom: 0.5em;
+  }
+  & strong { color: var(--color-navy-900); font-weight: 650; }
+  & a {
+    color: var(--brand-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  & ul, & ol { padding-left: 1.35em; }
+  & ul { list-style: disc; }
+  & ol { list-style: decimal; }
+  & li { margin-top: 0.5em; padding-left: 0.25em; }
+  & li::marker { color: var(--brand-primary); }
+  & blockquote {
+    border-left: 3px solid var(--brand-primary);
+    padding-left: 1.15em;
+    font-style: italic;
+    color: #475569;
+  }
+  & code {
+    background: var(--color-surface-muted);
+    padding: 0.15em 0.4em;
+    border-radius: 6px;
+    font-size: 0.9em;
+  }
+}

@@ -1,0 +1,100 @@
+{% extends "admin/index.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="noks-dash">
+
+  <div class="noks-hero">
+    <div>
+      <h1>{{ BRAND.name }} {{ BRAND.division }} — Operations</h1>
+      <p>{{ BRAND.mission }}</p>
+    </div>
+    <div class="noks-hero-actions">
+      <a href="{% url 'admin:catalog_product_add' %}">+ New product</a>
+      <a href="{% url 'admin:blog_post_add' %}">+ New article</a>
+      <a href="{% url 'admin:catalog_product_import' %}">Bulk import</a>
+      <a href="{{ BRAND.site_url }}" target="_blank" rel="noopener">View website ↗</a>
+    </div>
+  </div>
+
+  <div class="noks-kpis">
+    <div class="noks-kpi">
+      <div class="noks-kpi-label">Products</div>
+      <div class="noks-kpi-value">{{ noks.products_total|intcomma }}</div>
+      <div class="noks-kpi-meta"><strong>{{ noks.products_published }}</strong> published · {{ noks.products_featured }} featured</div>
+    </div>
+    <div class="noks-kpi">
+      <div class="noks-kpi-label">Quotations</div>
+      <div class="noks-kpi-value">{{ noks.quotes_total|intcomma }}</div>
+      <div class="noks-kpi-meta"><strong>{{ noks.quotes_new }}</strong> awaiting response</div>
+    </div>
+    <div class="noks-kpi">
+      <div class="noks-kpi-label">Quotes · last 30 days</div>
+      <div class="noks-kpi-value">{{ noks.quotes_30d|intcomma }}</div>
+      <div class="noks-kpi-meta"><strong>{{ noks.quotes_won }}</strong> won all-time</div>
+    </div>
+    <div class="noks-kpi">
+      <div class="noks-kpi-label">Inquiries</div>
+      <div class="noks-kpi-value">{{ noks.inquiries_total|intcomma }}</div>
+      <div class="noks-kpi-meta"><strong>{{ noks.inquiries_open }}</strong> unhandled</div>
+    </div>
+    <div class="noks-kpi">
+      <div class="noks-kpi-label">Knowledge centre</div>
+      <div class="noks-kpi-value">{{ noks.posts_published|intcomma }}</div>
+      <div class="noks-kpi-meta">{{ noks.posts_draft }} drafts in progress</div>
+    </div>
+    <div class="noks-kpi">
+      <div class="noks-kpi-label">AI conversations</div>
+      <div class="noks-kpi-value">{{ noks.conversations|intcomma }}</div>
+      <div class="noks-kpi-meta"><strong>{{ noks.qualified_leads }}</strong> qualified leads</div>
+    </div>
+  </div>
+
+  <div class="noks-recent">
+    <div class="noks-panel">
+      <h2>Latest quotation requests</h2>
+      {% if noks.recent_quotes %}
+        <ul>
+          {% for q in noks.recent_quotes %}
+            <li>
+              <a href="{% url 'admin:leads_quoterequest_change' q.pk %}">{{ q.reference }} — {{ q.full_name }}{% if q.company %} · {{ q.company }}{% endif %}</a>
+              <span class="meta">{{ q.get_status_display }} · {{ q.created_at|timesince }} ago</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty">No quotation requests yet.</p>
+      {% endif %}
+    </div>
+
+    <div class="noks-panel">
+      <h2>Most requested products</h2>
+      {% if noks.top_products %}
+        <ul>
+          {% for p in noks.top_products %}
+            <li>
+              <a href="{% url 'admin:catalog_product_change' p.pk %}">{{ p.name }}</a>
+              <span class="meta">{{ p.quote_count }} quote{{ p.quote_count|pluralize }} · {{ p.view_count }} views</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty">No product activity yet.</p>
+      {% endif %}
+    </div>
+
+    <div class="noks-panel">
+      <h2>Needs attention</h2>
+      <ul>
+        <li><a href="{% url 'admin:catalog_product_changelist' %}?is_published__exact=0">Unpublished products</a><span class="meta">{{ noks.products_unpublished }}</span></li>
+        <li><a href="{% url 'admin:catalog_product_changelist' %}?missing_seo=1">Products without meta description</a><span class="meta">{{ noks.products_missing_seo }}</span></li>
+        <li><a href="{% url 'admin:blog_post_changelist' %}?status__exact=draft">Draft articles</a><span class="meta">{{ noks.posts_draft }}</span></li>
+        <li><a href="{% url 'admin:leads_inquiry_changelist' %}?is_handled__exact=0">Unhandled inquiries</a><span class="meta">{{ noks.inquiries_open }}</span></li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+{{ block.super }}
+{% endblock %}

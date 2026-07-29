@@ -1,0 +1,207 @@
+/* NOKS — Chemical Division · admin skin.
+   Brand tokens are injected from the root .env via base_site.html. */
+
+:root {
+  --noks-radius: 14px;
+  --noks-ink: #0F172A;
+  --noks-muted: #64748B;
+  --noks-line: #E6EAF2;
+  --noks-bg: #F5F7FB;
+
+  /* Django admin variable overrides */
+  --primary: var(--noks-primary);
+  --secondary: var(--noks-navy);
+  --accent: var(--noks-primary);
+  --link-fg: var(--noks-primary);
+  --link-hover-color: var(--noks-primary-dark);
+  --header-bg: var(--noks-navy);
+  --header-color: #ffffff;
+  --header-branding-color: #ffffff;
+  --header-link-color: #ffffff;
+  --breadcrumbs-bg: #ffffff;
+  --breadcrumbs-fg: var(--noks-muted);
+  --breadcrumbs-link-fg: var(--noks-primary);
+  --button-bg: var(--noks-primary);
+  --button-hover-bg: var(--noks-primary-dark);
+  --default-button-bg: var(--noks-primary);
+  --default-button-hover-bg: var(--noks-primary-dark);
+  --close-button-bg: #64748B;
+  --object-tools-bg: var(--noks-navy);
+  --object-tools-hover-bg: var(--noks-primary);
+  --selected-row: #EEF3FF;
+  --body-quiet-color: var(--noks-muted);
+}
+
+html, body { background: var(--noks-bg); }
+body, input, textarea, select, button {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+#header {
+  background: linear-gradient(110deg, var(--noks-navy) 0%, var(--noks-primary-dark) 65%, var(--noks-primary) 100%);
+  padding: 14px 40px;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.06);
+}
+#branding { display: flex; align-items: center; }
+.noks-brand { display: flex; align-items: center; gap: 12px; }
+.noks-mark {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: #fff; color: var(--noks-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 15px; letter-spacing: -0.5px;
+}
+.noks-brand-text { line-height: 1.15; }
+.noks-brand-name { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.2px; }
+.noks-brand-sub {
+  font-size: 11px; color: rgba(255, 255, 255, 0.66);
+  text-transform: uppercase; letter-spacing: 0.09em; font-weight: 600;
+}
+#user-tools { font-size: 12px; text-transform: none; letter-spacing: 0; }
+#user-tools a { border-bottom: none; opacity: 0.9; }
+#user-tools a:hover { opacity: 1; border-bottom: none; }
+
+/* ── Breadcrumbs ────────────────────────────────────────────── */
+div.breadcrumbs {
+  background: #fff; border-bottom: 1px solid var(--noks-line);
+  padding: 12px 40px; font-size: 12.5px;
+}
+
+/* ── Cards & modules ────────────────────────────────────────── */
+#content { padding: 26px 40px 60px; }
+.module {
+  background: #fff; border: 1px solid var(--noks-line);
+  border-radius: var(--noks-radius); overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.module > h2, .module caption, .inline-group h2 {
+  background: #fff; color: var(--noks-ink);
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 14px 18px; border-bottom: 1px solid var(--noks-line);
+}
+.dashboard #content { max-width: 1440px; }
+
+/* ── Tables ─────────────────────────────────────────────────── */
+#changelist table thead th {
+  background: #FAFBFE; border-bottom: 1px solid var(--noks-line);
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--noks-muted); padding: 12px;
+}
+#changelist tbody td, #changelist tbody th { padding: 12px; border-bottom: 1px solid #F1F4F9; }
+#changelist tbody tr:hover { background: #FAFCFF; }
+
+/* ── Buttons ────────────────────────────────────────────────── */
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+  border-radius: 10px; font-weight: 600; padding: 9px 18px;
+  border: none; transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.button:hover, input[type=submit]:hover, .submit-row input:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(12, 72, 230, 0.22);
+}
+.submit-row {
+  background: #fff; border: 1px solid var(--noks-line);
+  border-radius: var(--noks-radius); padding: 14px 18px;
+}
+.object-tools a { border-radius: 999px; font-weight: 600; letter-spacing: 0.02em; }
+
+/* ── Forms ──────────────────────────────────────────────────── */
+input[type=text], input[type=email], input[type=url], input[type=number],
+input[type=password], textarea, select, .vTextField {
+  border: 1px solid var(--noks-line); border-radius: 10px; padding: 9px 12px;
+  transition: border-color .12s ease, box-shadow .12s ease;
+}
+input:focus, textarea:focus, select:focus, .vTextField:focus {
+  border-color: var(--noks-primary);
+  box-shadow: 0 0 0 3px rgba(12, 72, 230, 0.12);
+  outline: none;
+}
+fieldset.collapsed h2 { background: #FAFBFE; }
+
+/* ── Messages ───────────────────────────────────────────────── */
+ul.messagelist li {
+  border-radius: 10px; padding: 12px 16px 12px 42px;
+  font-size: 13.5px; border: 1px solid var(--noks-line);
+}
+ul.messagelist li.success { background: #ECFDF5; border-color: #A7F3D0; color: #065F46; }
+ul.messagelist li.warning { background: #FFFBEB; border-color: #FDE68A; color: #92400E; }
+ul.messagelist li.error   { background: #FEF2F2; border-color: #FECACA; color: #991B1B; }
+
+/* ── Login ──────────────────────────────────────────────────── */
+body.login { background: linear-gradient(150deg, var(--noks-navy), var(--noks-primary-dark)); }
+.login #container {
+  border-radius: 18px; border: none; margin-top: 8vh;
+  box-shadow: 0 24px 60px rgba(7, 18, 51, 0.35); overflow: hidden;
+}
+.login #header { border-radius: 0; padding: 22px 26px; }
+.login .submit-row { border: none; padding: 0 26px 22px; }
+.login .submit-row input { width: 100%; padding: 11px; }
+
+/* ── Dashboard ──────────────────────────────────────────────── */
+.noks-dash { display: grid; gap: 16px; margin-bottom: 26px; }
+.noks-kpis {
+  display: grid; gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+.noks-kpi {
+  background: #fff; border: 1px solid var(--noks-line);
+  border-radius: var(--noks-radius); padding: 18px 20px;
+  position: relative; overflow: hidden;
+}
+.noks-kpi::after {
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 3px;
+  background: linear-gradient(180deg, var(--noks-primary), var(--noks-emerald));
+}
+.noks-kpi-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--noks-muted);
+}
+.noks-kpi-value {
+  font-size: 30px; font-weight: 800; color: var(--noks-ink);
+  letter-spacing: -0.02em; margin-top: 6px; line-height: 1;
+}
+.noks-kpi-meta { font-size: 12px; color: var(--noks-muted); margin-top: 7px; }
+.noks-kpi-meta strong { color: var(--noks-emerald); }
+
+.noks-hero {
+  background: linear-gradient(115deg, var(--noks-navy), var(--noks-primary-dark) 70%, var(--noks-primary));
+  border-radius: 18px; padding: 26px 28px; color: #fff;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 24px; flex-wrap: wrap;
+}
+.noks-hero h1 { font-size: 22px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.02em; }
+.noks-hero p { margin: 0; opacity: 0.75; font-size: 13.5px; max-width: 62ch; }
+.noks-hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.noks-hero-actions a {
+  background: rgba(255, 255, 255, 0.12); color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 9px 16px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; text-decoration: none;
+  transition: background .15s ease;
+}
+.noks-hero-actions a:hover { background: rgba(255, 255, 255, 0.22); color: #fff; }
+
+.noks-recent { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.noks-panel {
+  background: #fff; border: 1px solid var(--noks-line);
+  border-radius: var(--noks-radius); overflow: hidden;
+}
+.noks-panel h2 {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; padding: 14px 18px;
+  border-bottom: 1px solid var(--noks-line); margin: 0; color: var(--noks-ink);
+}
+.noks-panel ul { list-style: none; margin: 0; padding: 6px 0; }
+.noks-panel li {
+  display: flex; justify-content: space-between; gap: 12px; align-items: center;
+  padding: 11px 18px; font-size: 13.5px; border-bottom: 1px solid #F4F6FA;
+}
+.noks-panel li:last-child { border-bottom: none; }
+.noks-panel li span.meta { color: var(--noks-muted); font-size: 12px; white-space: nowrap; }
+.noks-panel .empty { padding: 20px 18px; color: var(--noks-muted); font-size: 13px; }
+
+@media (max-width: 767px) {
+  #header, div.breadcrumbs, #content { padding-left: 18px; padding-right: 18px; }
+}
