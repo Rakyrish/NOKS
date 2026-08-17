@@ -1,0 +1,19 @@
+# The frontend build context is the repo root, so keep it small and make sure
+# host-side build artefacts never shadow what the image builds itself.
+.git
+.github
+**/node_modules
+**/.next
+**/__pycache__
+**/*.pyc
+**/.venv
+**/venv
+backend/media
+backend/staticfiles
+backend/db.sqlite3
+frontend/tsconfig.tsbuildinfo
+certbot
+*.log
+
+# NOTE: `.env` is intentionally NOT ignored — the frontend builder stage needs
+# it to inline NEXT_PUBLIC_* values. It is confined to the builder stage.

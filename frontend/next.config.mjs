@@ -1,7 +1,6 @@
 import path from "node:path";
 
 import dotenv from "dotenv";
-import type { NextConfig } from "next";
 
 // The whole stack reads ONE .env, at the repo root — never a local copy.
 dotenv.config({ path: path.resolve(process.cwd(), "../.env") });
@@ -10,7 +9,7 @@ dotenv.config({ path: path.resolve(process.cwd(), "../.env") });
 const publicEnv = Object.fromEntries(
   Object.entries(process.env)
     .filter(([key, value]) => key.startsWith("NEXT_PUBLIC_") && value !== undefined)
-    .map(([key, value]) => [key, value as string]),
+    .map(([key, value]) => [key, value]),
 );
 
 const imageDomains = (process.env.NEXT_PUBLIC_IMAGE_DOMAINS ?? "")
@@ -26,17 +25,24 @@ const apiOrigin = (() => {
   }
 })();
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   env: publicEnv,
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
 
+  // Prerendering is I/O-bound here (every page hits the catalog API), not
+  // memory-bound: the build peaks around 660MB, well inside the 2GB heap cap.
+  // The wider per-page ceiling stays as headroom for a cold backend; worker
+  // counts are left at Next's defaults deliberately — see git history.
+  staticPageGenerationTimeout: 300,
+
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: imageDomains.flatMap((hostname) => [
-      { protocol: "https" as const, hostname },
-      { protocol: "http" as const, hostname },
+      { protocol: "https", hostname },
+      { protocol: "http", hostname },
     ]),
   },
 

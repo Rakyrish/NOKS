@@ -10,7 +10,7 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import { brand, colors, seo, siteUrl } from "@/lib/site";
 
-import "./globals.css";
+import "../globals.css";
 
 const inter = Inter({
   subsets: ["latin"],

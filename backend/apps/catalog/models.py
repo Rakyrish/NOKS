@@ -1,5 +1,6 @@
 """Chemical product catalog: categories, industries, manufacturers, products."""
 
+from django.core.files.storage import FileSystemStorage
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
@@ -137,6 +138,12 @@ class Product(TimeStampedModel, SluggedModel, SEOModel):
     view_count = models.PositiveIntegerField(default=0, editable=False)
     quote_count = models.PositiveIntegerField(default=0, editable=False)
 
+    # Set when any field on this product was ever populated from an AI-drafted
+    # suggestion (apps.catalog.ai), so admins can see which listings still want
+    # a human fact-check. Never set by the AI call itself — only by the create/
+    # update view once a staff member has actually saved the draft.
+    ai_generated = models.BooleanField(default=False, editable=False)
+
     objects = ProductQuerySet.as_manager()
 
     class Meta:
@@ -184,7 +191,9 @@ class ProductDocument(TimeStampedModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="documents")
     doc_type = models.CharField(max_length=20, choices=DocType.choices, default=DocType.TDS)
     title = models.CharField(max_length=200)
-    file = models.FileField(upload_to="documents/%Y/%m/")
+    # Explicit local storage: TDS/SDS/COA/spec/brochure files must not ride
+    # Cloudinary's image-typed default storage (see STORAGES in settings.py).
+    file = models.FileField(upload_to="documents/%Y/%m/", storage=FileSystemStorage())
     is_public = models.BooleanField(
         default=True, help_text="Public documents download without a quote request."
     )

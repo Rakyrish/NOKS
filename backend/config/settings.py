@@ -32,6 +32,11 @@ CSRF_TRUSTED_ORIGINS = env.list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[])
 SITE_URL = env("SITE_URL", default="http://localhost:3000")
 API_URL = env("API_URL", default="http://localhost:8000")
 
+# Cloudinary-backed storage for image fields only — see STORAGES below.
+# Document/library FileFields (ProductDocument.file, MediaAsset.file) stay on
+# local storage regardless of this flag.
+USE_CLOUDINARY = env.bool("USE_CLOUDINARY", default=False)
+
 INSTALLED_APPS = [
     "apps.core.apps.CoreConfig",
     "apps.core.admin_site.NoksAdminConfig",  # branded AdminSite + dashboard
@@ -39,11 +44,15 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    # cloudinary_storage must be listed before staticfiles.
+    *(["cloudinary_storage"] if USE_CLOUDINARY else []),
     "django.contrib.staticfiles",
+    *(["cloudinary"] if USE_CLOUDINARY else []),
     "django.contrib.sitemaps",
     "django.contrib.humanize",
     # Third party
     "rest_framework",
+    "rest_framework.authtoken",
     "corsheaders",
     "django_filters",
     "import_export",
@@ -159,14 +168,37 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# Read lazily by the cloudinary_storage backend only when USE_CLOUDINARY selects
+# it below — inert (and fine to leave blank) while local storage is in use.
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": env("CLOUDINARY_CLOUD_NAME", default=""),
+    "API_KEY": env("CLOUDINARY_API_KEY", default=""),
+    "API_SECRET": env("CLOUDINARY_API_SECRET", default=""),
+}
+
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    # Applies to every ImageField/FileField that doesn't set its own `storage=`.
+    # ProductDocument.file and MediaAsset.file opt out explicitly (see their
+    # models) so PDFs/library files never ride Cloudinary's image-typed backend.
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"
+        if USE_CLOUDINARY
+        else "django.core.files.storage.FileSystemStorage"
+    },
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
 
 # ─────────────────────────────── DRF ──────────────────────────────
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    # Session auth covers the DRF browsable API/docs when DEBUG is on; token auth
+    # is what the admin control panel actually uses (see apps.core.auth_views).
+    # Public read endpoints stay AllowAny regardless — only admin.* viewsets and
+    # apps.core.auth_views require either of these to resolve a user.
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
@@ -182,6 +214,7 @@ REST_FRAMEWORK = {
         "anon": env("THROTTLE_ANON_RATE", default="120/hour"),
         "user": env("THROTTLE_USER_RATE", default="1000/hour"),
         "ai": env("THROTTLE_AI_RATE", default="30/hour"),
+        "login": env("THROTTLE_LOGIN_RATE", default="20/hour"),
     },
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"]
@@ -215,13 +248,21 @@ ADMIN_SITE_HEADER = env("DJANGO_ADMIN_SITE_HEADER", default="NOKS")
 ADMIN_SITE_TITLE = env("DJANGO_ADMIN_SITE_TITLE", default="NOKS Admin")
 ADMIN_INDEX_TITLE = env("DJANGO_ADMIN_INDEX_TITLE", default="Dashboard")
 
-# ─────────────────────────────── AI ASSISTANT ─────────────────────
+# ─────────────────────────────── AI ASSISTANT (customer-facing) ───
 ANTHROPIC_API_KEY = env("ANTHROPIC_API_KEY", default="")
 AI_MODEL = env("AI_MODEL", default="claude-opus-5")
 AI_MAX_TOKENS = env.int("AI_MAX_TOKENS", default=1024)
 AI_TEMPERATURE = env.float("AI_TEMPERATURE", default=0.3)
 AI_ASSISTANT_NAME = env("AI_ASSISTANT_NAME", default="NOKS Chem Assistant")
 AI_ENABLED = bool(ANTHROPIC_API_KEY)
+
+# ─────────────────────────────── AI PRODUCT DRAFTING (admin-only) ─
+# Separate provider from the customer assistant above — this drafts catalog
+# copy for staff to review, never talks to a site visitor. Deliberately never
+# asked to produce GHS/hazard/UN-number/storage data; see apps.catalog.ai.
+OPENAI_API_KEY = env("OPENAI_API_KEY", default="")
+OPENAI_MODEL = env("OPENAI_MODEL", default="gpt-4o-mini")
+AI_PRODUCT_DRAFTING_ENABLED = bool(OPENAI_API_KEY)
 
 # ─────────────────────────────── BRAND (shared with frontend) ─────
 # Read straight from the same NEXT_PUBLIC_* keys the Next.js app uses, so the
@@ -258,6 +299,17 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Next.js's server-side fetches (lib/api.ts, lib/admin/api.ts) hit this
+# container directly on the Docker network, bypassing nginx entirely — so
+# request.get_host() would otherwise resolve to "backend:8000" and every
+# request.build_absolute_uri() call (DRF's automatic ImageField/FileField
+# URLs) would bake that unreachable internal host into image/document URLs.
+# Both API clients send X-Forwarded-Host with the real public hostname
+# precisely so this setting can make Django trust it instead. Safe because
+# the backend port is never exposed publicly (see docker-compose.yml) — only
+# containers already on the private network can set this header at all.
+USE_X_FORWARDED_HOST = env.bool("DJANGO_USE_X_FORWARDED_HOST", default=True)
 
 LOGGING = {
     "version": 1,

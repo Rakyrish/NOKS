@@ -1,4 +1,4 @@
-import { apiUrl, internalApiUrl } from "./site";
+import { apiUrl, internalApiUrl, siteUrl } from "./site";
 import type {
   BlogCategory,
   Category,
@@ -35,16 +35,78 @@ type FetchOptions = RequestInit & {
   revalidate?: number | false;
 };
 
+/**
+ * Hard ceiling on every request, because nothing below us imposes one.
+ *
+ * A bare `fetch` to an unreachable host rejects quickly, but the *patched*
+ * fetch Next installs for `next: { revalidate }` does not: it neither resolves
+ * nor rejects, so the promise stays pending forever. That silently defeats
+ * `safe()` below — the fallback can only fire on a rejection — and the symptom
+ * is a render that hangs rather than degrades:
+ *
+ *   • at build time, every prerendered page that calls the API burns the full
+ *     `staticPageGenerationTimeout` and fails the build;
+ *   • at runtime, an ISR regeneration against a stalled backend hangs the
+ *     worker instead of re-serving the last good page.
+ *
+ * The timeout has to be enforced from outside the promise. Passing an
+ * `AbortSignal` is not enough: when `next: { revalidate }` is present Next
+ * substitutes its own caching fetch and the signal never reaches undici, so
+ * the request goes on hanging. Racing the promise settles it regardless of
+ * what the underlying implementation does.
+ */
+const REQUEST_TIMEOUT_MS = Number(process.env.API_TIMEOUT_MS) || 10_000;
+
+function withTimeout<T>(promise: Promise<T>, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`Request to ${label} timed out after ${REQUEST_TIMEOUT_MS}ms`)),
+      REQUEST_TIMEOUT_MS,
+    );
+    // Never let the timer alone hold the process open — matters during
+    // `next build`, where a pending handle would stall the worker exiting.
+    timer.unref?.();
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
 async function request<T>(path: string, options: FetchOptions = {}): Promise<T> {
   const { revalidate = 300, ...init } = options;
 
-  const response = await fetch(`${base()}${path}`, {
-    ...init,
-    headers: { "Content-Type": "application/json", ...(init.headers ?? {}) },
-    ...(isServer && init.method === undefined
-      ? { next: { revalidate: revalidate === false ? undefined : revalidate } }
-      : {}),
-  });
+  const response = await withTimeout(
+    fetch(`${base()}${path}`, {
+      ...init,
+      signal: init.signal ?? AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      headers: {
+        "Content-Type": "application/json",
+        // Server-side calls address the backend container directly and so never
+        // traverse nginx, which is what would normally set these. Without
+        // X-Forwarded-Proto, Django sees plain http, SECURE_SSL_REDIRECT answers
+        // 301 to https://backend:8000, and fetch follows that to a port where
+        // gunicorn speaks no TLS — the request then stalls until the connect
+        // timeout. Without X-Forwarded-Host, request.build_absolute_uri() (every
+        // ImageField/FileField URL DRF serializes) bakes in "backend:8000"
+        // instead of the public hostname — unreachable from a browser. Both
+        // headers state facts that are true of the request being rendered on
+        // the visitor's behalf, just not of this particular hop.
+        ...(isServer ? { "X-Forwarded-Proto": "https", "X-Forwarded-Host": new URL(siteUrl).host } : {}),
+        ...(init.headers ?? {}),
+      },
+      ...(isServer && init.method === undefined
+        ? { next: { revalidate: revalidate === false ? undefined : revalidate } }
+        : {}),
+    }),
+    path,
+  );
 
   if (!response.ok) {
     let payload: unknown;

@@ -1,0 +1,36 @@
+# Direct, hand-maintained dependencies for the NOKS backend.
+#
+# This file is the source of truth — `requirements.txt` is GENERATED from it
+# and must never be hand-edited. To add or upgrade a dependency:
+#
+#   1. Edit this file.
+#   2. From backend/, run: pip-compile --generate-hashes requirements.in
+#   3. Commit both requirements.in and the regenerated requirements.txt.
+#
+# (One-off local setup: `pip install pip-tools` to get the pip-compile command.)
+
+Django~=5.1.5
+djangorestframework~=3.15.2
+django-cors-headers~=4.6.0
+django-filter~=24.3
+django-environ~=0.11.2
+python-dotenv~=1.0.1
+psycopg[binary]~=3.2.3
+dj-database-url~=2.3.0
+Pillow~=11.0.0
+django-import-export~=4.3.3
+whitenoise~=6.8.2
+gunicorn~=23.0.0
+celery~=5.4.0
+redis~=5.2.1
+django-redis~=5.4.0
+django-taggit~=6.1.0
+anthropic~=0.42.0
+openai~=1.59.0
+requests~=2.32.3
+python-slugify~=8.0.4
+drf-spectacular~=0.28.0
+
+# Cloudinary-backed storage for image fields (apps.core.settings.USE_CLOUDINARY).
+# Pulls in `cloudinary` transitively.
+django-cloudinary-storage~=0.3.0

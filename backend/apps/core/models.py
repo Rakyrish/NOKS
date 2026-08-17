@@ -1,5 +1,6 @@
 """Shared abstract bases + editable site content (stats, services, FAQ, …)."""
 
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.utils.text import slugify
 
@@ -201,7 +202,9 @@ class MediaAsset(TimeStampedModel):
     """Central media library used by the admin."""
 
     title = models.CharField(max_length=200)
-    file = models.FileField(upload_to="library/%Y/%m/")
+    # Explicit local storage: this library holds arbitrary file types, so it
+    # must not ride Cloudinary's image-typed default storage (see settings.py).
+    file = models.FileField(upload_to="library/%Y/%m/", storage=FileSystemStorage())
     alt_text = models.CharField(max_length=250, blank=True)
     tags = models.CharField(max_length=250, blank=True)
 

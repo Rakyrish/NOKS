@@ -85,10 +85,11 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      args:
-        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      # Repo root, so the builder stage can copy the single root-level .env that
+      # next.config.ts reads to inline every NEXT_PUBLIC_* value. See
+      # frontend/Dockerfile for the full reasoning.
+      context: .
+      dockerfile: frontend/Dockerfile
     restart: unless-stopped
     env_file: .env
     environment:
@@ -101,12 +102,20 @@ services:
   nginx:
     image: nginx:1.27-alpine
     restart: unless-stopped
-    ports:
-      - "80:80"
+    # Deliberately publishes NO host port. Ports 80/443 on this machine belong
+    # to the kivi stack's nginx, which is the single TLS terminator for the box.
+    # That edge nginx reaches this one by name over the shared `edge` network
+    # (alias noks-web) and proxies chemicals.noksindustrial.com here. Everything
+    # below this point — routing, static, media, upstreams — stays NOKS's own.
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - media:/var/www/media:ro
       - staticfiles:/var/www/static:ro
+    networks:
+      default:
+      edge:
+        aliases:
+          - noks-web
     depends_on:
       - backend
       - frontend
@@ -116,3 +125,13 @@ volumes:
   redisdata:
   media:
   staticfiles:
+
+networks:
+  # Private to this stack: db, redis, backend, worker, beat, frontend, nginx.
+  default:
+  # Shared reverse-proxy network, created once outside compose:
+  #   docker network create edge
+  # Only the nginx containers of each stack join it, so the two sites stay
+  # fully isolated from each other's database, cache and application services.
+  edge:
+    external: true

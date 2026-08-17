@@ -79,7 +79,13 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 
 - API — <http://localhost:8001/api/v1/>
 - API docs (Swagger) — <http://localhost:8001/api/v1/docs/>
-- Admin — <http://localhost:8001/admin/> (credentials from `DJANGO_SUPERUSER_*`)
+- Admin control panel — <http://localhost:3001/admin> (same `DJANGO_SUPERUSER_*` credentials)
+- Django admin (low-level/db-fix tool) — <http://localhost:8001/django-admin/>
+
+`requirements.txt` is generated — never hand-edit it. To add or upgrade a
+dependency, edit `backend/requirements.in`, then from `backend/` run
+`pip-compile --generate-hashes requirements.in` (`pip install pip-tools` first
+if you don't have it) and commit both files.
 
 ### 4. Frontend
 
@@ -179,14 +185,22 @@ A chat widget backed by `POST /api/v1/assistant/chat/`.
 
 ## Admin
 
-`/admin/` is a branded control centre, styled from the same `.env` colour tokens.
+Two admin surfaces, for two different jobs:
 
-- Operations dashboard: product/quotation/inquiry/article/AI KPIs, latest quotes,
-  most-requested products, and a "needs attention" queue
-- Products with image + document inlines, availability badges, bulk publish/feature actions
-- **Bulk CSV/Excel import & export** for products, categories, industries and manufacturers
-- Quotation pipeline (new → reviewing → quoted → won/lost) with CSV export
-- Media library, SEO fields on every content model, role-based access via Django groups
+- **`/admin`** (Next.js) — the day-to-day control panel staff actually use. Token-authenticated
+  (staff users only), talks to `/api/v1/admin/*`. Dashboard KPIs; product list/create/edit with
+  image + SDS/TDS/COA document management and an OpenAI-drafted first pass (description,
+  applications, benefits, reference specs — never hazard/GHS/UN-number/storage data, which stays
+  manual-entry-only); category/industry management; the quotation and inquiry pipelines. Set
+  `OPENAI_API_KEY` to turn on "Generate with AI"; without it the button reports itself as
+  unconfigured rather than failing silently.
+- **`/django-admin/`** (Django) — the branded low-level admin, for things the control panel
+  doesn't cover yet: bulk CSV/Excel import/export, manufacturers, package sizes, the Knowledge
+  Centre (blog), site content (FAQs, testimonials, team, certifications), and raw database
+  fixes. Session-authenticated, same `DJANGO_SUPERUSER_*` credentials.
+
+Both enforce staff-only access; neither is linked from the public site or the sitemap, and both
+are `noindex`.
 
 ---
 

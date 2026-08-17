@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * npm runs before next.config.ts is evaluated, so the port would otherwise have
+ * npm runs before next.config.mjs is evaluated, so the port would otherwise have
  * to be hardcoded in package.json. This shim loads the root .env first, then
  * hands off to the Next.js CLI with the port from FRONTEND_PORT.
  *
