@@ -100,15 +100,15 @@ export const AssistantWidget = () => {
             exit={{ opacity: 0, scale: 0.7, y: 16 }}
             transition={{ type: "spring", stiffness: 380, damping: 26 }}
             aria-label={`Open ${ai.name}`}
-            className="group fixed right-6 bottom-6 z-40 flex h-14 items-center gap-2.5
-                       rounded-full bg-[var(--brand-primary)] pr-5 pl-4 text-white
-                       shadow-[0_12px_34px_-10px_rgba(12,72,230,0.75)]
+            className="group fixed left-6 bottom-6 z-40 flex h-13 items-center gap-2.5
+                       rounded-full bg-navy-900 border border-white/20 pr-5 pl-4 text-white
+                       shadow-[0_10px_30px_-8px_rgba(7,18,51,0.6)]
                        transition-transform hover:scale-[1.03]"
           >
-            <span className="relative grid size-8 place-items-center rounded-full bg-white/18">
-              <Sparkles className="size-4" />
+            <span className="relative grid size-7 place-items-center rounded-full bg-white/18">
+              <Sparkles className="size-3.5 text-blue-400" />
             </span>
-            <span className="text-sm font-semibold">Ask {ai.name}</span>
+            <span className="text-xs font-semibold">Ask {ai.name}</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -125,7 +125,7 @@ export const AssistantWidget = () => {
             className="fixed inset-x-4 bottom-4 z-50 flex max-h-[min(640px,88vh)] flex-col
                        overflow-hidden rounded-2xl border border-line bg-white
                        shadow-[0_30px_80px_-24px_rgba(7,18,51,0.5)]
-                       sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[400px]"
+                       sm:inset-x-auto sm:left-6 sm:bottom-6 sm:w-[400px]"
           >
             {/* Header */}
             <div className="flex items-center justify-between gap-3 bg-navy-900 px-5 py-4 text-white">

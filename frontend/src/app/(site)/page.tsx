@@ -2,17 +2,15 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { PostCard } from "@/components/blog/post-card";
-import { AboutSplit } from "@/components/home/about-split";
 import { CtaBand } from "@/components/home/cta-band";
 import { FaqSection } from "@/components/home/faq-section";
-import { FeaturedProducts } from "@/components/home/featured-products";
 import { Hero } from "@/components/home/hero";
+import { HowWeWorkTeaser } from "@/components/home/how-we-work-teaser";
+import { IdentityBand } from "@/components/home/identity-band";
 import { IndustriesGrid } from "@/components/home/industries-grid";
-import { ProcessTimeline } from "@/components/home/process-timeline";
-import { ServicesGrid } from "@/components/home/services-grid";
-import { StatsBand } from "@/components/home/stats-band";
+import { IndustryTabs } from "@/components/home/industry-tabs";
 import { Testimonials } from "@/components/home/testimonials";
-import { WhyNoks } from "@/components/home/why-noks";
+import { TrustStrip } from "@/components/home/trust-strip";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Reveal, RevealGroup, RevealItem } from "@/components/shared/motion";
 import { Section, SectionHeading } from "@/components/shared/section";
@@ -42,39 +40,55 @@ export default async function HomePage() {
         />
       )}
 
+      {/* ── 1. Karivex Interactive Carousel Hero ─────────────── */}
       <Hero />
-      <StatsBand stats={data.stats} />
-      <AboutSplit certifications={data.certifications} />
+
+      {/* ── 2. Karivex Identity & Credentials Band ───────────── */}
+      <IdentityBand />
+
+      {/* ── 3. Karivex Industry Tabs Product Showcase ─────────── */}
+      <IndustryTabs products={data.featured_products} />
+
+      {/* ── 4. Karivex Trust & Quality Strip ─────────────────── */}
+      <TrustStrip />
+
+      {/* ── 5. Karivex Multi-Tone Industry Grid ──────────────── */}
       <IndustriesGrid industries={data.industries} />
-      <FeaturedProducts products={data.featured_products} />
-      <WhyNoks items={data.value_props} />
-      <ServicesGrid services={data.services} tone="muted" />
-      <ProcessTimeline steps={data.process} />
+
+      {/* ── 6. Karivex "How We Work" Supply Chain Teaser ─────── */}
+      <HowWeWorkTeaser />
+
+      {/* ── 7. Client Trust & Testimonials ───────────────────── */}
       <Testimonials testimonials={data.testimonials} clients={data.clients} />
 
+      {/* ── 8. Technical Knowledge & Buying Guides ───────────── */}
       {data.latest_posts.length > 0 && (
-        <Section>
+        <Section className="bg-silver-100/50 border-b border-rule">
           <div className="container-noks">
             <div className="flex flex-wrap items-end justify-between gap-6">
-              <SectionHeading
-                align="left"
-                eyebrow="Knowledge centre"
-                title="Technical guidance from our chemists"
-                description="Practical articles on coagulant selection, food grade compliance,
-                             chemical safety and procurement."
-                className="max-w-2xl"
-              />
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
+                  Technical Center
+                </span>
+                <h2 className="mt-1 font-heading text-2xl sm:text-3xl font-bold text-navy-900">
+                  Chemical Buying Guides & Application Notes
+                </h2>
+                <p className="mt-2 text-sm text-steel-700 max-w-2xl">
+                  Practical briefings written by our industrial chemists on coagulant selection, food grade compliance, surfactant blending, and safety.
+                </p>
+              </div>
               <Reveal delay={0.1}>
-                <Button asChild variant="outline">
-                  <Link href="/knowledge">
-                    All articles
-                    <ArrowRight className="size-4" />
-                  </Link>
-                </Button>
+                <Link
+                  href="/knowledge"
+                  className="inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 hover:text-blue-700"
+                >
+                  <span>All technical guides</span>
+                  <ArrowRight className="size-4" />
+                </Link>
               </Reveal>
             </div>
 
-            <RevealGroup className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <RevealGroup className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {data.latest_posts.map((post) => (
                 <RevealItem key={post.id} className="h-full">
                   <PostCard post={post} />
@@ -85,7 +99,10 @@ export default async function HomePage() {
         </Section>
       )}
 
+      {/* ── 9. FAQ Section ───────────────────────────────────── */}
       <FaqSection faqs={data.faqs} />
+
+      {/* ── 10. Call to Action Band ──────────────────────────── */}
       <CtaBand />
     </>
   );

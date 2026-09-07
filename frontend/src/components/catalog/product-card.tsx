@@ -149,9 +149,9 @@ export const ProductCard = ({
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, delay: Math.min(index * 0.04, 0.35) }}
-        className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line
-                   bg-white transition-all duration-300 hover:-translate-y-1
-                   hover:border-brand-200 hover:shadow-[var(--shadow-lift)]"
+        className="group flex h-full flex-col overflow-hidden rounded-xl border border-rule
+                   border-t-4 border-t-[#0c48e6] bg-white transition-all duration-300
+                   hover:-translate-y-1 hover:shadow-card"
       >
         <Link
           href={href}

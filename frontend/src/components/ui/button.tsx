@@ -13,9 +13,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-[var(--brand-primary)] text-white shadow-[0_8px_24px_-10px_rgba(12,72,230,0.65)] " +
-          "hover:bg-[var(--brand-primary-dark)] hover:-translate-y-0.5 " +
-          "hover:shadow-[0_16px_34px_-12px_rgba(12,72,230,0.7)]",
+          "bg-gradient-to-r from-[#0a38c2] via-[#0c48e6] to-[#2f5efa] text-white font-bold shadow-[0_8px_24px_-6px_rgba(12,72,230,0.55)] " +
+          "hover:brightness-110 hover:-translate-y-0.5",
+        blue:
+          "bg-gradient-to-r from-[#0a38c2] via-[#0c48e6] to-[#2f5efa] text-white font-bold shadow-[0_8px_24px_-6px_rgba(12,72,230,0.55)] " +
+          "hover:brightness-110 hover:-translate-y-0.5",
         emerald:
           "bg-[var(--brand-emerald)] text-white shadow-[0_8px_24px_-10px_rgba(5,150,105,0.6)] " +
           "hover:brightness-110 hover:-translate-y-0.5",

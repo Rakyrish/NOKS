@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Sora } from "next/font/google";
+import { Alice, Inter } from "next/font/google";
 
 import { AssistantWidget } from "@/components/assistant/assistant-widget";
+import { FloatingContacts } from "@/components/layout/floating-contacts";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
-import { WhatsAppButton } from "@/components/layout/whatsapp-button";
 import { Providers } from "@/components/shared/providers";
 import { JsonLd } from "@/components/shared/json-ld";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
@@ -18,11 +18,11 @@ const inter = Inter({
   display: "swap",
 });
 
-const sora = Sora({
+const alice = Alice({
   subsets: ["latin"],
-  variable: "--font-sora",
+  variable: "--font-heading",
   display: "swap",
-  weight: ["400", "600", "700", "800"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -93,7 +93,7 @@ const brandTokens = `:root{
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-KE" className={`${inter.variable} ${sora.variable}`}>
+    <html lang="en-KE" className={`${inter.variable} ${alice.variable}`}>
       <head>
         <style dangerouslySetInnerHTML={{ __html: brandTokens }} />
       </head>
@@ -114,7 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main id="main">{children}</main>
           <Footer />
-          <WhatsAppButton />
+          <FloatingContacts />
           <AssistantWidget />
         </Providers>
       </body>

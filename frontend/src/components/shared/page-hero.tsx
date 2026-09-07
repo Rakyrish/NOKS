@@ -23,16 +23,16 @@ export const PageHero = ({
   children?: React.ReactNode;
   className?: string;
 }) => (
-  <section className={cn("relative overflow-hidden bg-navy-900 pt-10 pb-14 sm:pb-16", className)}>
-    <div className="bg-grid-light absolute inset-0 opacity-45" aria-hidden />
+  <section className={cn("relative overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 border-b-2 border-[#0c48e6] pt-10 pb-14 sm:pb-16", className)}>
+    <div className="bg-grid-light absolute inset-0 opacity-25" aria-hidden />
     <div
       className="pointer-events-none absolute -top-28 -right-20 size-[30rem] rounded-full
-                 bg-[var(--brand-primary)]/28 blur-[110px]"
+                 bg-blue-500/15 blur-[110px]"
       aria-hidden
     />
     <div
       className="pointer-events-none absolute -bottom-40 left-1/4 size-[24rem] rounded-full
-                 bg-[var(--brand-emerald)]/16 blur-[110px]"
+                 bg-teal-500/10 blur-[110px]"
       aria-hidden
     />
 
