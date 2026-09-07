@@ -13,9 +13,12 @@ const DEFAULT_INDUSTRIES: Industry[] = [
     name: "Water Treatment",
     slug: "water-treatment",
     icon: "droplets",
+    image: null,
+    accent_color: "#0C48E6",
+    is_featured: true,
     tagline: "Municipal & industrial water and effluent treatment",
     description: "Coagulants, flocculants, chlorine, and pH regulators for potable drinking water and trade wastewater.",
-    key_applications: ["Coagulation & flocculation", "Disinfection", "pH correction", "Scale & corrosion control"],
+    applications: ["Coagulation & flocculation", "Disinfection", "pH correction", "Scale & corrosion control"],
     order: 1,
   },
   {
@@ -23,9 +26,12 @@ const DEFAULT_INDUSTRIES: Industry[] = [
     name: "Food & Beverage",
     slug: "food-processing",
     icon: "utensils",
+    image: null,
+    accent_color: "#0C48E6",
+    is_featured: true,
     tagline: "Food grade ingredients and processing aids",
     description: "Acidulants, preservatives, sweeteners, and food-safe sanitation chemicals meeting strict compliance.",
-    key_applications: ["Preservation", "Acidity regulation", "Fortification", "CIP sanitation"],
+    applications: ["Preservation", "Acidity regulation", "Fortification", "CIP sanitation"],
     order: 2,
   },
   {
@@ -33,9 +39,12 @@ const DEFAULT_INDUSTRIES: Industry[] = [
     name: "Cosmetics & Detergents",
     slug: "manufacturing",
     icon: "factory",
+    image: null,
+    accent_color: "#0C48E6",
+    is_featured: true,
     tagline: "Surfactants and personal care raw materials",
     description: "SLES 70%, LABSA 96%, caustic soda, foam boosters, and fragrance binders for high-yield formulation.",
-    key_applications: ["Surfactant bases", "Viscosity builders", "Emulsifiers", "pH adjusters"],
+    applications: ["Surfactant bases", "Viscosity builders", "Emulsifiers", "pH adjusters"],
     order: 3,
   },
   {
@@ -43,9 +52,12 @@ const DEFAULT_INDUSTRIES: Industry[] = [
     name: "Agriculture & Livestock",
     slug: "agriculture",
     icon: "sprout",
+    image: null,
+    accent_color: "#0C48E6",
+    is_featured: true,
     tagline: "Crop nutrition, soil conditioners and feed inputs",
     description: "Custom fertiliser blending salts, trace elements, soil buffers, and feed premix additives.",
-    key_applications: ["Fertiliser blending", "Soil conditioning", "Feed minerals", "Irrigation sanitizing"],
+    applications: ["Fertiliser blending", "Soil conditioning", "Feed minerals", "Irrigation sanitizing"],
     order: 4,
   },
   {
@@ -53,9 +65,12 @@ const DEFAULT_INDUSTRIES: Industry[] = [
     name: "Paints, Inks & Coatings",
     slug: "paint-coatings",
     icon: "paint-roller",
+    image: null,
+    accent_color: "#0C48E6",
+    is_featured: true,
     tagline: "Pigments, resins, solvents and performance additives",
     description: "Titanium dioxide, solvents, binders, and defoamers for decorative and protective architectural coatings.",
-    key_applications: ["Pigment dispersion", "Solvent blending", "Resin binders", "Anti-corrosion"],
+    applications: ["Pigment dispersion", "Solvent blending", "Resin binders", "Anti-corrosion"],
     order: 5,
   },
   {
@@ -63,9 +78,12 @@ const DEFAULT_INDUSTRIES: Industry[] = [
     name: "Construction Chemistry",
     slug: "construction",
     icon: "hard-hat",
+    image: null,
+    accent_color: "#0C48E6",
+    is_featured: true,
     tagline: "Admixtures, waterproofing, and surface treatments",
     description: "Concrete plasticizers, accelerators, curing agents, and integral waterproofing additives.",
-    key_applications: ["Concrete admixtures", "Waterproofing", "Surface etching", "Grouting"],
+    applications: ["Concrete admixtures", "Waterproofing", "Surface etching", "Grouting"],
     order: 6,
   },
   {
@@ -73,9 +91,12 @@ const DEFAULT_INDUSTRIES: Industry[] = [
     name: "Mining & Metallurgy",
     slug: "mining",
     icon: "mountain",
+    image: null,
+    accent_color: "#0C48E6",
+    is_featured: true,
     tagline: "Extraction reagents, collectors and flocculants",
     description: "Cyanide alternatives, frothers, activators, and mineral processing chemicals for extraction plants.",
-    key_applications: ["Flotation reagents", "Leaching aids", "Dust suppression", "Tailings clarification"],
+    applications: ["Flotation reagents", "Leaching aids", "Dust suppression", "Tailings clarification"],
     order: 7,
   },
   {
@@ -83,9 +104,12 @@ const DEFAULT_INDUSTRIES: Industry[] = [
     name: "Laboratories & Research",
     slug: "laboratories",
     icon: "flask-conical",
+    image: null,
+    accent_color: "#0C48E6",
+    is_featured: true,
     tagline: "High purity analytical reagents and standard solutions",
     description: "AR grade acids, HPLC solvents, volumetric standards, and certified quality control consumables.",
-    key_applications: ["Sample preparation", "Titration standards", "Buffer preparation", "Analytical testing"],
+    applications: ["Sample preparation", "Titration standards", "Buffer preparation", "Analytical testing"],
     order: 8,
   },
 ];
@@ -154,13 +178,13 @@ export const IndustriesGrid = ({ industries = [] }: { industries?: Industry[] })
                     </p>
 
                     {/* Key Applications Pills */}
-                    {industry.key_applications && industry.key_applications.length > 0 && (
+                    {industry.applications && industry.applications.length > 0 && (
                       <div className="mt-4 space-y-1">
                         <p className="text-[11px] font-bold text-navy-900 uppercase tracking-wider">
                           Key Solutions:
                         </p>
                         <ul className="text-[11.5px] text-steel-700 space-y-1 pl-3 list-disc">
-                          {industry.key_applications.slice(0, 3).map((app) => (
+                          {industry.applications.slice(0, 3).map((app) => (
                             <li key={app}>{app}</li>
                           ))}
                         </ul>

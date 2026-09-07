@@ -21,15 +21,25 @@ const DEFAULT_PRODUCTS: Product[] = [
     slug: "caustic-soda-flakes",
     sku: "CHEM-CS-001",
     cas_number: "1310-73-2",
-    formula: "NaOH",
+    chemical_formula: "NaOH",
     category_name: "Industrial Chemicals",
     category_slug: "industrial-chemicals",
     grade: "industrial",
+    grade_display: "Industrial Grade",
+    purity: "",
+    manufacturer_name: "NOKS Industrial",
+    availability: "in_stock",
+    availability_display: "In Stock",
+    unit: "kg",
+    lead_time: "3-5 days",
+    price_on_request: true,
+    indicative_price: null,
+    currency: "USD",
+    is_featured: true,
+    is_bestseller: false,
+    image: null,
     short_description: "High-purity sodium hydroxide flakes (98% min) for pH correction, saponification, and industrial cleaning.",
-    featured: true,
-    in_stock: true,
-    industries: ["Water Treatment", "Textile", "Manufacturing"],
-    package_sizes: ["25 kg bag", "Bulk tanker"],
+    industry_slugs: ["water-treatment", "textile", "manufacturing"],
   },
   {
     id: 2,
@@ -37,15 +47,25 @@ const DEFAULT_PRODUCTS: Product[] = [
     slug: "aluminum-sulphate-17",
     sku: "CHEM-AS-002",
     cas_number: "10043-01-3",
-    formula: "Al2(SO4)3",
+    chemical_formula: "Al2(SO4)3",
     category_name: "Water Treatment Chemicals",
     category_slug: "water-treatment-chemicals",
     grade: "industrial",
+    grade_display: "Industrial Grade",
+    purity: "",
+    manufacturer_name: "NOKS Industrial",
+    availability: "in_stock",
+    availability_display: "In Stock",
+    unit: "kg",
+    lead_time: "3-5 days",
+    price_on_request: true,
+    indicative_price: null,
+    currency: "USD",
+    is_featured: true,
+    is_bestseller: false,
+    image: null,
     short_description: "Standard municipal and industrial coagulant for water purification, suspended solids removal, and turbidity reduction.",
-    featured: true,
-    in_stock: true,
-    industries: ["Water Treatment", "Pulp & Paper"],
-    package_sizes: ["50 kg bag", "Bulk"],
+    industry_slugs: ["water-treatment", "pulp-paper"],
   },
   {
     id: 3,
@@ -53,15 +73,25 @@ const DEFAULT_PRODUCTS: Product[] = [
     slug: "citric-acid-anhydrous",
     sku: "CHEM-CA-003",
     cas_number: "77-92-9",
-    formula: "C6H8O7",
+    chemical_formula: "C6H8O7",
     category_name: "Food Grade Chemicals",
     category_slug: "food-grade-chemicals",
     grade: "food",
+    grade_display: "Food Grade",
+    purity: "",
+    manufacturer_name: "NOKS Industrial",
+    availability: "in_stock",
+    availability_display: "In Stock",
+    unit: "kg",
+    lead_time: "3-5 days",
+    price_on_request: true,
+    indicative_price: null,
+    currency: "USD",
+    is_featured: true,
+    is_bestseller: false,
+    image: null,
     short_description: "High-purity food grade acidulant and preservative meeting BP/USP/FCC standards for beverage and food manufacturing.",
-    featured: true,
-    in_stock: true,
-    industries: ["Food Processing", "Cosmetics"],
-    package_sizes: ["25 kg bag"],
+    industry_slugs: ["food-processing", "cosmetics"],
   },
   {
     id: 4,
@@ -69,15 +99,25 @@ const DEFAULT_PRODUCTS: Product[] = [
     slug: "sles-70",
     sku: "CHEM-SLES-004",
     cas_number: "68585-34-2",
-    formula: "C12H25O(C2H4O)2SO3Na",
+    chemical_formula: "C12H25O(C2H4O)2SO3Na",
     category_name: "Industrial Chemicals",
     category_slug: "industrial-chemicals",
     grade: "industrial",
+    grade_display: "Industrial Grade",
+    purity: "",
+    manufacturer_name: "NOKS Industrial",
+    availability: "in_stock",
+    availability_display: "In Stock",
+    unit: "kg",
+    lead_time: "3-5 days",
+    price_on_request: true,
+    indicative_price: null,
+    currency: "USD",
+    is_featured: true,
+    is_bestseller: false,
+    image: null,
     short_description: "Primary anionic surfactant offering excellent foaming, detergency, and wetting for liquid detergents and shampoo formulation.",
-    featured: true,
-    in_stock: true,
-    industries: ["Manufacturing", "Hospitality"],
-    package_sizes: ["170 kg drum", "220 kg drum"],
+    industry_slugs: ["manufacturing", "hospitality"],
   },
   {
     id: 5,
@@ -85,15 +125,25 @@ const DEFAULT_PRODUCTS: Product[] = [
     slug: "labsa-96",
     sku: "CHEM-LABSA-005",
     cas_number: "27176-87-0",
-    formula: "RC6H4SO3H",
+    chemical_formula: "RC6H4SO3H",
     category_name: "Industrial Chemicals",
     category_slug: "industrial-chemicals",
     grade: "industrial",
+    grade_display: "Industrial Grade",
+    purity: "",
+    manufacturer_name: "NOKS Industrial",
+    availability: "in_stock",
+    availability_display: "In Stock",
+    unit: "kg",
+    lead_time: "3-5 days",
+    price_on_request: true,
+    indicative_price: null,
+    currency: "USD",
+    is_featured: true,
+    is_bestseller: false,
+    image: null,
     short_description: "High-active biodegradable anionic surfactant base for powder and liquid detergent manufacturing.",
-    featured: true,
-    in_stock: true,
-    industries: ["Manufacturing"],
-    package_sizes: ["210 kg drum", "1000 kg IBC"],
+    industry_slugs: ["manufacturing"],
   },
   {
     id: 6,
@@ -101,15 +151,25 @@ const DEFAULT_PRODUCTS: Product[] = [
     slug: "hydrochloric-acid-33",
     sku: "CHEM-HA-006",
     cas_number: "7647-01-0",
-    formula: "HCl",
+    chemical_formula: "HCl",
     category_name: "Industrial Chemicals",
     category_slug: "industrial-chemicals",
     grade: "industrial",
+    grade_display: "Industrial Grade",
+    purity: "",
+    manufacturer_name: "NOKS Industrial",
+    availability: "in_stock",
+    availability_display: "In Stock",
+    unit: "kg",
+    lead_time: "3-5 days",
+    price_on_request: true,
+    indicative_price: null,
+    currency: "USD",
+    is_featured: true,
+    is_bestseller: false,
+    image: null,
     short_description: "Technical grade aqueous solution for pH control, boiler descaling, pickling, and resin regeneration.",
-    featured: true,
-    in_stock: true,
-    industries: ["Water Treatment", "Mining", "Manufacturing"],
-    package_sizes: ["25 L carboy", "200 L drum", "Bulk tanker"],
+    industry_slugs: ["water-treatment", "mining", "manufacturing"],
   },
   {
     id: 7,
@@ -117,15 +177,25 @@ const DEFAULT_PRODUCTS: Product[] = [
     slug: "sodium-hypochlorite-15",
     sku: "CHEM-SH-007",
     cas_number: "7681-52-9",
-    formula: "NaOCl",
+    chemical_formula: "NaOCl",
     category_name: "Water Treatment Chemicals",
     category_slug: "water-treatment-chemicals",
     grade: "industrial",
+    grade_display: "Industrial Grade",
+    purity: "",
+    manufacturer_name: "NOKS Industrial",
+    availability: "in_stock",
+    availability_display: "In Stock",
+    unit: "kg",
+    lead_time: "3-5 days",
+    price_on_request: true,
+    indicative_price: null,
+    currency: "USD",
+    is_featured: true,
+    is_bestseller: false,
+    image: null,
     short_description: "Broad-spectrum oxidizing disinfectant and bleaching agent for drinking water chlorination and sanitization.",
-    featured: true,
-    in_stock: true,
-    industries: ["Water Treatment", "Hospitality", "Healthcare"],
-    package_sizes: ["20 L jerrycan", "200 L drum"],
+    industry_slugs: ["water-treatment", "hospitality", "healthcare"],
   },
   {
     id: 8,
@@ -133,15 +203,25 @@ const DEFAULT_PRODUCTS: Product[] = [
     slug: "potassium-chloride-ar",
     sku: "CHEM-PC-008",
     cas_number: "7447-40-7",
-    formula: "KCl",
+    chemical_formula: "KCl",
     category_name: "Laboratory Reagents",
     category_slug: "laboratory-reagents",
     grade: "analytical",
+    grade_display: "Analytical Grade",
+    purity: "",
+    manufacturer_name: "NOKS Industrial",
+    availability: "in_stock",
+    availability_display: "In Stock",
+    unit: "kg",
+    lead_time: "3-5 days",
+    price_on_request: true,
+    indicative_price: null,
+    currency: "USD",
+    is_featured: true,
+    is_bestseller: false,
+    image: null,
     short_description: "Analytical reagent grade potassium chloride (≥99.5%) for standard solutions, buffers, and diagnostic laboratories.",
-    featured: true,
-    in_stock: true,
-    industries: ["Laboratories", "Healthcare"],
-    package_sizes: ["500 g bottle", "1 kg bottle"],
+    industry_slugs: ["laboratories", "healthcare"],
   },
 ];
 
@@ -152,7 +232,7 @@ const TABS: { key: TabKey; label: string; filter: (p: Product) => boolean }[] = 
     label: "Water Treatment",
     filter: (p) =>
       p.category_slug?.includes("water") ||
-      p.industries?.some((i) => i.toLowerCase().includes("water")) ||
+      p.industry_slugs?.some((i) => i.toLowerCase().includes("water")) ||
       false,
   },
   {
@@ -161,7 +241,7 @@ const TABS: { key: TabKey; label: string; filter: (p: Product) => boolean }[] = 
     filter: (p) =>
       p.grade === "food" ||
       p.category_slug?.includes("food") ||
-      p.industries?.some((i) => i.toLowerCase().includes("food")) ||
+      p.industry_slugs?.some((i) => i.toLowerCase().includes("food")) ||
       false,
   },
   {
@@ -171,14 +251,14 @@ const TABS: { key: TabKey; label: string; filter: (p: Product) => boolean }[] = 
       p.name.includes("SLES") ||
       p.name.includes("LABSA") ||
       p.name.includes("Caustic") ||
-      p.industries?.some((i) => i.toLowerCase().includes("manufacturing")) ||
+      p.industry_slugs?.some((i) => i.toLowerCase().includes("manufacturing")) ||
       false,
   },
   {
     key: "agriculture",
     label: "Agriculture & Feed",
     filter: (p) =>
-      p.industries?.some((i) => i.toLowerCase().includes("agriculture") || i.toLowerCase().includes("mining")) ||
+      p.industry_slugs?.some((i) => i.toLowerCase().includes("agriculture") || i.toLowerCase().includes("mining")) ||
       false,
   },
   {
@@ -187,7 +267,7 @@ const TABS: { key: TabKey; label: string; filter: (p: Product) => boolean }[] = 
     filter: (p) =>
       p.grade === "analytical" ||
       p.category_slug?.includes("laboratory") ||
-      p.industries?.some((i) => i.toLowerCase().includes("lab")) ||
+      p.industry_slugs?.some((i) => i.toLowerCase().includes("lab")) ||
       false,
   },
 ];
@@ -281,7 +361,7 @@ export const IndustryTabs = ({ products = [] }: IndustryTabsProps) => {
                       </span>
                     ) : (
                       <span className="rounded bg-silver-200/80 px-2 py-0.5 text-[11px] font-semibold text-navy-900">
-                        {product.formula || "Chemical"}
+                        {product.chemical_formula || "Chemical"}
                       </span>
                     )}
                     <span className="text-[11px] font-bold text-teal-600 uppercase tracking-wider">
@@ -298,23 +378,6 @@ export const IndustryTabs = ({ products = [] }: IndustryTabsProps) => {
                   <p className="mt-2 text-xs leading-relaxed text-steel-700 line-clamp-3">
                     {product.short_description}
                   </p>
-
-                  {/* Packaging specs */}
-                  {product.package_sizes && product.package_sizes.length > 0 && (
-                    <div className="mt-4 border-t border-rule pt-3">
-                      <p className="text-[11px] font-bold text-navy-800">Available Packs:</p>
-                      <div className="mt-1 flex flex-wrap gap-1">
-                        {product.package_sizes.map((pack) => (
-                          <span
-                            key={pack}
-                            className="rounded bg-white border border-rule px-1.5 py-0.5 text-[10.5px] font-medium text-steel-700"
-                          >
-                            {pack}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* Actions (Dual Action Buttons in Blue & WhatsApp) */}
