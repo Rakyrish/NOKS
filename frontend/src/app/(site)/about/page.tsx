@@ -2,11 +2,15 @@ import { Check } from "lucide-react";
 import type { Metadata } from "next";
 
 import { CtaBand } from "@/components/home/cta-band";
+import { HowWeWorkTeaser } from "@/components/home/how-we-work-teaser";
+import { QualityBand } from "@/components/home/quality-band";
 import { StatsBand } from "@/components/home/stats-band";
+import { Testimonials } from "@/components/home/testimonials";
 import { WhyNoks } from "@/components/home/why-noks";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Reveal, RevealGroup, RevealItem } from "@/components/shared/motion";
 import { PageHero } from "@/components/shared/page-hero";
+import { SupplyCoverage } from "@/components/shared/supply-coverage";
 import { Section, SectionHeading } from "@/components/shared/section";
 import { api } from "@/lib/api";
 import { localBusinessSchema } from "@/lib/schema";
@@ -137,6 +141,31 @@ export default async function AboutPage() {
       )}
 
       <WhyNoks items={data.value_props} />
+
+      {/* ── Quality regime. Moved off the homepage, where it was the third
+             section in a row making the same documentation claim. ────── */}
+      <QualityBand />
+
+      {/* ── How an order actually runs ──────────────────────────────── */}
+      <HowWeWorkTeaser />
+
+      {/* ── Full delivery footprint, down to county. The homepage keeps a
+             compact version of this. ──────────────────────────────────── */}
+      <Section tone="muted">
+        <div className="container-noks">
+          <SectionHeading
+            eyebrow="Coverage"
+            title="Where we supply"
+            description="Ex-stock in Nairobi, delivered across Kenya and exported through the region."
+          />
+          <div className="mt-10">
+            <SupplyCoverage />
+          </div>
+        </div>
+      </Section>
+
+      {/* ── Social proof ────────────────────────────────────────────── */}
+      <Testimonials testimonials={data.testimonials} clients={data.clients} />
 
       {/* Team */}
       {team.length > 0 && (

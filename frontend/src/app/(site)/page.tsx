@@ -1,19 +1,11 @@
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
-
-import { PostCard } from "@/components/blog/post-card";
 import { CtaBand } from "@/components/home/cta-band";
 import { FaqSection } from "@/components/home/faq-section";
 import { Hero } from "@/components/home/hero";
-import { HowWeWorkTeaser } from "@/components/home/how-we-work-teaser";
 import { IndustriesGrid } from "@/components/home/industries-grid";
 import { IndustryTabs } from "@/components/home/industry-tabs";
-import { QualityBand } from "@/components/home/quality-band";
 import { SupplyMosaic } from "@/components/home/supply-mosaic";
-import { Testimonials } from "@/components/home/testimonials";
 import { TrustStrip } from "@/components/home/trust-strip";
 import { JsonLd } from "@/components/shared/json-ld";
-import { Reveal, RevealGroup, RevealItem } from "@/components/shared/motion";
 import { Section } from "@/components/shared/section";
 import { SupplyCoverage } from "@/components/shared/supply-coverage";
 import { api } from "@/lib/api";
@@ -21,6 +13,16 @@ import { faqSchema, itemListSchema, localBusinessSchema } from "@/lib/schema";
 
 export const revalidate = 300;
 
+/**
+ * The homepage answers four questions in order: what do you sell, why should
+ * I believe you, show me the products, how do I buy.
+ *
+ * Company depth — the quality regime, the order process, testimonials and the
+ * full delivery footprint — lives on /about. It used to sit here too, which
+ * meant the page made the same documentation claim three separate times
+ * (trust strip, mosaic stats, quality band) before a buyer reached the
+ * catalogue.
+ */
 export default async function HomePage() {
   const data = await api.homepage();
 
@@ -41,79 +43,33 @@ export default async function HomePage() {
         />
       )}
 
-      {/* ── 1. Hero carousel — the six ranges we supply ────────── */}
+      {/* ── 1. What we supply ─────────────────────────────────── */}
       <Hero />
 
-      {/* ── 2. Credibility bar, straight under the fold ────────── */}
+      {/* ── 2. Credibility, straight under the fold ───────────── */}
       <TrustStrip />
 
-      {/* ── 3. Capability mosaic — what we actually do ─────────── */}
+      {/* ── 3. What we actually do ────────────────────────────── */}
       <SupplyMosaic />
 
-      {/* ── 4. Catalogue showcase, filterable by sector ────────── */}
+      {/* ── 4. The catalogue, filterable by sector ────────────── */}
       <IndustryTabs products={data.featured_products} />
 
-      {/* ── 5. Sector grid ────────────────────────────────────── */}
+      {/* ── 5. Sectors — also the internal links to /industries ── */}
       <IndustriesGrid industries={data.industries} />
 
-      {/* ── 6. Delivery footprint, named down to county ────────── */}
+      {/* ── 6. Where we deliver. Compact here; the full county
+             breakdown is on /about. ───────────────────────────── */}
       <Section size="sm" className="border-b border-rule bg-white">
         <div className="container-noks">
-          <SupplyCoverage />
+          <SupplyCoverage compact />
         </div>
       </Section>
 
-      {/* ── 7. Quality & documentation assurance ───────────────── */}
-      <QualityBand />
-
-      {/* ── 8. How an order actually runs ──────────────────────── */}
-      <HowWeWorkTeaser />
-
-      {/* ── 9. Client trust & testimonials ─────────────────────── */}
-      <Testimonials testimonials={data.testimonials} clients={data.clients} />
-
-      {/* ── 10. Technical knowledge & buying guides ────────────── */}
-      {data.latest_posts.length > 0 && (
-        <Section className="bg-silver-100/50 border-b border-rule">
-          <div className="container-noks">
-            <div className="flex flex-wrap items-end justify-between gap-6">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
-                  Technical Center
-                </span>
-                <h2 className="mt-1 font-heading text-2xl sm:text-3xl font-bold text-navy-900">
-                  Chemical Buying Guides & Application Notes
-                </h2>
-                <p className="mt-2 text-sm text-steel-700 max-w-2xl">
-                  Practical briefings written by our industrial chemists on coagulant selection, food grade compliance, surfactant blending, and safety.
-                </p>
-              </div>
-              <Reveal delay={0.1}>
-                <Link
-                  href="/knowledge"
-                  className="inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 hover:text-blue-700"
-                >
-                  <span>All technical guides</span>
-                  <ArrowRight className="size-4" />
-                </Link>
-              </Reveal>
-            </div>
-
-            <RevealGroup className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {data.latest_posts.map((post) => (
-                <RevealItem key={post.id} className="h-full">
-                  <PostCard post={post} />
-                </RevealItem>
-              ))}
-            </RevealGroup>
-          </div>
-        </Section>
-      )}
-
-      {/* ── 11. FAQ ───────────────────────────────────────────── */}
+      {/* ── 7. Objections ─────────────────────────────────────── */}
       <FaqSection faqs={data.faqs} />
 
-      {/* ── 12. Call to action ────────────────────────────────── */}
+      {/* ── 8. Act ────────────────────────────────────────────── */}
       <CtaBand />
     </>
   );

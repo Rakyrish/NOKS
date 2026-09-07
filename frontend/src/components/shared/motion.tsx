@@ -50,13 +50,19 @@ export const Reveal = ({
   once?: boolean;
 }) => {
   const reduced = useReducedMotion();
+  // `whileInView` stays on in both branches. Dropping it under reduced motion
+  // left the element on the opacity:0 that server-rendered markup ships with
+  // (useReducedMotion is null during SSR, so the hidden `initial` is always
+  // written out) and nothing ever animated it back — entire sections were
+  // invisible for anyone with "reduce motion" enabled. Reduced motion should
+  // remove the movement, not the content.
   return (
     <motion.div
       className={className}
-      initial={reduced ? undefined : { opacity: 0, y }}
-      whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
+      initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once, margin: "-80px" }}
-      transition={{ duration: 0.65, delay, ease: EASE }}
+      transition={reduced ? { duration: 0 } : { duration: 0.65, delay, ease: EASE }}
     >
       {children}
     </motion.div>
@@ -74,17 +80,22 @@ export const RevealGroup = ({
   className?: string;
   delayChildren?: number;
   staggerChildren?: number;
-}) => (
-  <motion.div
-    className={className}
-    variants={stagger(delayChildren, staggerChildren)}
-    initial="hidden"
-    whileInView="show"
-    viewport={{ once: true, margin: "-70px" }}
-  >
-    {children}
-  </motion.div>
-);
+}) => {
+  const reduced = useReducedMotion();
+  return (
+    <motion.div
+      className={className}
+      variants={stagger(delayChildren, staggerChildren)}
+      // Start already shown when motion is not wanted, so the stagger never
+      // runs and nothing depends on the observer firing to become visible.
+      initial={reduced ? "show" : "hidden"}
+      whileInView="show"
+      viewport={{ once: true, margin: "-70px" }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 export const RevealItem = ({
   children,
