@@ -32,11 +32,13 @@ palette is built around it:
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `COLOR_PRIMARY` | `#0C48E6` | Primary actions, links, accents |
+| `COLOR_PRIMARY` | `#0C48E6` | Primary actions, CTA buttons, accents |
 | `COLOR_PRIMARY_DARK` | `#0A38C2` | Hover / pressed states |
-| `COLOR_NAVY` | `#071233` | Dark sections, footer, hero |
+| `COLOR_NAVY` | `#071233` | Dark sections, header, footer, hero |
+| `COLOR_NAVY_SOFT` | `#0A1830` | Top bar, secondary navigation |
 | `COLOR_EMERALD` | `#059669` | Success, certification, "in stock" |
-| `COLOR_ACCENT` | `#2F5EFA` | Gradient mid-tone |
+| `COLOR_ACCENT` | `#2F5EFA` | Gradient mid-tone, active badges |
+| `FONT_DISPLAY` | `Alice` | Editorial headings typography |
 
 ---
 

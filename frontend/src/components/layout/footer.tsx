@@ -1,149 +1,107 @@
-import { Clock, Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Twitter } from "lucide-react";
+"use client";
+
+import { Clock, Facebook, Instagram, Linkedin, Mail, MapPin, Phone, ShieldCheck, Twitter } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import * as React from "react";
 
-import { NewsletterForm } from "@/components/shared/newsletter-form";
-import { api } from "@/lib/api";
 import { brand, contact, social } from "@/lib/site";
 
-const OTHER_COLUMNS = [
-  {
-    title: "Company",
-    links: [
-      { label: "About NOKS", href: "/about" },
-      { label: "Industries We Serve", href: "/industries" },
-      { label: "Our Services", href: "/services" },
-      { label: "Knowledge Centre", href: "/knowledge" },
-      { label: "Contact Us", href: "/contact" },
-      { label: "Request a Quote", href: "/quote" },
-    ],
-  },
-  {
-    title: "Support",
-    links: [
-      { label: "Technical Datasheets", href: "/products" },
-      { label: "Safety Information", href: "/knowledge?category=chemical-safety" },
-      { label: "Buying Guides", href: "/knowledge?category=buying-guides" },
-      { label: "Delivery & Lead Times", href: "/contact" },
-      { label: "Chemical Sourcing", href: "/services" },
-    ],
-  },
+const PRODUCT_CATEGORIES = [
+  { label: "Water Treatment Chemicals", href: "/products?category=water-treatment-chemicals" },
+  { label: "Food-Grade & Additives", href: "/products?category=food-grade-chemicals" },
+  { label: "Cosmetic & Detergent Raw Materials", href: "/products?category=industrial-chemicals" },
+  { label: "Construction Chemicals", href: "/products?category=specialty-chemicals" },
+  { label: "Paints, Inks & Coatings", href: "/products?category=specialty-chemicals" },
+  { label: "Agriculture & Animal Feed", href: "/products?category=industrial-chemicals" },
+  { label: "Laboratory Reagents", href: "/products?category=laboratory-reagents" },
+  { label: "Specialty Chemicals", href: "/products?category=specialty-chemicals" },
 ] as const;
 
-const SOCIALS = [
-  { href: social.linkedin, Icon: Linkedin, label: "LinkedIn" },
-  { href: social.facebook, Icon: Facebook, label: "Facebook" },
-  { href: social.twitter, Icon: Twitter, label: "X" },
-  { href: social.instagram, Icon: Instagram, label: "Instagram" },
+const QUICK_LINKS = [
+  { label: "Chemical Catalogue", href: "/products" },
+  { label: "How We Work", href: "/#how-we-work" },
+  { label: "About NOKS", href: "/about" },
+  { label: "Buying Guides & Articles", href: "/knowledge" },
+  { label: "Industries We Serve", href: "/industries" },
+  { label: "Request a Quote", href: "/quote" },
+  { label: "Contact Us", href: "/contact" },
 ] as const;
 
-export const Footer = async () => {
-  const categories = await api.categories();
-  const productLinks = [
-    { label: "All Products", href: "/products" },
-    ...categories
-      .filter((category) => !category.parent)
-      .slice(0, 5)
-      .map((category) => ({ label: category.name, href: `/categories/${category.slug}` })),
-  ];
-
+export const Footer = () => {
   return (
-  <footer className="relative overflow-hidden bg-navy-900 text-white">
-    <div
-      className="pointer-events-none absolute -top-40 -right-32 size-[34rem] rounded-full
-                 bg-[var(--brand-primary)]/20 blur-[120px]"
-      aria-hidden
-    />
-    <div
-      className="pointer-events-none absolute -bottom-48 -left-24 size-[28rem] rounded-full
-                 bg-[var(--brand-emerald)]/12 blur-[120px]"
-      aria-hidden
-    />
+    <footer className="site-footer">
+      <div className="site-footer-inner max-w-[var(--max)] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 text-silver-300">
+        {/* 4-Column Footer Grid (Karivex Structure with NOKS Blue Branding) */}
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 pb-12 border-b border-white/10">
+          {/* Col 1: Brand & Warehouse */}
+          <div className="flex flex-col">
+            <Link href="/" className="inline-flex items-center gap-3">
+              <span className="flex size-11 items-center justify-center rounded-lg bg-white p-1 shadow-md">
+                <Image
+                  src={brand.logo}
+                  alt={`${brand.name} logo`}
+                  width={38}
+                  height={38}
+                  className="size-8 object-contain"
+                />
+              </span>
+              <div className="leading-tight">
+                <strong className="font-heading text-xl font-bold tracking-tight text-white">
+                  {brand.name} Solutions Ltd
+                </strong>
+                <span className="block text-[10.5px] font-bold tracking-[0.16em] text-blue-300 uppercase">
+                  chemical division
+                </span>
+              </div>
+            </Link>
 
-    <div className="relative">
-      {/* Newsletter */}
-      <div className="border-b border-white/10">
-        <div className="container-noks grid gap-8 py-12 lg:grid-cols-2 lg:items-center lg:py-14">
-          <div>
-            <h2 className="font-display text-2xl font-bold sm:text-[1.75rem]">
-              Technical insight, straight to your inbox
-            </h2>
-            <p className="mt-2 max-w-lg text-[15px] text-white/60">
-              Product updates, application guides and chemical safety briefings from our
-              technical team. No noise — usually once a month.
+            <p className="mt-4 text-xs sm:text-sm leading-relaxed text-silver-300">
+              {brand.mission || "Authorized distributor of industrial chemicals, laboratory reagents, and specialty ingredients across Kenya and East Africa. Ex-stock Nairobi with certified COA and MSDS."}
             </p>
+
+            <div className="mt-5 space-y-2.5 text-xs text-silver-300">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="size-4 shrink-0 text-blue-400 mt-0.5" />
+                <span>Enterprise Road, Industrial Area, Nairobi, Kenya</span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck className="size-4 shrink-0 text-teal-400" />
+                <span>KEBS & ISO Standard Certified Supply</span>
+              </div>
+            </div>
           </div>
-          <NewsletterForm />
-        </div>
-      </div>
 
-      {/* Main */}
-      <div className="container-noks grid gap-12 py-14 lg:grid-cols-[1.4fr_repeat(3,1fr)] lg:py-16">
-        <div>
-          <Link href="/" className="inline-flex items-center gap-3" aria-label={brand.fullName}>
-            <span className="rounded-xl bg-white px-3 py-2">
-              <Image
-                src={brand.logo}
-                alt={`${brand.name} logo`}
-                width={96}
-                height={28}
-                className="h-6 w-auto object-contain"
-              />
-            </span>
-          </Link>
-          <p className="mt-3 text-[11px] font-bold tracking-[0.16em] text-white/45 uppercase">
-            {brand.division}
-          </p>
-          <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/60">
-            {brand.mission}
-          </p>
-
-          <ul className="mt-7 space-y-3.5 text-[14.5px] text-white/70">
-            {contact.addressLine && (
-              <li className="flex gap-3">
-                <MapPin className="mt-0.5 size-4 shrink-0 text-[var(--brand-emerald-light)]" />
-                <span>{contact.addressLine}</span>
-              </li>
-            )}
-            {contact.phone && (
-              <li className="flex gap-3">
-                <Phone className="mt-0.5 size-4 shrink-0 text-[var(--brand-emerald-light)]" />
-                <a href={contact.telHref} className="transition-colors hover:text-white">
-                  {contact.phone}
-                </a>
-              </li>
-            )}
-            {contact.email && (
-              <li className="flex gap-3">
-                <Mail className="mt-0.5 size-4 shrink-0 text-[var(--brand-emerald-light)]" />
-                <a
-                  href={`mailto:${contact.email}`}
-                  className="break-all transition-colors hover:text-white"
-                >
-                  {contact.email}
-                </a>
-              </li>
-            )}
-            {contact.hours && (
-              <li className="flex gap-3">
-                <Clock className="mt-0.5 size-4 shrink-0 text-[var(--brand-emerald-light)]" />
-                <span>{contact.hours}</span>
-              </li>
-            )}
-          </ul>
-        </div>
-
-        {[{ title: "Products", links: productLinks }, ...OTHER_COLUMNS].map((column) => (
-          <div key={column.title}>
-            <h3 className="text-[11px] font-bold tracking-[0.14em] text-white/45 uppercase">
-              {column.title}
+          {/* Col 2: Chemical Categories */}
+          <div>
+            <h3 className="font-heading text-xs font-bold uppercase tracking-wider text-white mb-4">
+              Chemical Categories
             </h3>
-            <ul className="mt-5 space-y-3">
-              {column.links.map((link) => (
+            <ul className="space-y-2.5 text-xs sm:text-[13px] list-none p-0 m-0">
+              {PRODUCT_CATEGORIES.map((cat) => (
+                <li key={cat.label}>
+                  <Link
+                    href={cat.href}
+                    className="text-silver-300 transition-colors hover:text-blue-300 hover:underline"
+                  >
+                    {cat.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Col 3: Company & Quick Links */}
+          <div>
+            <h3 className="font-heading text-xs font-bold uppercase tracking-wider text-white mb-4">
+              Company & Operations
+            </h3>
+            <ul className="space-y-2.5 text-xs sm:text-[13px] list-none p-0 m-0">
+              {QUICK_LINKS.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-[14.5px] text-white/65 transition-colors hover:text-white"
+                    className="text-silver-300 transition-colors hover:text-blue-300 hover:underline"
                   >
                     {link.label}
                   </Link>
@@ -151,47 +109,95 @@ export const Footer = async () => {
               ))}
             </ul>
           </div>
-        ))}
-      </div>
 
-      {/* Bottom */}
-      <div className="border-t border-white/10">
-        <div className="container-noks flex flex-col items-center justify-between gap-5 py-6 sm:flex-row">
-          <p className="text-[13px] text-white/45">
-            © {new Date().getFullYear()} {brand.fullName}. All rights reserved.
-          </p>
+          {/* Col 4: Direct Contacts & Hours */}
+          <div>
+            <h3 className="font-heading text-xs font-bold uppercase tracking-wider text-white mb-4">
+              Sales & Depot Contact
+            </h3>
+            <div className="space-y-3 text-xs sm:text-[13px]">
+              {contact.phone && (
+                <div>
+                  <span className="block text-[11px] text-silver-400 uppercase font-semibold">
+                    Sales Hotline
+                  </span>
+                  <a
+                    href={contact.telHref}
+                    className="mt-0.5 inline-flex items-center gap-1.5 font-bold text-white hover:text-blue-300"
+                  >
+                    <Phone className="size-3.5 text-blue-400" />
+                    <span>{contact.phone}</span>
+                  </a>
+                </div>
+              )}
 
-          <div className="flex items-center gap-2.5">
-            {SOCIALS.filter((item) => item.href).map(({ href, Icon, label }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="grid size-9 place-items-center rounded-full border border-white/12
-                           text-white/60 transition-all hover:border-white/30
-                           hover:bg-white/10 hover:text-white"
-              >
-                <Icon className="size-4" />
-              </a>
-            ))}
-          </div>
+              {contact.phoneAlt && (
+                <div>
+                  <span className="block text-[11px] text-silver-400 uppercase font-semibold">
+                    Depot Logistics
+                  </span>
+                  <a
+                    href={`tel:${contact.phoneAlt.replace(/\s+/g, "")}`}
+                    className="mt-0.5 inline-block text-silver-300 hover:text-white"
+                  >
+                    {contact.phoneAlt}
+                  </a>
+                </div>
+              )}
 
-          <div className="flex items-center gap-5 text-[13px] text-white/45">
-            <Link href="/privacy" className="transition-colors hover:text-white/80">
-              Privacy
-            </Link>
-            <Link href="/terms" className="transition-colors hover:text-white/80">
-              Terms
-            </Link>
-            <Link href="/sitemap.xml" className="transition-colors hover:text-white/80">
-              Sitemap
-            </Link>
+              <div>
+                <span className="block text-[11px] text-silver-400 uppercase font-semibold">
+                  WhatsApp Direct
+                </span>
+                <a
+                  href={contact.whatsappUrl || "https://wa.me/254700000000"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-0.5 inline-flex items-center gap-1.5 font-bold text-[#25D366] hover:underline"
+                >
+                  <span>Chat with Sales Chemist</span>
+                </a>
+              </div>
+
+              {contact.email && (
+                <div>
+                  <span className="block text-[11px] text-silver-400 uppercase font-semibold">
+                    Email Inquiries
+                  </span>
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className="mt-0.5 inline-flex items-center gap-1.5 text-silver-300 hover:text-white"
+                  >
+                    <Mail className="size-3.5 text-blue-400" />
+                    <span>{contact.email}</span>
+                  </a>
+                </div>
+              )}
+
+              <div className="pt-2 border-t border-white/10">
+                <div className="flex items-center gap-1.5 text-[11.5px] text-silver-400">
+                  <Clock className="size-3.5 text-blue-400" />
+                  <span>{contact.hours || "Mo-Fr 08:00-17:30, Sa 08:00-13:00"}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Bottom Bar */}
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-silver-400">
+          <p>
+            © {new Date().getFullYear()} {brand.name} Solutions Ltd — Chemical Division. All rights reserved.
+          </p>
+          <p className="flex items-center gap-3">
+            <span>Serving Kenya • Uganda • Tanzania • Rwanda</span>
+            <span>·</span>
+            <Link href="/quote" className="text-blue-400 hover:underline">
+              Request a Quote
+            </Link>
+          </p>
+        </div>
       </div>
-    </div>
-  </footer>
+    </footer>
   );
 };
