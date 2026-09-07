@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Bot, Loader2, MessageSquare, Send, Sparkles, X } from "lucide-react";
+import { Bot, Loader2, MessageSquare, Send, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
@@ -100,15 +100,26 @@ export const AssistantWidget = () => {
             exit={{ opacity: 0, scale: 0.7, y: 16 }}
             transition={{ type: "spring", stiffness: 380, damping: 26 }}
             aria-label={`Open ${ai.name}`}
-            className="group fixed left-6 bottom-6 z-40 flex h-13 items-center gap-2.5
-                       rounded-full bg-navy-900 border border-white/20 pr-5 pl-4 text-white
-                       shadow-[0_10px_30px_-8px_rgba(7,18,51,0.6)]
-                       transition-transform hover:scale-[1.03]"
+            title={`Ask ${ai.name}`}
+            className="group fixed left-6 bottom-6 z-40 grid size-14 place-items-center
+                       rounded-full bg-gradient-to-br from-[var(--brand-accent)] to-[var(--brand-primary-dark)]
+                       text-white ring-2 ring-white/25
+                       shadow-[0_8px_25px_rgba(12,72,230,0.5)]
+                       transition-all duration-200 hover:scale-110 hover:ring-white/50
+                       active:scale-95"
           >
-            <span className="relative grid size-7 place-items-center rounded-full bg-white/18">
-              <Sparkles className="size-3.5 text-blue-400" />
+            {/* Same mark the open panel uses in its header, so the launcher and
+                the assistant read as one identity now the label is gone. */}
+            <Bot className="size-6" />
+            <span
+              className="pointer-events-none absolute left-full ml-3 hidden whitespace-nowrap
+                         rounded-lg border border-blue-500/30 bg-[#040b1f] px-3 py-1.5
+                         text-xs font-semibold text-white opacity-0 shadow-lg
+                         transition-all duration-200 group-hover:translate-x-1
+                         group-hover:opacity-100 sm:block"
+            >
+              Ask {ai.name}
             </span>
-            <span className="text-xs font-semibold">Ask {ai.name}</span>
           </motion.button>
         )}
       </AnimatePresence>
