@@ -17,8 +17,8 @@ export const FloatingContacts = () => {
 
   const phoneHref = contact.telHref || "tel:+254700000000";
   const displayPhone = contact.phone || "+254 700 000 000";
-  const emailHref = contact.email ? `mailto:${contact.email}` : "mailto:sales@noks.co.ke";
-  const displayEmail = contact.email || "sales@noks.co.ke";
+  const emailHref = contact.email ? `mailto:${contact.email}` : "mailto:info@noksindustrial.com";
+  const displayEmail = contact.email || "info@noksindustrial.com";
   const whatsappHref = contact.whatsappUrl
     ? `${contact.whatsappUrl}?text=${encodeURIComponent(
         `Hello ${brand.name}, I would like to inquire about industrial chemicals and request a quotation.`,
