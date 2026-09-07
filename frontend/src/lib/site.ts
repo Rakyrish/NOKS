@@ -3,8 +3,27 @@
  * Nothing in `src/` should read `process.env` directly.
  */
 
+/**
+ * Every NEXT_PUBLIC_* value, inlined as one blob by next.config.mjs.
+ *
+ * This exists because the lookup below is dynamic. Next.js substitutes
+ * `process.env.SOME_LITERAL_KEY` at build time, but it cannot rewrite
+ * `process.env[key]`, so in the browser bundle every lookup here returned
+ * undefined and each value silently fell back to "". Server-rendered markup
+ * therefore carried the real phone and email, and hydration then stripped
+ * them out. Reading a single static key restores them on the client.
+ */
+const PUBLIC_ENV: Record<string, string | undefined> = (() => {
+  try {
+    return JSON.parse(process.env.NEXT_PUBLIC_ENV_JSON || "{}") as Record<string, string>;
+  } catch {
+    return {};
+  }
+})();
+
 const env = (key: string, fallback = ""): string => {
-  const value = process.env[key];
+  // process.env is the real thing on the server; PUBLIC_ENV covers the browser.
+  const value = process.env[key] ?? PUBLIC_ENV[key];
   return value === undefined || value === "" ? fallback : value;
 };
 

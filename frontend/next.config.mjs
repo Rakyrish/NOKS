@@ -27,7 +27,14 @@ const apiOrigin = (() => {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  env: publicEnv,
+  // `env` lets Next replace `process.env.SOME_LITERAL` in the browser bundle,
+  // but only where the key is written out statically. src/lib/site.ts looks
+  // keys up dynamically (`process.env[key]`), which the compiler cannot
+  // rewrite — client-side every value came back undefined. Shipping the whole
+  // map as one JSON string gives that helper a single static key to read, so
+  // the values survive into the browser. Same data, already public by virtue
+  // of the NEXT_PUBLIC_ prefix.
+  env: { ...publicEnv, NEXT_PUBLIC_ENV_JSON: JSON.stringify(publicEnv) },
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
