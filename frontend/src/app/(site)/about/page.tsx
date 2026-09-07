@@ -36,6 +36,7 @@ export default async function AboutPage() {
         title={`${stats.years} years of chemistry that shows up on time`}
         description={brand.mission}
         crumbs={[{ name: "About", url: "/about" }]}
+        image="/images/pages/about.jpg"
       />
 
       <StatsBand stats={data.stats} />

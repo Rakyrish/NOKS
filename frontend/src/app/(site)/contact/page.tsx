@@ -68,6 +68,7 @@ export default async function ContactPage() {
         description="Quotations, product selection, safety documentation or sourcing enquiries —
                      we respond within one business day."
         crumbs={[{ name: "Contact", url: "/contact" }]}
+        image="/images/pages/contact.jpg"
       />
 
       <div className="bg-surface-muted py-14 sm:py-20">

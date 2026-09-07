@@ -44,6 +44,7 @@ export default async function KnowledgePage({
         description="Guides and briefings from our applications chemists — coagulant selection,
                      food grade compliance, safe handling and procurement practice."
         crumbs={[{ name: "Knowledge", url: "/knowledge" }]}
+        image="/images/pages/knowledge.jpg"
       />
 
       <div className="bg-surface-muted py-12 sm:py-16">

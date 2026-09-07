@@ -1,4 +1,5 @@
 import { ChevronRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
@@ -15,6 +16,7 @@ export const PageHero = ({
   crumbs = [],
   children,
   className,
+  image,
 }: {
   eyebrow?: string;
   title: React.ReactNode;
@@ -22,8 +24,27 @@ export const PageHero = ({
   crumbs?: Crumb[];
   children?: React.ReactNode;
   className?: string;
+  /** Background photograph. Sits under a heavy navy scrim, so it reads as
+   *  texture behind the copy rather than an image in its own right. */
+  image?: string;
 }) => (
   <section className={cn("relative overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 border-b-2 border-[#0c48e6] pt-10 pb-14 sm:pb-16", className)}>
+    {image && (
+      <>
+        <Image
+          src={image}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/90 to-navy-900/70"
+          aria-hidden
+        />
+      </>
+    )}
     <div className="bg-grid-light absolute inset-0 opacity-25" aria-hidden />
     <div
       className="pointer-events-none absolute -top-28 -right-20 size-[30rem] rounded-full

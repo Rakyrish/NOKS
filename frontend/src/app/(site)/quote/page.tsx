@@ -28,6 +28,7 @@ export default function QuotePage() {
         description="Add every product you need, tell us quantities and delivery location, and our
                      technical sales team will respond with pricing and lead times."
         crumbs={[{ name: "Request Quote", url: "/quote" }]}
+        image="/images/pages/quote.jpg"
       />
 
       <div className="bg-surface-muted py-14 sm:py-20">

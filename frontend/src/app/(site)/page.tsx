@@ -6,15 +6,15 @@ import { CtaBand } from "@/components/home/cta-band";
 import { FaqSection } from "@/components/home/faq-section";
 import { Hero } from "@/components/home/hero";
 import { HowWeWorkTeaser } from "@/components/home/how-we-work-teaser";
-import { IdentityBand } from "@/components/home/identity-band";
 import { IndustriesGrid } from "@/components/home/industries-grid";
 import { IndustryTabs } from "@/components/home/industry-tabs";
+import { QualityBand } from "@/components/home/quality-band";
+import { SupplyMosaic } from "@/components/home/supply-mosaic";
 import { Testimonials } from "@/components/home/testimonials";
 import { TrustStrip } from "@/components/home/trust-strip";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Reveal, RevealGroup, RevealItem } from "@/components/shared/motion";
-import { Section, SectionHeading } from "@/components/shared/section";
-import { Button } from "@/components/ui/button";
+import { Section } from "@/components/shared/section";
 import { api } from "@/lib/api";
 import { faqSchema, itemListSchema, localBusinessSchema } from "@/lib/schema";
 
@@ -40,28 +40,31 @@ export default async function HomePage() {
         />
       )}
 
-      {/* ── 1. Karivex Interactive Carousel Hero ─────────────── */}
+      {/* ── 1. Hero carousel — the six ranges we supply ────────── */}
       <Hero />
 
-      {/* ── 2. Karivex Identity & Credentials Band ───────────── */}
-      <IdentityBand />
-
-      {/* ── 3. Karivex Industry Tabs Product Showcase ─────────── */}
-      <IndustryTabs products={data.featured_products} />
-
-      {/* ── 4. Karivex Trust & Quality Strip ─────────────────── */}
+      {/* ── 2. Credibility bar, straight under the fold ────────── */}
       <TrustStrip />
 
-      {/* ── 5. Karivex Multi-Tone Industry Grid ──────────────── */}
+      {/* ── 3. Capability mosaic — what we actually do ─────────── */}
+      <SupplyMosaic />
+
+      {/* ── 4. Catalogue showcase, filterable by sector ────────── */}
+      <IndustryTabs products={data.featured_products} />
+
+      {/* ── 5. Sector grid ────────────────────────────────────── */}
       <IndustriesGrid industries={data.industries} />
 
-      {/* ── 6. Karivex "How We Work" Supply Chain Teaser ─────── */}
+      {/* ── 6. Quality & documentation assurance ───────────────── */}
+      <QualityBand />
+
+      {/* ── 7. How an order actually runs ──────────────────────── */}
       <HowWeWorkTeaser />
 
-      {/* ── 7. Client Trust & Testimonials ───────────────────── */}
+      {/* ── 8. Client trust & testimonials ─────────────────────── */}
       <Testimonials testimonials={data.testimonials} clients={data.clients} />
 
-      {/* ── 8. Technical Knowledge & Buying Guides ───────────── */}
+      {/* ── 9. Technical knowledge & buying guides ─────────────── */}
       {data.latest_posts.length > 0 && (
         <Section className="bg-silver-100/50 border-b border-rule">
           <div className="container-noks">
@@ -99,10 +102,10 @@ export default async function HomePage() {
         </Section>
       )}
 
-      {/* ── 9. FAQ Section ───────────────────────────────────── */}
+      {/* ── 10. FAQ ───────────────────────────────────────────── */}
       <FaqSection faqs={data.faqs} />
 
-      {/* ── 10. Call to Action Band ──────────────────────────── */}
+      {/* ── 11. Call to action ────────────────────────────────── */}
       <CtaBand />
     </>
   );

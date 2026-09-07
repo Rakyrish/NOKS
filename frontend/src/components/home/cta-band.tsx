@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, MessageCircle, Phone } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
@@ -15,10 +16,19 @@ export const CtaBand = ({
   description?: string;
 }) => (
   <section className="relative overflow-hidden py-20 sm:py-24 bg-navy-950 border-t-2 border-blue-600">
+    {/* Plant at blue hour — carries the "industrial scale" message the copy makes. */}
+    <Image
+      src="/images/sections/refinery-twilight.jpg"
+      alt=""
+      fill
+      sizes="100vw"
+      className="object-cover object-center"
+    />
     <div
-      className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-900 to-navy-850"
+      className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/92 to-navy-950/75"
       aria-hidden
     />
+    <div className="bg-grid-light absolute inset-0 opacity-30" aria-hidden />
     <div
       className="pointer-events-none absolute -top-32 right-1/4 size-[28rem] rounded-full
                  bg-blue-600/15 blur-[120px]"

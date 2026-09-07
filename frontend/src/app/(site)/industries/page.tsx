@@ -30,6 +30,7 @@ export default async function IndustriesPage() {
         description="Each sector brings its own specifications, documentation standards and delivery
                      realities. We supply — and support — all of them."
         crumbs={[{ name: "Industries", url: "/industries" }]}
+        image="/images/pages/industries.jpg"
       />
 
       {industries.length > 0 && (

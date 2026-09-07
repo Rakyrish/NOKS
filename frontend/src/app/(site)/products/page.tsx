@@ -77,6 +77,7 @@ export default async function ProductsPage({
         title="Industrial & Laboratory Chemicals"
         description="Over a thousand products across five categories — searchable by name, CAS number, industry, grade and package size. Every product ships with a Certificate of Analysis."
         crumbs={[{ name: "Products", url: "/products" }]}
+        image="/images/pages/products.jpg"
       />
 
       {page.results.length > 0 && (

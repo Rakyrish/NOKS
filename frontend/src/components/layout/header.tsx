@@ -167,9 +167,10 @@ export const Header = () => {
       {/* ── Main Header (Karivex Structure · NOKS Blue) ──────── */}
       <header className="site-header">
         <div className="top-bar-inner !py-2.5 flex items-center justify-between gap-4 sm:gap-6">
-          {/* Brand Logo & Name */}
-          <Link href="/" className="flex shrink-0 items-center gap-3" aria-label={brand.fullName}>
-            <span className="flex size-11 items-center justify-center rounded-lg bg-white p-1 shadow-md">
+          {/* Brand Logo & Name. min-w-0 so the wordmark can compress rather
+              than pushing the row wider than a phone viewport. */}
+          <Link href="/" className="flex min-w-0 items-center gap-2.5 sm:gap-3" aria-label={brand.fullName}>
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-white p-1 shadow-md sm:size-11">
               <Image
                 src={brand.logo}
                 alt={`${brand.name} logo`}
@@ -179,8 +180,8 @@ export const Header = () => {
                 className="size-9 object-contain"
               />
             </span>
-            <div className="flex flex-col leading-tight">
-              <strong className="font-heading text-lg font-bold tracking-tight text-white sm:text-xl">
+            <div className="flex min-w-0 flex-col leading-tight">
+              <strong className="truncate font-heading text-base font-bold tracking-tight text-white sm:text-xl">
                 {brand.name} Solutions Ltd
               </strong>
               <span className="text-[10.5px] font-bold tracking-[0.16em] text-blue-300 uppercase">
@@ -246,9 +247,11 @@ export const Header = () => {
               </a>
             )}
 
-            {/* Request a quote CTA button */}
-            <Link href="/quote" className="nav-cta">
-              Request a quote
+            {/* Request a quote CTA button. Short label on phones — the full
+                one plus the brand block overflows a 390px viewport. */}
+            <Link href="/quote" className="nav-cta whitespace-nowrap max-sm:!px-3.5">
+              <span className="max-sm:hidden">Request a quote</span>
+              <span className="sm:hidden">Quote</span>
             </Link>
 
             {/* Mobile menu toggle */}

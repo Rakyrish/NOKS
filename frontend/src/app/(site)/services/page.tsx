@@ -26,6 +26,7 @@ export default async function ServicesPage() {
         description="Sourcing, application engineering, packaging and logistics — the services that
                      turn a product list into a working supply chain."
         crumbs={[{ name: "Services", url: "/services" }]}
+        image="/images/pages/services.jpg"
       />
 
       <ServicesGrid services={data.services} />
