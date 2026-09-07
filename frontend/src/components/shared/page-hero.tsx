@@ -24,8 +24,8 @@ export const PageHero = ({
   crumbs?: Crumb[];
   children?: React.ReactNode;
   className?: string;
-  /** Background photograph. Sits under a heavy navy scrim, so it reads as
-   *  texture behind the copy rather than an image in its own right. */
+  /** Background photograph. Scrimmed hard behind the copy and released toward
+   *  the right, so it stays readable as a picture. */
   image?: string;
 }) => (
   <section className={cn("relative overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 border-b-2 border-[#0c48e6] pt-10 pb-14 sm:pb-16", className)}>
@@ -39,23 +39,42 @@ export const PageHero = ({
           sizes="100vw"
           className="object-cover object-center"
         />
+        {/* The description runs to ~49% of the frame and the h1 to ~64%, so the
+            scrim holds full density across the copy column and only releases
+            past it. Some of these photographs are bright (white barrels, a lit
+            refinery) — releasing earlier puts white text on near-white pixels. */}
         <div
-          className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/90 to-navy-900/70"
+          className="absolute inset-0 bg-gradient-to-r from-navy-950/96 via-navy-950/88 via-42% to-navy-950/18"
+          aria-hidden
+        />
+        {/* Seats the section on its blue bottom rule, without washing the
+            upper two-thirds of the picture. */}
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-transparent via-30% to-transparent"
           aria-hidden
         />
       </>
     )}
-    <div className="bg-grid-light absolute inset-0 opacity-25" aria-hidden />
     <div
-      className="pointer-events-none absolute -top-28 -right-20 size-[30rem] rounded-full
-                 bg-blue-500/15 blur-[110px]"
+      className={cn("bg-grid-light absolute inset-0", image ? "opacity-[0.12]" : "opacity-25")}
       aria-hidden
     />
-    <div
-      className="pointer-events-none absolute -bottom-40 left-1/4 size-[24rem] rounded-full
-                 bg-teal-500/10 blur-[110px]"
-      aria-hidden
-    />
+    {/* Colour blooms exist to give the plain gradient some depth. Over a
+        photograph they only add fog, so they are dropped when one is set. */}
+    {!image && (
+      <>
+        <div
+          className="pointer-events-none absolute -top-28 -right-20 size-[30rem] rounded-full
+                     bg-blue-500/15 blur-[110px]"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -bottom-40 left-1/4 size-[24rem] rounded-full
+                     bg-teal-500/10 blur-[110px]"
+          aria-hidden
+        />
+      </>
+    )}
 
     {crumbs.length > 0 && (
       <JsonLd
@@ -67,7 +86,7 @@ export const PageHero = ({
     <div className="relative container-noks">
       {crumbs.length > 0 && (
         <nav aria-label="Breadcrumb" className="mb-6">
-          <ol className="flex flex-wrap items-center gap-1 text-[12.5px] text-white/45">
+          <ol className="flex flex-wrap items-center gap-1 text-[12.5px] text-white/60">
             <li>
               <Link href="/" className="transition-colors hover:text-white">
                 Home
@@ -97,12 +116,12 @@ export const PageHero = ({
         </p>
       )}
 
-      <h1 className="max-w-4xl font-display text-[clamp(1.9rem,4.4vw,3.15rem)] leading-[1.1] font-extrabold text-white">
+      <h1 className="max-w-4xl font-display text-[clamp(1.9rem,4.4vw,3.15rem)] leading-[1.1] font-extrabold text-white [text-shadow:0_2px_18px_rgba(4,11,31,0.55)]">
         {title}
       </h1>
 
       {description && (
-        <div className="mt-4 max-w-2xl text-[15px] leading-relaxed text-white/65 sm:text-[16.5px]">
+        <div className="mt-4 max-w-2xl text-[15px] leading-relaxed text-white/85 [text-shadow:0_1px_10px_rgba(4,11,31,0.7)] sm:text-[16.5px]">
           {description}
         </div>
       )}

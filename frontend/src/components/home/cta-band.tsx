@@ -24,11 +24,14 @@ export const CtaBand = ({
       sizes="100vw"
       className="object-cover object-center"
     />
+    {/* The copy here is centred, so the scrim has to be even rather than
+        directional: a moderate overall wash, darkest through the middle band
+        where the headline sits, leaving the plant readable top and bottom. */}
     <div
-      className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/92 to-navy-950/75"
+      className="absolute inset-0 bg-gradient-to-b from-navy-950/70 via-navy-950/85 to-navy-950/70"
       aria-hidden
     />
-    <div className="bg-grid-light absolute inset-0 opacity-30" aria-hidden />
+    <div className="bg-grid-light absolute inset-0 opacity-20" aria-hidden />
     <div
       className="pointer-events-none absolute -top-32 right-1/4 size-[28rem] rounded-full
                  bg-blue-600/15 blur-[120px]"

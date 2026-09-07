@@ -139,10 +139,11 @@ export const Hero = () => {
           />
         </div>
 
-        {/* Legibility scrims. Heavy on the left where the copy sits, then falling
-            away sharply so the right two-fifths still reads as a photograph. */}
-        <div className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/80 via-45% to-navy-950/10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/95 via-transparent to-navy-950/40" />
+        {/* Legibility scrims. Dense behind the headline, then released across
+            the midpoint — enough to hold white text without flattening the
+            photograph into a navy panel. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-navy-950/95 via-navy-950/86 via-40% to-navy-950/12" />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-transparent via-35% to-navy-950/25" />
         <div className="bg-grid-light absolute inset-0 opacity-[0.18]" aria-hidden />
       </div>
 
