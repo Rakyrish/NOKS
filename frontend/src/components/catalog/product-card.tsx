@@ -12,6 +12,7 @@ import { useWishlist } from "@/lib/use-wishlist";
 import { cn, mediaUrl } from "@/lib/utils";
 import type { Product } from "@/types";
 
+import { ProductContactActions } from "./product-contact-actions";
 import { QuickViewDialog } from "./quick-view-dialog";
 
 const GRADE_VARIANT: Record<string, "brand" | "emerald" | "amber" | "navy" | "neutral"> = {
@@ -135,6 +136,13 @@ export const ProductCard = ({
                 </Link>
               </div>
             </div>
+
+            <ProductContactActions
+              productName={product.name}
+              casNumber={product.cas_number}
+              className="mt-3"
+              size="sm"
+            />
           </div>
         </motion.article>
 
@@ -228,6 +236,13 @@ export const ProductCard = ({
               Quick Quote
             </Link>
           </div>
+
+          <ProductContactActions
+            productName={product.name}
+            casNumber={product.cas_number}
+            className="mt-2"
+            size="sm"
+          />
         </div>
       </motion.article>
 

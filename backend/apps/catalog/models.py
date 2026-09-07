@@ -137,6 +137,12 @@ class Product(TimeStampedModel, SluggedModel, SEOModel):
     packaging_options = models.JSONField(
         default=list, blank=True, help_text='["25 kg bag", "1000 kg IBC"]'
     )
+    faqs = models.JSONField(
+        default=list,
+        blank=True,
+        help_text='[{"question": "What pack sizes are available?", "answer": "..."}] '
+        "— rendered on the product page and published as FAQPage structured data.",
+    )
     storage_handling = models.TextField(blank=True)
     safety_information = models.TextField(blank=True)
     hazard_class = models.CharField(max_length=80, blank=True)

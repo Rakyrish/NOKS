@@ -9,6 +9,34 @@ import type { FAQ, Industry, PostDetail, ProductDetail } from "@/types";
 const socialProfiles = () =>
   [social.linkedin, social.facebook, social.twitter, social.instagram].filter(Boolean);
 
+/**
+ * Countries and Kenyan counties NOKS delivers to.
+ *
+ * Spelled out rather than left as "East Africa" so the service area is
+ * machine-readable — search engines match local intent ("chemical supplier
+ * Eldoret") against this, and a regional abstraction gives them nothing.
+ */
+const SERVED_COUNTRIES = [
+  "Kenya", "Uganda", "Tanzania", "Ethiopia",
+  "Rwanda", "Burundi", "South Sudan", "DR Congo",
+];
+
+const SERVED_COUNTIES = [
+  "Nairobi", "Mombasa", "Kisumu", "Nakuru", "Uasin Gishu", "Kiambu",
+  "Machakos", "Kajiado", "Nyeri", "Meru", "Kericho", "Kakamega", "Bungoma",
+  "Trans Nzoia", "Kilifi", "Murang'a", "Embu", "Laikipia", "Kirinyaga",
+  "Narok", "Nyandarua", "Busia",
+];
+
+export const areaServed = () => [
+  ...SERVED_COUNTRIES.map((name) => ({ "@type": "Country", name })),
+  ...SERVED_COUNTIES.map((name) => ({
+    "@type": "AdministrativeArea",
+    name: `${name} County`,
+    containedInPlace: { "@type": "Country", name: "Kenya" },
+  })),
+];
+
 export const organizationSchema = () => ({
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -38,10 +66,7 @@ export const organizationSchema = () => ({
         },
       }
     : {}),
-  areaServed: [
-    { "@type": "Country", name: "Kenya" },
-    { "@type": "Place", name: "East Africa" },
-  ],
+  areaServed: areaServed(),
   sameAs: socialProfiles(),
   contactPoint: [
     {
@@ -49,7 +74,7 @@ export const organizationSchema = () => ({
       telephone: contact.phone,
       contactType: "sales",
       email: contact.email,
-      areaServed: ["KE", "UG", "TZ", "RW"],
+      areaServed: ["KE", "UG", "TZ", "ET", "RW", "BI", "SS", "CD"],
       availableLanguage: ["en", "sw"],
     },
     {
@@ -78,6 +103,7 @@ export const localBusinessSchema = () => ({
     postalCode: contact.postal,
     addressCountry: contact.country,
   },
+  areaServed: areaServed(),
   ...(contact.hours ? { openingHours: contact.hours } : {}),
   ...(contact.lat && contact.lng
     ? {
@@ -151,7 +177,9 @@ export const productSchema = (product: ProductDetail) => {
     "@id": `${siteUrl}/products/${product.slug}/#product`,
     name: product.name,
     sku: product.sku,
-    description: product.short_description,
+    // The long description is the substantive one; short_description is a
+    // one-liner written for cards.
+    description: product.description || product.short_description,
     category: product.category_name,
     url: absoluteUrl(`/products/${product.slug}`),
     ...(product.image ? { image: [absoluteUrl(product.image)] } : {}),
@@ -173,7 +201,7 @@ export const productSchema = (product: ProductDetail) => {
                   ? "https://schema.org/PreOrder"
                   : "https://schema.org/InStock",
             seller: { "@id": `${siteUrl}/#organization` },
-            areaServed: "Kenya, East Africa",
+            areaServed: areaServed(),
           },
         }
       : {}),
@@ -219,10 +247,7 @@ export const serviceSchema = (industry: Industry) => ({
   name: `Chemical supply for ${industry.name}`,
   description: industry.description || industry.tagline,
   provider: { "@id": `${siteUrl}/#organization` },
-  areaServed: [
-    { "@type": "Country", name: "Kenya" },
-    { "@type": "Place", name: "East Africa" },
-  ],
+  areaServed: areaServed(),
   url: absoluteUrl(`/industries/${industry.slug}`),
   ...(industry.applications?.length
     ? {

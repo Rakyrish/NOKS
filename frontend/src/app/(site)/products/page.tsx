@@ -35,8 +35,11 @@ export async function generateMetadata({
     title,
     description: `Browse ${label} from ${brand.fullName}. Certified industrial chemicals, laboratory reagents, water treatment and food grade products with technical datasheets and fast delivery across Kenya and East Africa.`,
     alternates: { canonical: "/products" },
-    // Filtered permutations must not compete with the canonical catalog page.
-    robots: term || Object.keys(params).length > 1 ? { index: false, follow: true } : undefined,
+    // Only internal search results stay out of the index — those are the thin,
+    // infinitely-variable URLs search engines ask you not to publish. Category,
+    // industry and grade facets are real landing pages and stay indexable; the
+    // canonical above is what keeps them from competing with /products.
+    robots: term ? { index: false, follow: true } : undefined,
   };
 }
 

@@ -122,7 +122,7 @@ class ProductDetailSerializer(SEOFieldsMixin, ProductListSerializer):
     class Meta(ProductListSerializer.Meta):
         fields = ProductListSerializer.Meta.fields + [
             "description", "applications", "benefits", "specifications",
-            "packaging_options", "storage_handling", "safety_information",
+            "packaging_options", "faqs", "storage_handling", "safety_information",
             "hazard_class", "hs_code", "synonyms", "min_order_quantity",
             "images", "documents", "industries", "manufacturer", "category",
             "related", "bought_together", "package_sizes", "seo", "updated_at",

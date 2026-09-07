@@ -15,6 +15,7 @@ import { TrustStrip } from "@/components/home/trust-strip";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Reveal, RevealGroup, RevealItem } from "@/components/shared/motion";
 import { Section } from "@/components/shared/section";
+import { SupplyCoverage } from "@/components/shared/supply-coverage";
 import { api } from "@/lib/api";
 import { faqSchema, itemListSchema, localBusinessSchema } from "@/lib/schema";
 
@@ -55,16 +56,23 @@ export default async function HomePage() {
       {/* ── 5. Sector grid ────────────────────────────────────── */}
       <IndustriesGrid industries={data.industries} />
 
-      {/* ── 6. Quality & documentation assurance ───────────────── */}
+      {/* ── 6. Delivery footprint, named down to county ────────── */}
+      <Section size="sm" className="border-b border-rule bg-white">
+        <div className="container-noks">
+          <SupplyCoverage />
+        </div>
+      </Section>
+
+      {/* ── 7. Quality & documentation assurance ───────────────── */}
       <QualityBand />
 
-      {/* ── 7. How an order actually runs ──────────────────────── */}
+      {/* ── 8. How an order actually runs ──────────────────────── */}
       <HowWeWorkTeaser />
 
-      {/* ── 8. Client trust & testimonials ─────────────────────── */}
+      {/* ── 9. Client trust & testimonials ─────────────────────── */}
       <Testimonials testimonials={data.testimonials} clients={data.clients} />
 
-      {/* ── 9. Technical knowledge & buying guides ─────────────── */}
+      {/* ── 10. Technical knowledge & buying guides ────────────── */}
       {data.latest_posts.length > 0 && (
         <Section className="bg-silver-100/50 border-b border-rule">
           <div className="container-noks">
@@ -102,10 +110,10 @@ export default async function HomePage() {
         </Section>
       )}
 
-      {/* ── 10. FAQ ───────────────────────────────────────────── */}
+      {/* ── 11. FAQ ───────────────────────────────────────────── */}
       <FaqSection faqs={data.faqs} />
 
-      {/* ── 11. Call to action ────────────────────────────────── */}
+      {/* ── 12. Call to action ────────────────────────────────── */}
       <CtaBand />
     </>
   );

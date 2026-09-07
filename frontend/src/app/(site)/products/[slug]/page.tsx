@@ -3,7 +3,9 @@ import {
   Box,
   Check,
   Download,
+  ExternalLink,
   FileText,
+  HelpCircle,
   MessageCircle,
   Phone,
   ShieldCheck,
@@ -17,13 +19,14 @@ import { ProductCard } from "@/components/catalog/product-card";
 import { ProductGallery } from "@/components/catalog/product-gallery";
 import { ProductQuoteBox } from "@/components/catalog/product-quote-box";
 import { JsonLd } from "@/components/shared/json-ld";
+import { SupplyCoverage } from "@/components/shared/supply-coverage";
 import { PageHero } from "@/components/shared/page-hero";
 import { Reveal } from "@/components/shared/motion";
 import { Section, SectionHeading } from "@/components/shared/section";
 import { AvailabilityBadge, Badge } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
-import { productSchema } from "@/lib/schema";
+import { faqSchema, productSchema } from "@/lib/schema";
 import { brand, contact } from "@/lib/site";
 import { absoluteUrl } from "@/lib/site";
 
@@ -80,6 +83,9 @@ export default async function ProductPage({ params }: Params) {
   return (
     <>
       <JsonLd id={`product-${product.slug}`} data={productSchema(product)} />
+      {product.faqs?.length > 0 && (
+        <JsonLd id={`product-faq-${product.slug}`} data={faqSchema(product.faqs)} />
+      )}
       {/* Breadcrumb JSON-LD comes from PageHero below (crumbs prop) — one
           BreadcrumbList block per page, not two. */}
 
@@ -249,6 +255,82 @@ export default async function ProductPage({ params }: Params) {
                 </Panel>
               )}
             </div>
+
+            {/* Buyer questions — also published as FAQPage structured data */}
+            {product.faqs?.length > 0 && (
+              <Panel title={`${product.name} — frequently asked questions`} icon={HelpCircle}>
+                <dl className="divide-y divide-line">
+                  {product.faqs.map((faq) => (
+                    <div key={faq.question} className="py-4 first:pt-0 last:pb-0">
+                      <dt className="font-heading text-[15px] font-bold text-navy-900">
+                        {faq.question}
+                      </dt>
+                      <dd className="mt-2 text-[14px] leading-relaxed text-slate-600">
+                        {faq.answer}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </Panel>
+            )}
+
+            {/* Delivery footprint */}
+            <SupplyCoverage productName={product.name} />
+
+            {/* Outbound references. Real citations to the authorities a buyer
+                would check anyway — left dofollow, because that is what a
+                genuine reference is. */}
+            {(product.cas_number || product.manufacturer?.website) && (
+              <Panel title="References & further reading" icon={ExternalLink}>
+                <ul className="space-y-2.5 text-[14px]">
+                  {product.cas_number && (
+                    <li>
+                      <a
+                        href={`https://pubchem.ncbi.nlm.nih.gov/#query=${encodeURIComponent(product.cas_number)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 font-semibold text-[var(--brand-primary)] hover:underline"
+                      >
+                        PubChem entry for CAS {product.cas_number}
+                        <ExternalLink className="size-3.5" />
+                      </a>
+                      <span className="block text-[13px] text-slate-500">
+                        Independent physical, chemical and toxicological data from the US
+                        National Library of Medicine.
+                      </span>
+                    </li>
+                  )}
+                  <li>
+                    <a
+                      href="https://www.kebs.org/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 font-semibold text-[var(--brand-primary)] hover:underline"
+                    >
+                      Kenya Bureau of Standards (KEBS)
+                      <ExternalLink className="size-3.5" />
+                    </a>
+                    <span className="block text-[13px] text-slate-500">
+                      Standards and conformity requirements applying to chemicals imported
+                      into Kenya.
+                    </span>
+                  </li>
+                  {product.manufacturer?.website && (
+                    <li>
+                      <a
+                        href={product.manufacturer.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 font-semibold text-[var(--brand-primary)] hover:underline"
+                      >
+                        {product.manufacturer.name} — manufacturer site
+                        <ExternalLink className="size-3.5" />
+                      </a>
+                    </li>
+                  )}
+                </ul>
+              </Panel>
+            )}
 
             {/* Downloads */}
             <Panel title="Downloads & documentation" icon={Download}>

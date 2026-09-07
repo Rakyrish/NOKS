@@ -4,7 +4,7 @@ import { ArrowRight, Check, ExternalLink, FileText, Phone } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
-import { brand, contact } from "@/lib/site";
+import { ProductContactActions } from "@/components/catalog/product-contact-actions";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 
@@ -343,9 +343,6 @@ export const IndustryTabs = ({ products = [] }: IndustryTabsProps) => {
             const borderColors = ["border-t-[#0c48e6]", "border-t-teal-500", "border-t-navy-700"];
             const topColor = borderColors[idx % 3];
 
-            const whatsappMessage = encodeURIComponent(
-              `Hello ${brand.name}, I'd like a price quotation for ${product.name} (CAS: ${product.cas_number || "N/A"}).`,
-            );
 
             return (
               <div
@@ -389,14 +386,11 @@ export const IndustryTabs = ({ products = [] }: IndustryTabsProps) => {
                     <span>Request Quotation</span>
                     <ArrowRight className="size-3.5" />
                   </Link>
-                  <a
-                    href={`https://wa.me/${contact.whatsapp || "254700000000"}?text=${whatsappMessage}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1.5 rounded-md bg-[#25D366]/15 border border-[#25D366]/40 py-2 px-3 text-xs font-bold text-[#04310f] transition-all hover:bg-[#25D366]/25"
-                  >
-                    <span>WhatsApp Inquiry</span>
-                  </a>
+                  <ProductContactActions
+                    productName={product.name}
+                    casNumber={product.cas_number}
+                    size="sm"
+                  />
                 </div>
               </div>
             );
@@ -409,7 +403,7 @@ export const IndustryTabs = ({ products = [] }: IndustryTabsProps) => {
             href="/products"
             className="inline-flex items-center gap-2 rounded-full border-2 border-blue-600 bg-white px-6 py-3 text-sm font-bold text-blue-600 transition-all hover:bg-blue-600 hover:text-white"
           >
-            <span>Explore All 1,200+ Products in Chemical Catalogue</span>
+            <span>Explore the full chemical catalogue</span>
             <ArrowRight className="size-4" />
           </Link>
         </div>

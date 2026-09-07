@@ -4,6 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/shared/motion";
+import { stats } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 type Tile = {
@@ -25,7 +26,10 @@ const TILES: Tile[] = [
     image: "/images/sections/drums-blue.jpg",
     icon: Boxes,
     href: "/products",
-    stat: { value: "1,200+", label: "chemicals stocked" },
+    stat: {
+      value: `${stats.products.toLocaleString("en-KE")}+`,
+      label: "product lines supplied",
+    },
     className: "sm:col-span-2 sm:row-span-2",
   },
   {

@@ -108,6 +108,7 @@ export interface ProductDetail extends Product {
   benefits: string[];
   specifications: Record<string, string>;
   packaging_options: string[];
+  faqs: { question: string; answer: string }[];
   storage_handling: string;
   safety_information: string;
   hazard_class: string;
