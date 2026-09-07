@@ -12,7 +12,7 @@ import { PageHero } from "@/components/shared/page-hero";
 import { Section, SectionHeading } from "@/components/shared/section";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
-import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/schema";
+import { articleSchema, faqSchema } from "@/lib/schema";
 import { absoluteUrl } from "@/lib/site";
 import { formatDate, mediaUrl } from "@/lib/utils";
 
@@ -72,10 +72,8 @@ export default async function ArticlePage({ params }: Params) {
   return (
     <>
       <JsonLd id={`article-${post.slug}`} data={articleSchema(post)} />
-      <JsonLd
-        id={`article-crumbs-${post.slug}`}
-        data={breadcrumbSchema([{ name: "Home", url: "/" }, ...crumbs])}
-      />
+      {/* Breadcrumb JSON-LD comes from PageHero below (crumbs prop) — one
+          BreadcrumbList block per page, not two. */}
       {post.faqs.length > 0 && (
         <JsonLd id={`article-faq-${post.slug}`} data={faqSchema(post.faqs)} />
       )}

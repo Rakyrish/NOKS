@@ -23,7 +23,7 @@ import { Section, SectionHeading } from "@/components/shared/section";
 import { AvailabilityBadge, Badge } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
-import { breadcrumbSchema, productSchema } from "@/lib/schema";
+import { productSchema } from "@/lib/schema";
 import { brand, contact } from "@/lib/site";
 import { absoluteUrl } from "@/lib/site";
 
@@ -71,7 +71,7 @@ export default async function ProductPage({ params }: Params) {
 
   const crumbs = [
     { name: "Products", url: "/products" },
-    { name: product.category_name, url: `/products?category=${product.category_slug}` },
+    { name: product.category_name, url: `/categories/${product.category_slug}` },
     { name: product.name, url: `/products/${product.slug}` },
   ];
 
@@ -80,10 +80,8 @@ export default async function ProductPage({ params }: Params) {
   return (
     <>
       <JsonLd id={`product-${product.slug}`} data={productSchema(product)} />
-      <JsonLd
-        id={`product-crumbs-${product.slug}`}
-        data={breadcrumbSchema([{ name: "Home", url: "/" }, ...crumbs])}
-      />
+      {/* Breadcrumb JSON-LD comes from PageHero below (crumbs prop) — one
+          BreadcrumbList block per page, not two. */}
 
       <PageHero
         eyebrow={product.category_name}

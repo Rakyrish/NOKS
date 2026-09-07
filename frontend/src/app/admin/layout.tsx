@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Sora } from "next/font/google";
 
 import { Providers } from "@/components/shared/providers";
-import { brand, colors } from "@/lib/site";
+import { brand, colors, siteUrl } from "@/lib/site";
 
 import "../globals.css";
 
@@ -18,6 +18,7 @@ const sora = Sora({
 // internal tool, not a marketing page: no Header/Footer/JSON-LD/assistant
 // widget, and never indexed regardless of what robots.ts says.
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: { default: `Control Panel — ${brand.fullName}`, template: `%s — Admin` },
   robots: { index: false, follow: false },
 };

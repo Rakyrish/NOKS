@@ -26,8 +26,13 @@ redis~=5.2.1
 django-redis~=5.4.0
 django-taggit~=6.1.0
 anthropic~=0.42.0
-openai~=1.59.0
+# 1.66+ for the Responses API (client.responses) — apps.catalog.ai uses it to
+# pair the web_search tool with structured outputs so AI product drafting can
+# actually look up facts (e.g. CAS numbers) instead of guessing from training data.
+openai~=1.109.0
 requests~=2.32.3
+# Google Indexing API (auto-submit product URLs to Search Console on publish).
+google-auth~=2.35.0
 python-slugify~=8.0.4
 drf-spectacular~=0.28.0
 

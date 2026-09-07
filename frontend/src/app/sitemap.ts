@@ -50,15 +50,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (!response.has_next) break;
     }
 
-    const [industries, posts, blogCategories] = await Promise.all([
+    const [categoryTree, industries, posts] = await Promise.all([
+      api.categoryTree(),
       api.industries(),
       api.posts({ page: 1 }),
-      api.blogCategories(),
     ]);
+    // Flatten parent + child categories — each gets its own crawlable
+    // /categories/{slug} page (see app/(site)/categories/[slug]/page.tsx).
+    // Blog categories are deliberately not listed here: they only exist as
+    // /knowledge?category=... query filters, which robots.ts disallows —
+    // listing a robots-blocked URL in the sitemap is a Search Console error,
+    // not a shortcut to indexing it.
+    const categories = categoryTree.flatMap((category) => [category, ...(category.children ?? [])]);
 
     return [
       ...staticRoutes,
       ...products,
+      ...categories.map((category) => ({
+        url: absoluteUrl(`/categories/${category.slug}`),
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: 0.75,
+      })),
       ...industries.map((industry) => ({
         url: absoluteUrl(`/industries/${industry.slug}`),
         lastModified: now,
@@ -70,12 +83,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: post.published_at ? new Date(post.published_at) : now,
         changeFrequency: "monthly" as const,
         priority: 0.7,
-      })),
-      ...blogCategories.map((category) => ({
-        url: absoluteUrl(`/knowledge?category=${category.slug}`),
-        lastModified: now,
-        changeFrequency: "weekly" as const,
-        priority: 0.6,
       })),
     ];
   } catch (error) {

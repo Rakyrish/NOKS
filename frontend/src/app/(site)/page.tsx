@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { PostCard } from "@/components/blog/post-card";
 import { AboutSplit } from "@/components/home/about-split";
+import { CategoriesGrid } from "@/components/home/categories-grid";
 import { CtaBand } from "@/components/home/cta-band";
 import { FaqSection } from "@/components/home/faq-section";
 import { FeaturedProducts } from "@/components/home/featured-products";
@@ -45,6 +46,7 @@ export default async function HomePage() {
       <Hero />
       <StatsBand stats={data.stats} />
       <AboutSplit certifications={data.certifications} />
+      <CategoriesGrid categories={data.categories} />
       <IndustriesGrid industries={data.industries} />
       <FeaturedProducts products={data.featured_products} />
       <WhyNoks items={data.value_props} />

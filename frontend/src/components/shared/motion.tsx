@@ -115,7 +115,12 @@ export const Counter = ({
   const ref = React.useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
   const reduced = useReducedMotion();
-  const [display, setDisplay] = React.useState(0);
+  // Seeded with the real figure, never 0: that is what the server renders, what
+  // crawlers index, and what stays on screen if the count-up never runs (JS off,
+  // an observer that never fires). The rise to `value` is an enhancement layered
+  // on top — it rewinds to 0 only once we know we are live and in view.
+  const [display, setDisplay] = React.useState(value);
+  const started = React.useRef(false);
 
   const motionValue = useMotionValue(0);
   const spring = useSpring(motionValue, {
@@ -124,10 +129,16 @@ export const Counter = ({
   });
 
   React.useEffect(() => {
-    if (inView) motionValue.set(value);
-  }, [inView, value, motionValue]);
+    if (!inView || reduced || started.current) return;
+    started.current = true;
+    setDisplay(0);
+    motionValue.set(value);
+  }, [inView, reduced, value, motionValue]);
 
-  React.useEffect(() => spring.on("change", (v) => setDisplay(Math.round(v))), [spring]);
+  React.useEffect(
+    () => spring.on("change", (v) => started.current && setDisplay(Math.round(v))),
+    [spring],
+  );
 
   const shown = reduced ? value : display;
 

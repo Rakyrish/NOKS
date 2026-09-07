@@ -142,6 +142,8 @@ export type AdminProductInput = Partial<
 export interface ProductDraft {
   suggested_name: string;
   chemical_formula: string;
+  cas_number: string;
+  hs_code: string;
   synonyms: string;
   grade: string;
   purity: string;
@@ -151,9 +153,19 @@ export interface ProductDraft {
   benefits: string[];
   specifications: Record<string, string>;
   packaging_options: string[];
+  hazard_class: string;
+  safety_information: string;
+  storage_handling: string;
   meta_title: string;
   meta_description: string;
+  meta_keywords: string;
   confidence_note: string;
+  /** Industry ids the AI picked, mapped back from the catalog's own list by
+   *  the `generate` action — the form ticks these on. */
+  industries: number[];
+  /** Set when the drafted product is already in the catalog — see the
+   *  `generate` action in backend/apps/catalog/admin_views.py. */
+  duplicate_of: { id: number; name: string; sku: string } | null;
 }
 
 export interface AdminQuoteItem {

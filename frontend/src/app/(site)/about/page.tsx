@@ -10,12 +10,12 @@ import { PageHero } from "@/components/shared/page-hero";
 import { Section, SectionHeading } from "@/components/shared/section";
 import { api } from "@/lib/api";
 import { localBusinessSchema } from "@/lib/schema";
-import { brand, contact } from "@/lib/site";
+import { brand, contact, stats } from "@/lib/site";
 
 export const revalidate = 900;
 
 export const metadata: Metadata = {
-  title: "About NOKS Chemical Division — Chemical Supplier in Kenya",
+  title: "About — Chemical Supplier in Kenya",
   description: `${brand.mission} Learn about our history, certifications, technical team and quality assurance.`,
   alternates: { canonical: "/about" },
 };
@@ -33,7 +33,7 @@ export default async function AboutPage() {
 
       <PageHero
         eyebrow={`About ${brand.name}`}
-        title="Fifteen years of chemistry that shows up on time"
+        title={`${stats.years} years of chemistry that shows up on time`}
         description={brand.mission}
         crumbs={[{ name: "About", url: "/about" }]}
       />
@@ -104,7 +104,7 @@ export default async function AboutPage() {
             <SectionHeading
               eyebrow="Milestones"
               title="How we got here"
-              description="Fifteen years of steady, deliberate expansion."
+              description={`${stats.years} years of steady, deliberate expansion.`}
             />
 
             <div className="relative mx-auto mt-14 max-w-3xl">

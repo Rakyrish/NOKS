@@ -44,10 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    # cloudinary_storage must be listed before staticfiles.
-    *(["cloudinary_storage"] if USE_CLOUDINARY else []),
     "django.contrib.staticfiles",
-    *(["cloudinary"] if USE_CLOUDINARY else []),
     "django.contrib.sitemaps",
     "django.contrib.humanize",
     # Third party
@@ -261,8 +258,72 @@ AI_ENABLED = bool(ANTHROPIC_API_KEY)
 # copy for staff to review, never talks to a site visitor. Deliberately never
 # asked to produce GHS/hazard/UN-number/storage data; see apps.catalog.ai.
 OPENAI_API_KEY = env("OPENAI_API_KEY", default="")
-OPENAI_MODEL = env("OPENAI_MODEL", default="gpt-4o-mini")
+# gpt-4.1-mini, not -nano. Nano is a quarter of the price ($0.10/$0.40 per 1M
+# input/output tokens against $0.40/$1.60) and was the default until it was
+# measured against real listings: on product photos it returned a *wrong* CAS
+# number for ammonium bicarbonate (1066-33-9, off by a digit), left
+# benzalkonium chloride's blank, and once emitted a NUL byte inside a purity
+# string. Mini got all of those right. A wrong identifier on a published
+# listing costs more than the ~$0.0005 saved, so the budget below moved
+# instead of the model. Reasoning models (gpt-5*, o*) also work — apps.catalog.ai
+# drops `temperature` for them — but they spend output tokens on reasoning and
+# were no more accurate here.
+OPENAI_MODEL = env("OPENAI_MODEL", default="gpt-4.1-mini")
 AI_PRODUCT_DRAFTING_ENABLED = bool(OPENAI_API_KEY)
+
+# Built-in web search is OFF by default because it, not the tokens, was the
+# whole cost of a draft: OpenAI bills "web_search_preview" on a non-reasoning
+# model at $25 per 1k calls — $0.025 a draft, 25x the budget below, against
+# well under $0.001 of tokens. With it off the model has no search tool, so
+# apps.catalog.ai switches to a prompt that forbids answering identifiers or
+# GHS/hazard data from memory: those fields come back empty for staff to fill
+# from the supplier SDS rather than being recalled and quietly wrong.
+# Set OPENAI_WEB_SEARCH_ENABLED=True to buy the looked-up version back.
+OPENAI_WEB_SEARCH_ENABLED = env.bool("OPENAI_WEB_SEARCH_ENABLED", default=False)
+# Which built-in search tool that flag turns on. Measured on this catalog,
+# "web_search" costs ~8.8k tokens per draft against ~2.5k for
+# "web_search_preview" — same searches performed, and identical CAS numbers on
+# every product tested, including obscure ones. Set OPENAI_WEB_SEARCH_TOOL to
+# "web_search" to go back to the GA tool if the preview one is ever withdrawn.
+OPENAI_WEB_SEARCH_TOOL = env("OPENAI_WEB_SEARCH_TOOL", default="web_search_preview")
+# A finished draft runs ~350-500 output tokens; this only bounds a runaway.
+# Output is the dominant token cost, so this doubles as the ceiling on what a
+# single draft can possibly bill: 900 x $1.60/1M = $0.00144 worst case.
+OPENAI_MAX_OUTPUT_TOKENS = env.int("OPENAI_MAX_OUTPUT_TOKENS", default=900)
+
+# What a draft is allowed to cost, in USD. Nothing is blocked at this number —
+# apps.catalog.ai prices each response from usage and logs a WARNING when one
+# lands over it, so a model/tool change that quietly makes drafting 30x more
+# expensive shows up in the logs instead of only on the invoice.
+# Measured on gpt-4.1-mini: $0.0012 from a name, $0.0015 from a photo. $0.0025
+# covers even a draft that runs into the OPENAI_MAX_OUTPUT_TOKENS ceiling
+# ($0.0021), so the warning means "something changed", not "this one was long"
+# — the $0.025 web-search path still trips it 10x over.
+OPENAI_DRAFT_COST_BUDGET_USD = env.float("OPENAI_DRAFT_COST_BUDGET_USD", default=0.0025)
+# Published rates for OPENAI_MODEL, USD per 1M tokens, used only for that
+# estimate. Defaults are gpt-4.1-mini's — change them with the model.
+OPENAI_INPUT_USD_PER_MTOK = env.float("OPENAI_INPUT_USD_PER_MTOK", default=0.40)
+OPENAI_CACHED_INPUT_USD_PER_MTOK = env.float("OPENAI_CACHED_INPUT_USD_PER_MTOK", default=0.10)
+OPENAI_OUTPUT_USD_PER_MTOK = env.float("OPENAI_OUTPUT_USD_PER_MTOK", default=1.60)
+# Per-call price of the built-in search tool, added to the estimate only when
+# OPENAI_WEB_SEARCH_ENABLED is on. $25/1k calls for web_search_preview on a
+# non-reasoning model; $10/1k for "web_search".
+OPENAI_WEB_SEARCH_USD_PER_CALL = env.float("OPENAI_WEB_SEARCH_USD_PER_CALL", default=0.025)
+# Product photos are sent as vision input purely to read label text. A 2000px
+# photo costs ~2,374 input tokens, 1024px ~1,266, 768px ~721 — 1024 keeps small
+# print legible at roughly half the cost. 0 disables downscaling.
+OPENAI_IMAGE_MAX_PX = env.int("OPENAI_IMAGE_MAX_PX", default=1024)
+
+# ─────────────────────────────── GOOGLE SEARCH CONSOLE INDEXING ───
+# Pushes product URLs to Google's Indexing API the moment a product is
+# published, edited or removed in the admin panel, instead of waiting for the
+# next crawl of /sitemap.xml. GOOGLE_INDEXING_CREDENTIALS_JSON holds the full
+# service-account key (minified to one line) for a service account added as
+# an Owner on the Search Console property for SITE_URL. Empty ⇒
+# GOOGLE_INDEXING_ENABLED is False and apps.catalog.google_indexing.submit_url
+# is a silent no-op — see apps.catalog.tasks.
+GOOGLE_INDEXING_CREDENTIALS_JSON = env("GOOGLE_INDEXING_CREDENTIALS_JSON", default="")
+GOOGLE_INDEXING_ENABLED = bool(GOOGLE_INDEXING_CREDENTIALS_JSON)
 
 # ─────────────────────────────── BRAND (shared with frontend) ─────
 # Read straight from the same NEXT_PUBLIC_* keys the Next.js app uses, so the

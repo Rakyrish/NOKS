@@ -1,11 +1,31 @@
 """Chemical product catalog: categories, industries, manufacturers, products."""
 
+import re
+
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
 
 from apps.core.models import OrderedModel, SEOModel, SluggedModel, TimeStampedModel
+
+
+def normalize_product_name(name: str) -> str:
+    """Collapse a product name to the key used to detect duplicate listings.
+
+    Case, punctuation and spacing carry no meaning in a chemical name, so
+    "Acetone, Technical Grade" and "Acetone Technical Grade" are the same
+    product and must not both exist — that punctuation-only difference is
+    exactly what let a pile of duplicates through before Product.name_key
+    was made unique. British/American -sulph-/-sulf- spellings are folded
+    together for the same reason ("Sulphuric Acid 98%" == "Sulfuric Acid 98%").
+
+    Digits are deliberately kept: concentration and grade numbers DO
+    distinguish products ("Hydrochloric Acid 33%" vs "... 25%").
+    """
+    key = name.lower().replace("sulph", "sulf")
+    key = re.sub(r"[^a-z0-9]+", " ", key)
+    return " ".join(key.split())
 
 
 class Category(TimeStampedModel, SluggedModel, SEOModel, OrderedModel):
@@ -77,6 +97,11 @@ class Product(TimeStampedModel, SluggedModel, SEOModel):
 
     # ── Identity ────────────────────────────────────────────────
     sku = models.CharField(max_length=64, unique=True, db_index=True)
+    # Normalized form of `name`, kept unique so the database itself refuses a
+    # second listing of the same product. SluggedModel.save() would otherwise
+    # quietly resolve the collision by appending -2/-3 to the slug and create
+    # the duplicate anyway. Maintained in save(); never edited directly.
+    name_key = models.CharField(max_length=220, unique=True, editable=False)
     chemical_formula = models.CharField(max_length=120, blank=True)
     cas_number = models.CharField(
         max_length=40, blank=True, db_index=True, verbose_name="CAS number"
@@ -160,6 +185,7 @@ class Product(TimeStampedModel, SluggedModel, SEOModel):
         if not self.sku:
             base = slugify(self.name).upper().replace("-", "")[:10] or "PROD"
             self.sku = f"NOKS-{base}-{Product.objects.count() + 1:04d}"
+        self.name_key = normalize_product_name(self.name)
         super().save(*args, **kwargs)
 
     @property

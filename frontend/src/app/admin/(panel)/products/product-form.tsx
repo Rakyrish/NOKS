@@ -8,12 +8,14 @@ import { Button } from "@/components/ui/button";
 import type { AdminManufacturer, AdminProduct } from "@/types/admin";
 import type { Category, Industry } from "@/types";
 
-import { generateDraft, type FormState } from "./actions";
+import { generateDraft, type DuplicateOf, type FormState } from "./actions";
 import { AVAILABILITY_CHOICES, GRADE_CHOICES } from "./choices";
 import { ImageUrlField } from "./image-url-field";
 
 type Draftable = {
   chemical_formula: string;
+  cas_number: string;
+  hs_code: string;
   synonyms: string;
   grade: string;
   purity: string;
@@ -23,13 +25,19 @@ type Draftable = {
   benefits: string;
   specifications: string; // "Key: Value" per line
   packaging_options: string;
+  hazard_class: string;
+  safety_information: string;
+  storage_handling: string;
   meta_title: string;
   meta_description: string;
+  meta_keywords: string;
 };
 
 function toDraftable(product?: AdminProduct): Draftable {
   return {
     chemical_formula: product?.chemical_formula ?? "",
+    cas_number: product?.cas_number ?? "",
+    hs_code: product?.hs_code ?? "",
     synonyms: product?.synonyms ?? "",
     grade: product?.grade ?? "industrial",
     purity: product?.purity ?? "",
@@ -41,8 +49,12 @@ function toDraftable(product?: AdminProduct): Draftable {
       .map(([k, v]) => `${k}: ${v}`)
       .join("\n"),
     packaging_options: (product?.packaging_options ?? []).join("\n"),
+    hazard_class: product?.hazard_class ?? "",
+    safety_information: product?.safety_information ?? "",
+    storage_handling: product?.storage_handling ?? "",
     meta_title: product?.meta_title ?? "",
     meta_description: product?.meta_description ?? "",
+    meta_keywords: product?.meta_keywords ?? "",
   };
 }
 
@@ -59,8 +71,9 @@ function AiDraftPanel({
   imageUrl: string;
   onImageUrlChange: (url: string) => void;
   onNameChange: (name: string) => void;
-  onDraft: (draft: Draftable, confidenceNote: string) => void;
+  onDraft: (draft: Draftable, confidenceNote: string, industryIds: number[]) => void;
 }) {
+  const [duplicateOf, setDuplicateOf] = useState<DuplicateOf | null>(null);
   const [notes, setNotes] = useState("");
   const [cas, setCas] = useState("");
   const [pending, startTransition] = useTransition();
@@ -72,22 +85,36 @@ function AiDraftPanel({
       return;
     }
     setError(null);
+    setDuplicateOf(null);
     const hadNoName = !name.trim();
     startTransition(async () => {
       try {
-        const draft = await generateDraft({
+        const result = await generateDraft({
           name: name || undefined,
           cas_number: cas || undefined,
           category_id: categoryId ?? undefined,
           notes: notes || undefined,
           image_url: imageUrl || undefined,
         });
+        if (!result.ok) {
+          // The backend refuses to draft a product that already exists rather
+          // than spend tokens on copy that could never be saved.
+          setError(result.duplicateOf ? null : result.error);
+          setDuplicateOf(result.duplicateOf ?? null);
+          return;
+        }
+        const draft = result.draft;
         if (hadNoName && draft.suggested_name) {
           onNameChange(draft.suggested_name);
         }
+        // Saving would be rejected anyway — say so now rather than after the
+        // admin has reviewed a full form's worth of drafted copy.
+        setDuplicateOf(draft.duplicate_of);
         onDraft(
           {
             chemical_formula: draft.chemical_formula,
+            cas_number: draft.cas_number,
+            hs_code: draft.hs_code,
             synonyms: draft.synonyms,
             grade: draft.grade,
             purity: draft.purity,
@@ -99,10 +126,15 @@ function AiDraftPanel({
               .map(([k, v]) => `${k}: ${v}`)
               .join("\n"),
             packaging_options: draft.packaging_options.join("\n"),
+            hazard_class: draft.hazard_class,
+            safety_information: draft.safety_information,
+            storage_handling: draft.storage_handling,
             meta_title: draft.meta_title,
             meta_description: draft.meta_description,
+            meta_keywords: draft.meta_keywords,
           },
           draft.confidence_note,
+          draft.industries,
         );
       } catch (err) {
         setError(err instanceof Error ? err.message : "AI drafting failed.");
@@ -117,13 +149,18 @@ function AiDraftPanel({
         <h3 className="font-display text-sm font-bold text-ink">Generate with AI</h3>
       </div>
       <p className="mb-4 text-xs leading-relaxed text-muted-fg">
-        Drafts description, applications, benefits, reference specifications and SEO title/
-        description — from the product name, a photo, or both. Paste a photo URL and it becomes
-        vision input as well as the product&apos;s actual photo once saved: the AI reads whatever
-        it can off the label (product name if you haven&apos;t typed one yet, grade, net weight,
-        appearance). It never writes GHS hazard class, hazard statements, UN number or
-        storage/handling, even if visible on the label — enter those yourself from the
-        supplier&apos;s SDS. Review every field before publishing.
+        Drafts the product name, CAS number, HS code, formula, description, applications,
+        benefits, reference specifications and SEO title/description/keywords — from the product
+        name, a photo, or both. Paste a photo URL and it becomes vision input as well as the
+        product&apos;s actual photo once saved: the AI reads whatever it can off the label
+        (product name if you haven&apos;t typed one yet, grade, net weight, appearance).{" "}
+        <strong className="text-rose-700">
+          Hazard class, safety information and storage &amp; handling are left blank on purpose —
+          they come from the supplier&apos;s Safety Data Sheet, never from AI. Type them in
+          yourself before publishing.
+        </strong>{" "}
+        Anything else the AI could not confirm is listed in the note above the form. Review every
+        field before publishing.
       </p>
 
       <div className="mb-3">
@@ -151,6 +188,19 @@ function AiDraftPanel({
         </div>
       </div>
       {error && <p className="mb-3 text-xs font-medium text-rose-600">{error}</p>}
+      {duplicateOf && (
+        <p className="mb-3 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <strong>Already in the catalog:</strong>{" "}
+          <a
+            href={`/admin/products/${duplicateOf.id}/edit`}
+            className="underline underline-offset-2"
+          >
+            {duplicateOf.name}
+          </a>{" "}
+          (SKU {duplicateOf.sku}). Saving this as a new product will be rejected — edit
+          that listing instead, or rename this one to distinguish it (grade, concentration).
+        </p>
+      )}
       <Button type="button" variant="outline" size="sm" onClick={run} disabled={pending}>
         {pending ? (imageUrl ? "Reading photo & drafting…" : "Drafting…") : "Generate draft"}
       </Button>
@@ -178,6 +228,7 @@ export function ProductForm({
   const [draft, setDraft] = useState<Draftable>(toDraftable(product));
   const [confidenceNote, setConfidenceNote] = useState("");
   const [fromAi, setFromAi] = useState(false);
+  const [industryIds, setIndustryIds] = useState<number[]>(product?.industries ?? []);
 
   const flatCategories = categories.flatMap((c) => [c, ...(c.children ?? [])]);
 
@@ -190,17 +241,20 @@ export function ProductForm({
           imageUrl={imageUrl}
           onImageUrlChange={setImageUrl}
           onNameChange={setName}
-          onDraft={(d, note) => {
+          onDraft={(d, note, ids) => {
             setDraft(d);
             setConfidenceNote(note);
             setFromAi(true);
+            // Drafted industries replace the selection outright: nothing else
+            // has ticked a box yet on a new product.
+            setIndustryIds(ids);
           }}
         />
       )}
       {fromAi && <input type="hidden" name="_from_ai_draft" value="on" />}
       {confidenceNote && (
         <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          <strong>AI note:</strong> {confidenceNote}
+          <strong>AI note — fields to confirm yourself:</strong> {confidenceNote}
         </p>
       )}
 
@@ -251,11 +305,21 @@ export function ProductForm({
           </div>
           <div>
             <Label htmlFor="cas_number">CAS number</Label>
-            <Input id="cas_number" name="cas_number" defaultValue={product?.cas_number} />
+            <Input
+              id="cas_number"
+              name="cas_number"
+              value={draft.cas_number}
+              onChange={(e) => setDraft({ ...draft, cas_number: e.target.value })}
+            />
           </div>
           <div>
             <Label htmlFor="hs_code">HS code</Label>
-            <Input id="hs_code" name="hs_code" defaultValue={product?.hs_code} />
+            <Input
+              id="hs_code"
+              name="hs_code"
+              value={draft.hs_code}
+              onChange={(e) => setDraft({ ...draft, hs_code: e.target.value })}
+            />
           </div>
         </div>
         <div>
@@ -270,7 +334,12 @@ export function ProductForm({
                   type="checkbox"
                   name="industries"
                   value={i.id}
-                  defaultChecked={product?.industries.includes(i.id)}
+                  checked={industryIds.includes(i.id)}
+                  onChange={(e) =>
+                    setIndustryIds((prev) =>
+                      e.target.checked ? [...prev, i.id] : prev.filter((id) => id !== i.id),
+                    )
+                  }
                   className="size-3.5"
                 />
                 {i.name}
@@ -400,16 +469,24 @@ export function ProductForm({
 
       <Card className="space-y-4 border-rose-100 bg-rose-50/40 p-5">
         <div>
-          <h3 className="font-display text-sm font-bold text-ink">Safety — manual entry only</h3>
+          <h3 className="font-display text-sm font-bold text-ink">
+            Safety — verify against the SDS before publishing
+          </h3>
           <p className="mt-1 text-xs text-muted-fg">
-            Enter this directly from the supplier&apos;s Safety Data Sheet. AI drafting never
-            fills these fields.
+            The AI can draft these from public GHS/SDS sources, but this is high-stakes data.
+            Cross-check every field here against the actual supplier&apos;s Safety Data Sheet for
+            this exact product before publishing — never trust it unverified.
           </p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="hazard_class">GHS hazard class</Label>
-            <Input id="hazard_class" name="hazard_class" defaultValue={product?.hazard_class} />
+            <Input
+              id="hazard_class"
+              name="hazard_class"
+              value={draft.hazard_class}
+              onChange={(e) => setDraft({ ...draft, hazard_class: e.target.value })}
+            />
           </div>
         </div>
         <div>
@@ -418,7 +495,8 @@ export function ProductForm({
             id="safety_information"
             name="safety_information"
             rows={3}
-            defaultValue={product?.safety_information}
+            value={draft.safety_information}
+            onChange={(e) => setDraft({ ...draft, safety_information: e.target.value })}
           />
         </div>
         <div>
@@ -427,7 +505,8 @@ export function ProductForm({
             id="storage_handling"
             name="storage_handling"
             rows={3}
-            defaultValue={product?.storage_handling}
+            value={draft.storage_handling}
+            onChange={(e) => setDraft({ ...draft, storage_handling: e.target.value })}
           />
         </div>
       </Card>
@@ -520,11 +599,20 @@ export function ProductForm({
             />
             <p className="mt-1 text-xs text-muted-fg">{draft.meta_description.length} characters</p>
           </div>
+          <div className="sm:col-span-2">
+            <Label htmlFor="meta_keywords">SEO keywords (optional, comma separated)</Label>
+            <Input
+              id="meta_keywords"
+              name="meta_keywords"
+              value={draft.meta_keywords}
+              onChange={(e) => setDraft({ ...draft, meta_keywords: e.target.value })}
+            />
+          </div>
         </div>
       </Card>
 
       {state?.error && (
-        <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+        <p className="whitespace-pre-line rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
           {state.error}
         </p>
       )}

@@ -8,7 +8,15 @@ receives.
 
 from rest_framework import serializers
 
-from .models import Category, Industry, Manufacturer, Product, ProductDocument, ProductImage
+from .models import (
+    Category,
+    Industry,
+    Manufacturer,
+    Product,
+    ProductDocument,
+    ProductImage,
+    normalize_product_name,
+)
 from .serializers import ProductDocumentSerializer, ProductImageSerializer
 
 
@@ -87,6 +95,30 @@ class AdminProductSerializer(serializers.ModelSerializer):
         if not value.strip():
             raise serializers.ValidationError("Short description is required.")
         return value
+
+    def validate_name(self, value):
+        """Reject a name that already belongs to another product.
+
+        Product.name_key is unique at the database level; without this the
+        admin would get an opaque 500 from the IntegrityError instead of being
+        told which existing listing they're about to duplicate.
+        """
+        name = value.strip()
+        if not name:
+            raise serializers.ValidationError("Product name is required.")
+
+        clash = Product.objects.filter(name_key=normalize_product_name(name))
+        if self.instance is not None:
+            clash = clash.exclude(pk=self.instance.pk)
+        existing = clash.first()
+        if existing is not None:
+            raise serializers.ValidationError(
+                f"“{existing.name}” already exists in the catalog "
+                f"(SKU {existing.sku}). Edit that product instead of creating a "
+                f"second listing, or give this one a name that distinguishes it "
+                f"— e.g. by grade or concentration."
+            )
+        return name
 
 
 class ProductImageUploadSerializer(serializers.ModelSerializer):

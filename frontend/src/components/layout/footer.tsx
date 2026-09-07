@@ -3,20 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { NewsletterForm } from "@/components/shared/newsletter-form";
+import { api } from "@/lib/api";
 import { brand, contact, social } from "@/lib/site";
 
-const COLUMNS = [
-  {
-    title: "Products",
-    links: [
-      { label: "All Products", href: "/products" },
-      { label: "Industrial Chemicals", href: "/products?category=industrial-chemicals" },
-      { label: "Laboratory Reagents", href: "/products?category=laboratory-reagents" },
-      { label: "Water Treatment", href: "/products?category=water-treatment-chemicals" },
-      { label: "Food Grade", href: "/products?category=food-grade-chemicals" },
-      { label: "Specialty Chemicals", href: "/products?category=specialty-chemicals" },
-    ],
-  },
+const OTHER_COLUMNS = [
   {
     title: "Company",
     links: [
@@ -47,7 +37,17 @@ const SOCIALS = [
   { href: social.instagram, Icon: Instagram, label: "Instagram" },
 ] as const;
 
-export const Footer = () => (
+export const Footer = async () => {
+  const categories = await api.categories();
+  const productLinks = [
+    { label: "All Products", href: "/products" },
+    ...categories
+      .filter((category) => !category.parent)
+      .slice(0, 5)
+      .map((category) => ({ label: category.name, href: `/categories/${category.slug}` })),
+  ];
+
+  return (
   <footer className="relative overflow-hidden bg-navy-900 text-white">
     <div
       className="pointer-events-none absolute -top-40 -right-32 size-[34rem] rounded-full
@@ -133,7 +133,7 @@ export const Footer = () => (
           </ul>
         </div>
 
-        {COLUMNS.map((column) => (
+        {[{ title: "Products", links: productLinks }, ...OTHER_COLUMNS].map((column) => (
           <div key={column.title}>
             <h3 className="text-[11px] font-bold tracking-[0.14em] text-white/45 uppercase">
               {column.title}
@@ -193,4 +193,5 @@ export const Footer = () => (
       </div>
     </div>
   </footer>
-);
+  );
+};

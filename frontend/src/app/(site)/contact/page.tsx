@@ -17,6 +17,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
+/** Same line configured twice should read as one number, not two. */
+const digitsOnly = (value: string) => value.replace(/\D/g, "");
+const altPhone =
+  contact.phoneAlt && digitsOnly(contact.phoneAlt) !== digitsOnly(contact.phone)
+    ? contact.phoneAlt
+    : "";
+
 export default async function ContactPage() {
   const faqs = await api.homepage();
 
@@ -26,7 +33,7 @@ export default async function ContactPage() {
       label: "Call sales",
       value: contact.phone,
       href: contact.telHref,
-      note: contact.phoneAlt ? `Alt: ${contact.phoneAlt}` : undefined,
+      note: altPhone ? `Alt: ${altPhone}` : undefined,
     },
     {
       Icon: Mail,

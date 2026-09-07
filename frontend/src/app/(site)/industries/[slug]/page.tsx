@@ -9,7 +9,7 @@ import { PageHero } from "@/components/shared/page-hero";
 import { Section, SectionHeading } from "@/components/shared/section";
 import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
-import { breadcrumbSchema, serviceSchema } from "@/lib/schema";
+import { serviceSchema } from "@/lib/schema";
 import { absoluteUrl, brand, contact } from "@/lib/site";
 import Link from "next/link";
 
@@ -60,10 +60,8 @@ export default async function IndustryPage({ params }: Params) {
   return (
     <>
       <JsonLd id={`industry-${industry.slug}`} data={serviceSchema(industry)} />
-      <JsonLd
-        id={`industry-crumbs-${industry.slug}`}
-        data={breadcrumbSchema([{ name: "Home", url: "/" }, ...crumbs])}
-      />
+      {/* Breadcrumb JSON-LD comes from PageHero below (crumbs prop) — one
+          BreadcrumbList block per page, not two. */}
 
       <PageHero
         eyebrow="Industry"

@@ -121,63 +121,64 @@ export const breadcrumbSchema = (items: { name: string; url: string }[]) => ({
   })),
 });
 
-export const productSchema = (product: ProductDetail) => ({
-  "@context": "https://schema.org",
-  "@type": "Product",
-  "@id": `${siteUrl}/products/${product.slug}/#product`,
-  name: product.name,
-  sku: product.sku,
-  description: product.short_description,
-  category: product.category_name,
-  url: absoluteUrl(`/products/${product.slug}`),
-  ...(product.image ? { image: [absoluteUrl(product.image)] } : {}),
-  ...(product.manufacturer_name
-    ? { brand: { "@type": "Brand", name: product.manufacturer_name } }
-    : { brand: { "@type": "Brand", name: brand.fullName } }),
-  ...(product.chemical_formula || product.cas_number
-    ? {
-        additionalProperty: [
-          ...(product.chemical_formula
-            ? [
-                {
-                  "@type": "PropertyValue",
-                  name: "Chemical formula",
-                  value: product.chemical_formula,
-                },
-              ]
-            : []),
-          ...(product.cas_number
-            ? [{ "@type": "PropertyValue", name: "CAS number", value: product.cas_number }]
-            : []),
-          ...(product.purity
-            ? [{ "@type": "PropertyValue", name: "Purity", value: product.purity }]
-            : []),
-          ...Object.entries(product.specifications ?? {}).map(([name, value]) => ({
-            "@type": "PropertyValue",
-            name,
-            value: String(value),
-          })),
-        ],
-      }
-    : {}),
-  offers: {
-    "@type": "Offer",
+export const productSchema = (product: ProductDetail) => {
+  const additionalProperty = [
+    ...(product.chemical_formula
+      ? [{ "@type": "PropertyValue", name: "Chemical formula", value: product.chemical_formula }]
+      : []),
+    ...(product.cas_number
+      ? [{ "@type": "PropertyValue", name: "CAS number", value: product.cas_number }]
+      : []),
+    ...(product.purity
+      ? [{ "@type": "PropertyValue", name: "Purity", value: product.purity }]
+      : []),
+    ...Object.entries(product.specifications ?? {}).map(([name, value]) => ({
+      "@type": "PropertyValue",
+      name,
+      value: String(value),
+    })),
+  ];
+
+  // A real, transactable price is required for Offer eligibility in Google's
+  // rich results — advertising "0" for price-on-request products is
+  // inaccurate structured data (a guideline violation, not just unhelpful),
+  // so those products omit `offers` entirely rather than fabricate a price.
+  const hasRealPrice = !product.price_on_request && !!product.indicative_price;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": `${siteUrl}/products/${product.slug}/#product`,
+    name: product.name,
+    sku: product.sku,
+    description: product.short_description,
+    category: product.category_name,
     url: absoluteUrl(`/products/${product.slug}`),
-    priceCurrency: product.currency,
-    // Price on request → advertise availability, not a fabricated figure.
-    ...(product.price_on_request || !product.indicative_price
-      ? { price: "0", priceValidUntil: undefined }
-      : { price: product.indicative_price }),
-    availability:
-      product.availability === "out_of_stock"
-        ? "https://schema.org/OutOfStock"
-        : product.availability === "made_to_order"
-          ? "https://schema.org/PreOrder"
-          : "https://schema.org/InStock",
-    seller: { "@id": `${siteUrl}/#organization` },
-    areaServed: "Kenya, East Africa",
-  },
-});
+    ...(product.image ? { image: [absoluteUrl(product.image)] } : {}),
+    ...(product.manufacturer_name
+      ? { brand: { "@type": "Brand", name: product.manufacturer_name } }
+      : { brand: { "@type": "Brand", name: brand.fullName } }),
+    ...(additionalProperty.length ? { additionalProperty } : {}),
+    ...(hasRealPrice
+      ? {
+          offers: {
+            "@type": "Offer",
+            url: absoluteUrl(`/products/${product.slug}`),
+            priceCurrency: product.currency,
+            price: product.indicative_price,
+            availability:
+              product.availability === "out_of_stock"
+                ? "https://schema.org/OutOfStock"
+                : product.availability === "made_to_order"
+                  ? "https://schema.org/PreOrder"
+                  : "https://schema.org/InStock",
+            seller: { "@id": `${siteUrl}/#organization` },
+            areaServed: "Kenya, East Africa",
+          },
+        }
+      : {}),
+  };
+};
 
 export const faqSchema = (faqs: Pick<FAQ, "question" | "answer">[]) => ({
   "@context": "https://schema.org",

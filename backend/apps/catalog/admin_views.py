@@ -8,6 +8,7 @@ untouched and untouchable from here.
 """
 
 from django.core.files.base import ContentFile
+from django.db import IntegrityError
 from django.db.models import F, ProtectedError, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
@@ -30,7 +31,16 @@ from .admin_serializers import (
     ProductImageUploadSerializer,
 )
 from .ai import ProductDraftError, generate_product_draft
-from .models import Category, Industry, Manufacturer, Product, ProductDocument, ProductImage
+from .models import (
+    Category,
+    Industry,
+    Manufacturer,
+    Product,
+    ProductDocument,
+    ProductImage,
+    normalize_product_name,
+)
+from .tasks import submit_product_url
 from .url_fetch import UnsafeUrlError, fetch_image_bytes
 
 
@@ -109,6 +119,37 @@ class AdminProductViewSet(AdminBaseViewSet):
             category = Category.objects.filter(pk=data["category_id"]).first()
             category_name = category.name if category else ""
 
+        # Cheapest possible draft: none at all. A name that's already in the
+        # catalog can't be saved anyway (AdminProductSerializer.validate_name),
+        # so spending ~2.5k tokens drafting it is pure waste. Only possible when
+        # a name was typed — drafting from a photo alone can't be checked until
+        # the model has proposed one, which is handled after the call below.
+        typed_name = data.get("name", "").strip()
+        if typed_name:
+            existing = Product.objects.filter(
+                name_key=normalize_product_name(typed_name)
+            ).first()
+            if existing is not None:
+                return Response(
+                    {
+                        "detail": (
+                            f"“{existing.name}” is already in the catalog "
+                            f"(SKU {existing.sku}). Edit that product instead."
+                        ),
+                        "duplicate_of": {
+                            "id": existing.id,
+                            "name": existing.name,
+                            "sku": existing.sku,
+                        },
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+
+        # The model picks industries out of the catalog's own list (an enum in
+        # the draft schema), so what comes back is always tickable rows rather
+        # than labels this site has no listing for.
+        industries = {i.name: i.id for i in Industry.objects.all()}
+
         try:
             draft = generate_product_draft(
                 name=data.get("name", ""),
@@ -116,11 +157,58 @@ class AdminProductViewSet(AdminBaseViewSet):
                 category_name=category_name,
                 notes=data.get("notes", ""),
                 image_url=data.get("image_url", ""),
+                industry_choices=list(industries),
             )
         except ProductDraftError as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
+        # Names in, ids out: the admin form ticks checkboxes by primary key.
+        draft["industries"] = [
+            industries[name] for name in draft.get("industries") or [] if name in industries
+        ]
+
+        # Saving this draft would be rejected by AdminProductSerializer.validate_name
+        # anyway — surfacing it here means the admin finds out before reviewing a
+        # whole form, and can jump straight to the listing that already exists.
+        # The drafted name is what matters: drafting from a photo alone can
+        # resolve to a product that's already in the catalog under a name the
+        # admin never typed.
+        draft["duplicate_of"] = None
+        drafted_name = (draft.get("suggested_name") or data.get("name", "")).strip()
+        if drafted_name:
+            existing = Product.objects.filter(
+                name_key=normalize_product_name(drafted_name)
+            ).first()
+            if existing is not None:
+                draft["duplicate_of"] = {
+                    "id": existing.id,
+                    "name": existing.name,
+                    "sku": existing.sku,
+                }
+
         return Response(draft)
+
+    def create(self, request, *args, **kwargs):
+        # validate_name() catches the ordinary case; this closes the window
+        # between that check and the INSERT, where two admins saving the same
+        # product at once would otherwise surface the unique-constraint
+        # violation on name_key as a 500.
+        try:
+            return super().create(request, *args, **kwargs)
+        except IntegrityError:
+            return Response(
+                {"name": ["That product was just added by someone else."]},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+    def update(self, request, *args, **kwargs):
+        try:
+            return super().update(request, *args, **kwargs)
+        except IntegrityError:
+            return Response(
+                {"name": ["Another product with that name was just created."]},
+                status=status.HTTP_409_CONFLICT,
+            )
 
     def perform_create(self, serializer):
         # `generate` never writes to the DB — this is the one place ai_generated
@@ -142,6 +230,28 @@ class AdminProductViewSet(AdminBaseViewSet):
                 # shouldn't block product creation. The admin can retry the
                 # image from the edit page, where a failure is reported inline.
                 pass
+
+        if product.is_published:
+            submit_product_url.delay(product.slug, "URL_UPDATED")
+
+    def perform_update(self, serializer):
+        # Compare against the pre-save state so a publish/unpublish toggle on
+        # this same request tells Google the right thing: newly published or
+        # still-published edits are URL_UPDATED, and a product taken off
+        # publish is reported URL_DELETED even though the row itself remains.
+        was_published = serializer.instance.is_published
+        product = serializer.save()
+        if product.is_published:
+            submit_product_url.delay(product.slug, "URL_UPDATED")
+        elif was_published:
+            submit_product_url.delay(product.slug, "URL_DELETED")
+
+    def perform_destroy(self, instance):
+        slug = instance.slug
+        was_published = instance.is_published
+        instance.delete()
+        if was_published:
+            submit_product_url.delay(slug, "URL_DELETED")
 
 
 def save_image_from_url(product, url, *, alt_text="", order=None):

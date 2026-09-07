@@ -4,9 +4,29 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { AdminApiError, adminApi } from "@/lib/admin/api";
-import type { AdminProductInput } from "@/types/admin";
+import type { AdminProductInput, ProductDraft } from "@/types/admin";
 
 export type FormState = { error?: string; success?: string };
+
+/**
+ * DRF returns field errors as {field: [msg, ...]}. Rendering that with
+ * JSON.stringify put a raw `{"name":["…"]}` blob in front of the admin, which
+ * buries the one message that matters most here — the duplicate-name
+ * rejection from AdminProductSerializer.validate_name.
+ */
+function readableError(error: AdminApiError, fallback: string): string {
+  const payload = error.payload;
+  if (!payload || typeof payload !== "object") return error.message || fallback;
+
+  const entries = Object.entries(payload as Record<string, unknown>);
+  if (!entries.length) return error.message || fallback;
+
+  const messages = entries.map(([field, value]) => {
+    const text = Array.isArray(value) ? value.join(" ") : String(value);
+    return field === "detail" || field === "non_field_errors" ? text : `${field}: ${text}`;
+  });
+  return messages.join("\n");
+}
 
 function parseListField(formData: FormData, name: string): string[] {
   const raw = String(formData.get(name) || "");
@@ -62,6 +82,7 @@ function buildProductInput(formData: FormData): AdminProductInput {
     is_bestseller: formData.get("is_bestseller") === "on",
     meta_title: String(formData.get("meta_title") || ""),
     meta_description: String(formData.get("meta_description") || ""),
+    meta_keywords: String(formData.get("meta_keywords") || ""),
   };
 }
 
@@ -79,11 +100,7 @@ export async function createProduct(_prev: FormState | undefined, formData: Form
     });
   } catch (error) {
     if (error instanceof AdminApiError) {
-      const detail =
-        typeof error.payload === "object" && error.payload
-          ? JSON.stringify(error.payload)
-          : error.message;
-      return { error: detail };
+      return { error: readableError(error, "Could not create the product.") };
     }
     return { error: "Could not create the product." };
   }
@@ -102,11 +119,7 @@ export async function updateProduct(
     await adminApi.products.update(id, data);
   } catch (error) {
     if (error instanceof AdminApiError) {
-      const detail =
-        typeof error.payload === "object" && error.payload
-          ? JSON.stringify(error.payload)
-          : error.message;
-      return { error: detail };
+      return { error: readableError(error, "Could not save the product.") };
     }
     return { error: "Could not save the product." };
   }
@@ -121,14 +134,38 @@ export async function deleteProduct(id: number) {
   redirect("/admin/products");
 }
 
+export type DuplicateOf = { id: number; name: string; sku: string };
+
+export type DraftResult =
+  | { ok: true; draft: ProductDraft }
+  | { ok: false; error: string; duplicateOf?: DuplicateOf };
+
+/**
+ * Returns a result rather than throwing: an Error raised in a Server Action
+ * reaches the client with its message redacted in production, which would
+ * turn the backend's "already in the catalog" 409 — the one response the
+ * admin most needs to read — into a generic failure.
+ */
 export async function generateDraft(input: {
   name?: string;
   cas_number?: string;
   category_id?: number;
   notes?: string;
   image_url?: string;
-}) {
-  return adminApi.products.generate(input);
+}): Promise<DraftResult> {
+  try {
+    return { ok: true, draft: await adminApi.products.generate(input) };
+  } catch (error) {
+    if (error instanceof AdminApiError) {
+      const payload = (error.payload ?? {}) as { detail?: string; duplicate_of?: DuplicateOf };
+      return {
+        ok: false,
+        error: payload.detail || readableError(error, "AI drafting failed."),
+        duplicateOf: payload.duplicate_of,
+      };
+    }
+    return { ok: false, error: "AI drafting failed." };
+  }
 }
 
 export async function uploadImage(productId: number, formData: FormData) {
