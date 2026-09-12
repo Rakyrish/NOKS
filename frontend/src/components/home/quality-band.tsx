@@ -3,30 +3,45 @@ import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
+import { isVerified } from "@/lib/business";
 import { Reveal, RevealGroup, RevealItem } from "@/components/shared/motion";
 
+/**
+ * What you can ask us for, not what we assert ships automatically.
+ *
+ * These read as guarantees — "COA for the exact batch shipped", "lot number on
+ * every drum", "full 16-section SDS" — and there are zero documents stored
+ * against any of the 182 products. Each falls back to the request-based
+ * wording until CLAIMS["documents-with-every-batch"] is verified.
+ */
 const DOCUMENTS = [
   {
     icon: ScrollText,
     title: "Certificate of Analysis",
     desc: "Manufacturer COA for the exact batch shipped — assay, appearance, and test method.",
+    fallback: "Manufacturer COA for the batch quoted — assay, appearance and test method, on request.",
   },
   {
     icon: FileText,
     title: "Safety Data Sheet",
     desc: "Full 16-section SDS in English, plus hazard class and UN number for transport.",
+    fallback: "Manufacturer SDS in English, with hazard class and UN number for transport, on request.",
   },
   {
     icon: Microscope,
     title: "Batch traceability",
     desc: "Lot number on every drum and bag, traced back to the manufacturing run.",
+    fallback: "Lot numbers quoted on request, traced back to the manufacturing run.",
   },
   {
     icon: BadgeCheck,
     title: "Compliance paperwork",
     desc: "HS codes, import documentation, and KEBS conformity references on request.",
+    fallback: "HS codes and import documentation on request.",
   },
-];
+].map((item) =>
+  isVerified("documents-with-every-batch") ? item : { ...item, desc: item.fallback },
+);
 
 export const QualityBand = () => (
   <section className="relative overflow-hidden border-y border-navy-800 bg-navy-950 py-16 text-white lg:py-24">

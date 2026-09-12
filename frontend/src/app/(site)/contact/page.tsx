@@ -6,16 +6,18 @@ import { ContactForm } from "@/components/shared/contact-form";
 import { JsonLd } from "@/components/shared/json-ld";
 import { PageHero } from "@/components/shared/page-hero";
 import { api } from "@/lib/api";
+import { pageMetadata } from "@/lib/metadata";
 import { localBusinessSchema } from "@/lib/schema";
 import { brand, contact, social } from "@/lib/site";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Contact Us — Chemical Sales & Technical Support",
   description: `Contact ${brand.fullName} in ${contact.city || "Nairobi"}. Phone ${contact.phone}, email ${contact.email}. Chemical sales, technical support and quotation requests across Kenya and East Africa.`,
-  alternates: { canonical: "/contact" },
-};
+  path: "/contact",
+  image: "/images/pages/contact.jpg",
+});
 
 /** Same line configured twice should read as one number, not two. */
 const digitsOnly = (value: string) => value.replace(/\D/g, "");

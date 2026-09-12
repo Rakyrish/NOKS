@@ -3,12 +3,27 @@
  * Every value traces back to the root .env or the CMS — nothing invented here.
  */
 
+import { isVerified, nap, toE164 } from "./business";
 import { absoluteImageUrl, schemaImages } from "./images";
+import { cleanPath } from "./indexing";
 import { absoluteUrl, brand, contact, seo, siteUrl, social } from "./site";
 import type { FAQ, Industry, PostDetail, ProductDetail } from "@/types";
 
+/**
+ * `sameAs` must point at profiles that are genuinely ours.
+ *
+ * The four configured handles are generic ("/noks"); probing them found
+ * x.com/noks returning 404 and the rest unconfirmed. `sameAs` is how Google
+ * links an entity to its profiles, so pointing it at someone else's account is
+ * worse than omitting it. Gated on CLAIMS["social-profiles"].
+ */
 const socialProfiles = () =>
-  [social.linkedin, social.facebook, social.twitter, social.instagram].filter(Boolean);
+  isVerified("social-profiles")
+    ? [social.linkedin, social.facebook, social.twitter, social.instagram].filter(Boolean)
+    : [];
+
+/** Only ever publish a phone number schema.org can actually parse. */
+const telephone = () => nap.phoneE164 ?? undefined;
 
 /**
  * Countries and Kenyan counties NOKS delivers to.
@@ -50,7 +65,7 @@ export const organizationSchema = () => ({
   description: brand.mission || seo.description,
   slogan: brand.tagline,
   email: contact.email || undefined,
-  telephone: contact.phone || undefined,
+  telephone: telephone(),
   address: {
     "@type": "PostalAddress",
     streetAddress: contact.street || undefined,
@@ -68,11 +83,11 @@ export const organizationSchema = () => ({
       }
     : {}),
   areaServed: areaServed(),
-  sameAs: socialProfiles(),
+  ...(socialProfiles().length ? { sameAs: socialProfiles() } : {}),
   contactPoint: [
     {
       "@type": "ContactPoint",
-      telephone: contact.phone,
+      telephone: telephone(),
       contactType: "sales",
       email: contact.email,
       areaServed: ["KE", "UG", "TZ", "ET", "RW", "BI", "SS", "CD"],
@@ -80,7 +95,7 @@ export const organizationSchema = () => ({
     },
     {
       "@type": "ContactPoint",
-      telephone: contact.phoneAlt || contact.phone,
+      telephone: (contact.phoneAlt ? toE164(contact.phoneAlt) : null) ?? telephone(),
       contactType: "technical support",
       email: contact.emailSupport || contact.email,
     },
@@ -94,9 +109,10 @@ export const localBusinessSchema = () => ({
   name: brand.fullName,
   image: absoluteImageUrl(brand.logo) ?? undefined,
   url: siteUrl,
-  telephone: contact.phone,
+  telephone: telephone(),
   email: contact.email,
-  priceRange: "$$",
+  // `priceRange: "$$"` used to sit here. Nothing on the site prices anything —
+  // all 182 products are quote-only — so the band was invented.
   address: {
     "@type": "PostalAddress",
     streetAddress: contact.street,
@@ -115,7 +131,7 @@ export const localBusinessSchema = () => ({
         },
       }
     : {}),
-  sameAs: socialProfiles(),
+  ...(socialProfiles().length ? { sameAs: socialProfiles() } : {}),
 });
 
 export const websiteSchema = () => ({
@@ -137,6 +153,17 @@ export const websiteSchema = () => ({
   },
 });
 
+/**
+ * BreadcrumbList for the visible trail rendered by `components/shared/page-hero`.
+ *
+ * Every intermediate `item` must be a crawlable, canonical URL. Articles used
+ * to publish `/knowledge?category=<slug>` here — a parameter URL that the
+ * indexing policy marks `noindex, follow`, so the trail pointed at a page
+ * Google is told not to index. `cleanPath` strips any query string or trailing
+ * slash a caller passes, so a breadcrumb can only ever name the canonical form
+ * of a route; positions are sequential from 1 by construction, and the last
+ * item is whatever the page declares as its own canonical path.
+ */
 export const breadcrumbSchema = (items: { name: string; url: string }[]) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -144,7 +171,7 @@ export const breadcrumbSchema = (items: { name: string; url: string }[]) => ({
     "@type": "ListItem",
     position: index + 1,
     name: item.name,
-    item: absoluteUrl(item.url),
+    item: absoluteUrl(cleanPath(item.url)),
   })),
 });
 
@@ -256,11 +283,19 @@ export const articleSchema = (post: PostDetail) => ({
   articleSection: post.category_name,
   keywords: post.tag_list?.join(", "),
   wordCount: post.body ? post.body.split(/\s+/).length : undefined,
-  author: {
-    "@type": "Organization",
-    name: post.author?.name || brand.fullName,
-    url: siteUrl,
-  },
+  // A named human when we have one, the organisation otherwise. This used to
+  // assert `Organization` even where `post.author.name` existed, which loses
+  // the authorship signal E-E-A-T is built on and misstates who wrote the
+  // piece. The URL points at the author's profile page, so the claim is
+  // checkable rather than decorative.
+  author: post.author?.name
+    ? {
+        "@type": "Person",
+        name: post.author.name,
+        ...(post.author.role ? { jobTitle: post.author.role } : {}),
+        url: absoluteUrl(`/knowledge/authors/${post.author.slug}`),
+      }
+    : { "@type": "Organization", name: brand.fullName, url: siteUrl },
   publisher: { "@id": `${siteUrl}/#organization` },
   mainEntityOfPage: { "@type": "WebPage", "@id": absoluteUrl(`/knowledge/${post.slug}`) },
   inLanguage: "en-KE",

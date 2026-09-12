@@ -6,18 +6,30 @@ import { CtaBand } from "@/components/home/cta-band";
 import { RevealGroup, RevealItem } from "@/components/shared/motion";
 import { PageHero } from "@/components/shared/page-hero";
 import { api } from "@/lib/api";
+import { pageMetadata } from "@/lib/metadata";
 import { brand } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export const revalidate = 600;
 
-export const metadata: Metadata = {
-  title: "Knowledge Centre — Chemical Guides & Technical Articles",
-  description: `Technical guidance from ${brand.fullName}: water treatment practice, food grade compliance, laboratory science, chemical safety and buying guides for East African industry.`,
-  alternates: { canonical: "/knowledge" },
-};
-
 type SearchParams = Record<string, string | string[] | undefined>;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  // `?category=` and `?page=` are filtered views of this same index, so they
+  // canonicalise here and stay out of the index. Every article they can reach
+  // is linked from the unfiltered first page and listed in the sitemap.
+  return pageMetadata({
+    title: "Knowledge Centre — Chemical Guides & Technical Articles",
+    description: `Technical guidance from ${brand.fullName}: water treatment practice, food grade compliance, laboratory science, chemical safety and buying guides for East African industry.`,
+    path: "/knowledge",
+    searchParams: await searchParams,
+    image: "/images/pages/knowledge.jpg",
+  });
+}
 
 export default async function KnowledgePage({
   searchParams,

@@ -330,3 +330,26 @@ export interface QuoteItemInput {
   packaging?: string;
   notes?: string;
 }
+
+/**
+ * One URL's worth of the facts a sitemap needs, from
+ * `/api/v1/sitemap-inventory/`. Kept separate from the browse serializers:
+ * `noindex` and `canonical_url` are SEO plumbing, not catalogue content, and
+ * putting them on every product in every grid response would cost far more
+ * than the one call this saves.
+ */
+export interface SitemapEntry {
+  slug: string;
+  /** ISO timestamp of the last change a reader would notice, or null. */
+  lastmod: string | null;
+  noindex: boolean;
+  /** Non-empty when this row declares a different URL as canonical. */
+  canonical: string;
+}
+
+export interface SitemapInventory {
+  products: SitemapEntry[];
+  categories: (SitemapEntry & { product_count: number })[];
+  industries: (SitemapEntry & { product_count: number })[];
+  posts: (SitemapEntry & { published_at: string | null })[];
+}

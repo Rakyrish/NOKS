@@ -7,6 +7,7 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { PageHero } from "@/components/shared/page-hero";
 import { Skeleton } from "@/components/ui";
 import { api, type ProductQuery } from "@/lib/api";
+import { pageMetadata } from "@/lib/metadata";
 import { itemListSchema } from "@/lib/schema";
 import { brand } from "@/lib/site";
 
@@ -31,16 +32,19 @@ export async function generateMetadata({
 
   const title = term || category ? `${label} — Product Catalog` : "Product Catalog";
 
-  return {
+  // The robots directive and the canonical both come from lib/indexing.ts.
+  // The old rule here excluded only `?q=` and left every other facet
+  // combination — category, industry, grade, availability, ordering, page —
+  // declaring itself `index, follow` while canonicalising to /products. With
+  // 40 categories, 12 industries, 5 grades, 4 availabilities and free
+  // ordering and pagination, that is an unbounded indexable space.
+  return pageMetadata({
     title,
-    description: `Browse ${label} from ${brand.fullName}. Certified industrial chemicals, laboratory reagents, water treatment and food grade products with technical datasheets and fast delivery across Kenya and East Africa.`,
-    alternates: { canonical: "/products" },
-    // Only internal search results stay out of the index — those are the thin,
-    // infinitely-variable URLs search engines ask you not to publish. Category,
-    // industry and grade facets are real landing pages and stay indexable; the
-    // canonical above is what keeps them from competing with /products.
-    robots: term ? { index: false, follow: true } : undefined,
-  };
+    description: `Browse ${label} from ${brand.fullName}: industrial chemicals, laboratory reagents, water treatment and food grade products, with CAS number, grade and packaging on every listing. Delivery across Kenya and East Africa.`,
+    path: "/products",
+    searchParams: params,
+    image: "/images/pages/products.jpg",
+  });
 }
 
 const first = (value: string | string[] | undefined): string | undefined =>
@@ -78,7 +82,10 @@ export default async function ProductsPage({
       <PageHero
         eyebrow="Catalog"
         title="Industrial & Laboratory Chemicals"
-        description="Over a thousand products across five categories — searchable by name, CAS number, industry, grade and package size. Every product ships with a Certificate of Analysis."
+        // Was "Over a thousand products across five categories … Every product
+        // ships with a Certificate of Analysis." The catalogue holds 182
+        // products across 40 categories, and no product documents exist.
+        description={`${page.count} products, searchable by name, CAS number, industry, grade and package size — with specification and packaging published on every listing.`}
         crumbs={[{ name: "Products", url: "/products" }]}
         image="/images/pages/products.jpg"
       />

@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { isVerified } from "@/lib/business";
 import { ProductCard } from "@/components/catalog/product-card";
 import { CtaBand } from "@/components/home/cta-band";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -9,8 +10,9 @@ import { PageHero } from "@/components/shared/page-hero";
 import { Section, SectionHeading } from "@/components/shared/section";
 import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
+import { notFoundMetadata, pageMetadata } from "@/lib/metadata";
 import { serviceSchema } from "@/lib/schema";
-import { absoluteUrl, brand, contact } from "@/lib/site";
+import { brand, contact } from "@/lib/site";
 import Link from "next/link";
 
 export const revalidate = 900;
@@ -29,20 +31,20 @@ async function loadIndustry(slug: string) {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const industry = await loadIndustry(slug);
-  if (!industry) return { title: "Industry not found" };
+  if (!industry) return notFoundMetadata(`/industries/${slug}`, "Industry");
 
-  const title =
-    industry.seo?.title || `${industry.name} Chemicals in ${contact.country || "Kenya"}`;
-  const description =
-    industry.seo?.description ||
-    `${brand.fullName} supplies certified chemicals for ${industry.name.toLowerCase()} across Kenya and East Africa. ${industry.tagline}`;
-
-  return {
-    title,
-    description,
-    alternates: { canonical: industry.seo?.canonical || `/industries/${industry.slug}` },
-    openGraph: { title, description, url: absoluteUrl(`/industries/${industry.slug}`) },
-  };
+  return pageMetadata({
+    title: industry.seo?.title || `${industry.name} Chemicals in ${contact.country || "Kenya"}`,
+    description:
+      industry.seo?.description ||
+      `${brand.fullName} supplies chemicals for ${industry.name.toLowerCase()} in Kenya and across East Africa. ${industry.tagline}`,
+    path: `/industries/${industry.slug}`,
+    canonicalOverride: industry.seo?.canonical,
+    keywords: industry.seo?.keywords,
+    image: industry.image,
+    imageAlt: industry.name,
+    noindex: industry.seo?.noindex || (industry.product_count ?? 0) === 0,
+  });
 }
 
 export default async function IndustryPage({ params }: Params) {
@@ -92,9 +94,11 @@ export default async function IndustryPage({ params }: Params) {
               {industry.description}
             </p>
             <p className="mt-4 text-[15.5px] leading-relaxed text-slate-600">
-              Every delivery arrives with a batch Certificate of Analysis and Safety Data
-              Sheet. Our applications chemists support dosing selection, compatibility
-              checks and on-site handling training — before and after you order.
+              {isVerified("documents-with-every-batch")
+                ? "Every delivery arrives with a batch Certificate of Analysis and Safety Data Sheet. "
+                : "Ask for the Certificate of Analysis and Safety Data Sheet for any product here and we will send the current version with your quotation. "}
+              Our technical team supports dosing selection and compatibility checks — before
+              and after you order.
             </p>
           </div>
 

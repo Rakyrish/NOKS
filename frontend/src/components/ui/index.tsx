@@ -5,6 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
+import { isVerified } from "@/lib/business";
 import { cn } from "@/lib/utils";
 
 /* ── Card ──────────────────────────────────────────────────── */
@@ -70,6 +71,19 @@ const AVAILABILITY_VARIANT: Record<string, BadgeProps["variant"]> = {
   out_of_stock: "rose",
 };
 
+/**
+ * Stock status, when there is a stock status to report.
+ *
+ * `Product.availability` is a free-text enum defaulting to `in_stock`, and all
+ * 182 published products still carry that default — there is no inventory
+ * system anywhere in the stack. So the green "In stock" pill on every card and
+ * every product page was not reporting stock; it was reporting that nobody had
+ * edited a field. Telling a buyer a drum of caustic soda is in stock when we
+ * do not know that is a promise the business then has to keep.
+ *
+ * Until CLAIMS["stock-status"] is verified, the badge states what is actually
+ * true: availability is confirmed when we quote.
+ */
 export const AvailabilityBadge = ({
   availability,
   label,
@@ -78,16 +92,19 @@ export const AvailabilityBadge = ({
   availability: string;
   label: string;
   className?: string;
-}) => (
-  <Badge
-    variant={AVAILABILITY_VARIANT[availability] ?? "neutral"}
-    size="sm"
-    className={className}
-  >
-    <span className="size-1.5 rounded-full bg-current" aria-hidden />
-    {label}
-  </Badge>
-);
+}) => {
+  const trustworthy = isVerified("stock-status");
+  return (
+    <Badge
+      variant={trustworthy ? (AVAILABILITY_VARIANT[availability] ?? "neutral") : "neutral"}
+      size="sm"
+      className={className}
+    >
+      <span className="size-1.5 rounded-full bg-current" aria-hidden />
+      {trustworthy ? label : "Availability on quotation"}
+    </Badge>
+  );
+};
 
 /* ── Inputs ────────────────────────────────────────────────── */
 

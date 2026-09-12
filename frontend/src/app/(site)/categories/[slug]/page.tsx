@@ -9,8 +9,9 @@ import { PageHero } from "@/components/shared/page-hero";
 import { Section, SectionHeading } from "@/components/shared/section";
 import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
+import { notFoundMetadata, pageMetadata } from "@/lib/metadata";
 import { itemListSchema } from "@/lib/schema";
-import { absoluteUrl, brand, contact } from "@/lib/site";
+import { brand, contact } from "@/lib/site";
 
 export const revalidate = 900;
 
@@ -28,21 +29,27 @@ async function loadCategory(slug: string) {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const category = await loadCategory(slug);
-  if (!category) return { title: "Category not found" };
+  if (!category) return notFoundMetadata(`/categories/${slug}`, "Category");
 
-  const title = category.seo?.title || `${category.name} Suppliers in ${contact.country || "Kenya"}`;
-  const description =
-    category.seo?.description ||
-    category.description ||
-    `${brand.fullName} supplies ${category.name.toLowerCase()} across Kenya and East Africa, with a Certificate of Analysis and Safety Data Sheet on every batch.`;
-
-  return {
-    title,
-    description,
-    alternates: { canonical: category.seo?.canonical || `/categories/${category.slug}` },
-    robots: category.seo?.noindex ? { index: false, follow: true } : undefined,
-    openGraph: { title, description, url: absoluteUrl(`/categories/${category.slug}`) },
-  };
+  return pageMetadata({
+    title: category.seo?.title || `${category.name} Suppliers in ${contact.country || "Kenya"}`,
+    description:
+      category.seo?.description ||
+      category.description ||
+      // The old default asserted "a Certificate of Analysis and Safety Data
+      // Sheet on every batch" on all 40 category pages. There are zero
+      // documents in the system — see CLAIMS["documents-with-every-batch"].
+      `${brand.fullName} supplies ${category.name.toLowerCase()} in Kenya and across East Africa. Specification, grade and packaging published for every product; written quotation within one business day.`,
+    path: `/categories/${category.slug}`,
+    canonicalOverride: category.seo?.canonical,
+    keywords: category.seo?.keywords,
+    image: category.image,
+    imageAlt: category.name,
+    // An empty category is a thin page with nothing to rank for. Rather than
+    // serving 15 of them to the index, they stay crawlable (so the crumb trail
+    // and any child links still carry) but out of it, until they hold stock.
+    noindex: category.seo?.noindex || (category.product_count ?? 0) === 0,
+  });
 }
 
 export default async function CategoryPage({ params }: Params) {

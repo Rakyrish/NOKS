@@ -26,6 +26,7 @@ import { Section, SectionHeading } from "@/components/shared/section";
 import { AvailabilityBadge, Badge } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
+import { isVerified } from "@/lib/business";
 import { notFoundMetadata, pageMetadata } from "@/lib/metadata";
 import { faqSchema, productSchema } from "@/lib/schema";
 import { brand, contact } from "@/lib/site";
@@ -240,8 +241,14 @@ export default async function ProductPage({ params }: Params) {
                     </li>
                   ))}
                 </ul>
+                {/* Every one of the 182 products carries the model default of
+                    1, bulk acids and tanker commodities included, so printing
+                    it stated a minimum nobody set. Shown only once the field
+                    carries real data — see CLAIMS["minimum-order-quantity"]. */}
                 <p className="mt-4 text-[13.5px] text-slate-500">
-                  Minimum order quantity: {product.min_order_quantity} {product.unit}.
+                  {isVerified("minimum-order-quantity")
+                    ? `Minimum order quantity: ${product.min_order_quantity} ${product.unit}. `
+                    : "Minimum order quantity confirmed with your quotation. "}
                   Custom packaging and private labelling available on request.
                 </p>
               </Panel>
@@ -379,8 +386,9 @@ export default async function ProductPage({ params }: Params) {
               ) : (
                 <div className="rounded-xl border border-dashed border-line bg-surface-muted p-5 text-center">
                   <p className="text-[14px] text-slate-600">
-                    Technical datasheet, Safety Data Sheet and Certificate of Analysis are
-                    issued with every quotation and delivery.
+                    {isVerified("documents-with-every-batch")
+                      ? "Technical datasheet, Safety Data Sheet and Certificate of Analysis are issued with every quotation and delivery."
+                      : "Ask for the technical datasheet, Safety Data Sheet or Certificate of Analysis for this product and we will send the current version with your quotation."}
                   </p>
                   <Button asChild size="sm" variant="outline" className="mt-3">
                     <Link href={`/quote?product=${product.slug}`}>Request documentation</Link>
@@ -439,11 +447,15 @@ export default async function ProductPage({ params }: Params) {
               </div>
             </div>
 
+            {/* Was an unconditional "Every batch is supplied with a Certificate
+                of Analysis and Safety Data Sheet, traceable to source." Zero
+                documents exist in the system for any product. */}
             <div className="mt-4 flex items-start gap-3 rounded-2xl bg-emerald-50 p-5">
               <ShieldCheck className="mt-0.5 size-5 shrink-0 text-[var(--brand-emerald)]" />
               <p className="text-[13px] leading-relaxed text-emerald-900">
-                Every batch is supplied with a Certificate of Analysis and Safety Data
-                Sheet, traceable to source.
+                {isVerified("documents-with-every-batch")
+                  ? "Every batch is supplied with a Certificate of Analysis and Safety Data Sheet, traceable to source."
+                  : "Request the Certificate of Analysis and Safety Data Sheet for this product with your quotation."}
               </p>
             </div>
 

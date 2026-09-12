@@ -20,6 +20,7 @@
 import type { Metadata } from "next";
 
 import { absoluteImageUrl } from "./images";
+import { cleanPath, indexingFor, type SearchParamsInput } from "./indexing";
 import { absoluteUrl, brand, seo } from "./site";
 
 /** Longest title Google will usually render before truncating. Advisory. */
@@ -75,7 +76,15 @@ export type PageMetadataInput = {
   image?: string | null;
   imageAlt?: string;
   ogType?: "website" | "article";
-  /** `true` renders `noindex,follow` — used for filters, searches and facets. */
+  /**
+   * The request's query string. Passing it lets `pageMetadata` apply the
+   * site's indexing policy (lib/indexing.ts) rather than each route
+   * re-deciding what counts as a filtered view — which is how
+   * `/products?category=…` ended up declaring itself indexable while
+   * `/products?q=…` did not.
+   */
+  searchParams?: SearchParamsInput;
+  /** Force `noindex,follow` regardless of URL shape (e.g. a CMS flag). */
   noindex?: boolean;
   article?: { publishedTime?: string; modifiedTime?: string; authors?: string[] };
 };
@@ -91,7 +100,8 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
   const title = withBrand(input.title);
   const description = normalizeDescription(input.description) ?? normalizeDescription(seo.description);
 
-  const canonicalPath = normalizeCanonicalPath(input.path);
+  const decision = indexingFor(input.path, input.searchParams, input.noindex);
+  const canonicalPath = decision.canonicalPath;
   const canonical = resolveCanonical(input.canonicalOverride, canonicalPath);
 
   const socialImage = absoluteImageUrl(input.image) ?? absoluteUrl(DEFAULT_OG_IMAGE);
@@ -107,7 +117,7 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
     description,
     keywords: normalizeKeywords(input.keywords),
     alternates: { canonical },
-    robots: input.noindex
+    robots: decision.noindex
       ? // follow, always: a crawler must be able to read this page's links and
         // its noindex. Blocking it in robots.txt instead would leave the URL
         // indexable-by-reference and the directive unread.
@@ -134,21 +144,32 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
 }
 
 /**
- * Metadata for a route that resolved to nothing.
+ * Metadata for a route whose entity does not exist.
  *
- * `notFound()` cannot itself set metadata, so this is what the route returns
- * from `generateMetadata` when the entity is missing. Critically it sets a
- * canonical for the *requested* URL rather than inheriting the root layout's
- * homepage canonical, and marks the page `noindex, follow`.
+ * Belt and braces with `app/(site)/not-found.tsx`. When the page body calls
+ * `notFound()`, Next renders the not-found boundary and that file's metadata
+ * export is what ships — but `generateMetadata` has already run, and a route
+ * that returned a bare `{ title }` inherited the root layout's homepage
+ * canonical and its `index, follow`. Whichever of the two Next resolves, the
+ * answer is the same: no canonical, `noindex, follow`.
+ *
+ * `canonical: null` rather than a self-reference — a page that does not exist
+ * is not the canonical version of anything, and pointing one at the homepage
+ * (the previous behaviour) tells Google the two URLs are the same document.
+ *
+ * `path` is unused in the output and kept for the call site's readability and
+ * for the regression tests, which assert every dynamic route passes the
+ * requested path here rather than guessing.
  */
 export function notFoundMetadata(path: string, label = "Page"): Metadata {
+  void normalizeCanonicalPath(path);
   return {
     title: { absolute: `${label} not found | ${brand.fullName}` },
     description: undefined,
-    alternates: { canonical: normalizeCanonicalPath(path) },
+    alternates: { canonical: null },
     robots: { index: false, follow: true, googleBot: { index: false, follow: true } },
-    openGraph: undefined,
-    twitter: undefined,
+    openGraph: null,
+    twitter: null,
   };
 }
 
@@ -161,12 +182,7 @@ export const noindexMetadata = (input: Omit<PageMetadataInput, "noindex">): Meta
  * the one clean form of the URL. `/products/x/?a=1` and `/products/x` must not
  * canonicalise differently.
  */
-export function normalizeCanonicalPath(path: string): string {
-  const withoutQuery = path.split(/[?#]/)[0] || "/";
-  const rooted = withoutQuery.startsWith("/") ? withoutQuery : `/${withoutQuery}`;
-  const trimmed = rooted.replace(/\/+$/, "");
-  return trimmed || "/";
-}
+export const normalizeCanonicalPath = cleanPath;
 
 /**
  * Honour a CMS canonical override only when it is same-origin and parseable.

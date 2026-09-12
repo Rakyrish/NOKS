@@ -42,11 +42,12 @@ export const metadata: Metadata = {
   authors: [{ name: brand.fullName, url: siteUrl }],
   creator: brand.fullName,
   publisher: brand.fullName,
-  // Inherited by any route that does not set its own — which is how soft-404s
-  // ended up canonicalised to the homepage. Every route below now sets an
-  // explicit canonical (see lib/metadata.ts), and tests/metadata.test.ts holds
-  // that line.
-  alternates: { canonical: "/" },
+  // NO `alternates` here, deliberately. `canonical: "/"` was inherited by every
+  // route that did not set its own, which is how a "Product not found" page
+  // came to declare the homepage as its canonical. Each route now supplies one
+  // through `pageMetadata`/`notFoundMetadata`; a route that somehow forgets
+  // emits no canonical at all, which is a far cheaper mistake than emitting the
+  // wrong one. tests/metadata.test.ts holds that line.
   openGraph: {
     type: "website",
     locale: seo.locale,

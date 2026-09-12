@@ -5,16 +5,27 @@ import Link from "next/link";
 import { PageHero } from "@/components/shared/page-hero";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
+import { pageMetadata } from "@/lib/metadata";
 import type { ProductDetail } from "@/types";
 
-export const metadata: Metadata = {
-  title: "Compare Chemical Products",
-  description:
-    "Compare specifications, grades, packaging and availability across NOKS chemical products side by side.",
-  robots: { index: false, follow: true },
-};
-
 type SearchParams = Record<string, string | string[] | undefined>;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  // A scratchpad keyed entirely off whichever slugs the visitor ticked — no
+  // stable, linkable meaning. `noindex` comes from the route being on the
+  // never-indexable list in lib/indexing.ts, not from a per-route override.
+  return pageMetadata({
+    title: "Compare Chemical Products",
+    description:
+      "Compare specifications, grades, packaging and availability across NOKS chemical products side by side.",
+    path: "/compare",
+    searchParams: await searchParams,
+  });
+}
 
 export default async function ComparePage({
   searchParams,

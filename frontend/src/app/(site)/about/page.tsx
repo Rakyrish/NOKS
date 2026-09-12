@@ -13,16 +13,19 @@ import { PageHero } from "@/components/shared/page-hero";
 import { SupplyCoverage } from "@/components/shared/supply-coverage";
 import { Section, SectionHeading } from "@/components/shared/section";
 import { api } from "@/lib/api";
+import { pageMetadata } from "@/lib/metadata";
 import { localBusinessSchema } from "@/lib/schema";
-import { brand, contact, stats } from "@/lib/site";
+import { isVerified } from "@/lib/business";
+import { brand } from "@/lib/site";
 
 export const revalidate = 900;
 
-export const metadata: Metadata = {
-  title: "About — Chemical Supplier in Kenya",
-  description: `${brand.mission} Learn about our history, certifications, technical team and quality assurance.`,
-  alternates: { canonical: "/about" },
-};
+export const metadata: Metadata = pageMetadata({
+  title: "About NOKS — Industrial Chemical Supplier in Nairobi",
+  description: `${brand.mission} Who we are, where we are, how an order runs and who to call.`,
+  path: "/about",
+  image: "/images/pages/about.jpg",
+});
 
 export default async function AboutPage() {
   const [data, team, milestones] = await Promise.all([
@@ -35,9 +38,11 @@ export default async function AboutPage() {
     <>
       <JsonLd id="about-business" data={localBusinessSchema()} />
 
+      {/* Title was "{stats.years} years of chemistry that shows up on time" —
+          a tenure figure from .env that nothing corroborates. */}
       <PageHero
         eyebrow={`About ${brand.name}`}
-        title={`${stats.years} years of chemistry that shows up on time`}
+        title={`${brand.fullName} — industrial chemical supply from Nairobi`}
         description={brand.mission}
         crumbs={[{ name: "About", url: "/about" }]}
         image="/images/pages/about.jpg"
@@ -61,17 +66,24 @@ export default async function AboutPage() {
                 Area, supplying commodity chemicals to manufacturers who were tired of
                 unreliable delivery and missing documentation.
               </p>
+              {/* "food grade handling certified for the beverage and dairy
+                  sectors", "on-site jar testing", "seven neighbouring markets"
+                  and "our own laboratory" were all removed: each names a
+                  capability or a footprint the codebase cannot evidence. What
+                  remains describes the catalogue, which is checkable on this
+                  site. */}
               <p>
                 That original problem still shapes how we operate. Stock availability,
                 batch traceability and honest lead times are not features we advertise —
-                they are the baseline. Around them we built a laboratory reagents division,
-                a dedicated water treatment programme with on-site jar testing, and food
-                grade handling certified for the beverage and dairy sectors.
+                they are the baseline.
               </p>
               <p>
-                Today we serve {contact.country || "Kenya"} and seven neighbouring markets,
-                supported by applications chemists who spend as much time in client plants
-                as they do in our own laboratory.
+                The catalogue today runs to {data.catalog_facts.products} products across{" "}
+                {data.catalog_facts.categories} chemical categories, serving{" "}
+                {data.catalog_facts.industries} industries: industrial and technical grades,
+                laboratory reagents, water treatment chemistry and food grade additives.
+                Every listing publishes its CAS number, grade, purity and packaging so a
+                buyer can check the specification before asking for a price.
               </p>
             </div>
           </Reveal>
@@ -83,11 +95,13 @@ export default async function AboutPage() {
               </p>
               <ul className="mt-5 space-y-4">
                 {[
-                  "A Certificate of Analysis with every batch, without being asked",
+                  isVerified("documents-with-every-batch")
+                    ? "A Certificate of Analysis with every batch, without being asked"
+                    : "The Certificate of Analysis and Safety Data Sheet for any product, on request",
                   "Honest lead times — we quote what we can actually deliver",
                   "Technical advice before the sale, not just after it",
-                  "Segregated storage for food grade and laboratory products",
-                  "GHS-compliant labelling and Safety Data Sheets on every hazardous product",
+                  "A written quotation within one business day",
+                  "Full specification published for every product, before you ask",
                 ].map((item) => (
                   <li key={item} className="flex gap-3 text-[14.5px] text-slate-700">
                     <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-[var(--brand-emerald)] text-white">
@@ -102,14 +116,15 @@ export default async function AboutPage() {
         </div>
       </Section>
 
-      {/* Timeline */}
-      {milestones.length > 0 && (
+      {/* Timeline. Gated: the founding year and each milestone are company
+          history no part of this system can corroborate. */}
+      {isVerified("company-history") && milestones.length > 0 && (
         <Section tone="muted">
           <div className="container-noks">
             <SectionHeading
               eyebrow="Milestones"
               title="How we got here"
-              description={`${stats.years} years of steady, deliberate expansion.`}
+              description="The turning points that shaped the business."
             />
 
             <div className="relative mx-auto mt-14 max-w-3xl">

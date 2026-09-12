@@ -5,15 +5,17 @@ import { ProcessTimeline } from "@/components/home/process-timeline";
 import { ServicesGrid } from "@/components/home/services-grid";
 import { PageHero } from "@/components/shared/page-hero";
 import { api } from "@/lib/api";
+import { pageMetadata } from "@/lib/metadata";
 import { brand } from "@/lib/site";
 
 export const revalidate = 900;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Our Services — Chemical Supply, Sourcing & Technical Support",
   description: `${brand.fullName} offers chemical supply, technical consultation, import & export, custom packaging, chemical sourcing, bulk distribution, laboratory support and turnkey industrial solutions across Kenya and East Africa.`,
-  alternates: { canonical: "/services" },
-};
+  path: "/services",
+  image: "/images/pages/services.jpg",
+});
 
 export default async function ServicesPage() {
   const data = await api.homepage();

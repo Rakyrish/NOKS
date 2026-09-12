@@ -12,8 +12,9 @@ import { PageHero } from "@/components/shared/page-hero";
 import { Section, SectionHeading } from "@/components/shared/section";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
+import { notFoundMetadata, pageMetadata } from "@/lib/metadata";
 import { articleSchema, faqSchema } from "@/lib/schema";
-import { absoluteUrl } from "@/lib/site";
+
 import { imageSrc } from "@/lib/images";
 import { formatDate } from "@/lib/utils";
 
@@ -33,28 +34,24 @@ async function loadPost(slug: string) {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const post = await loadPost(slug);
-  if (!post) return { title: "Article not found" };
+  if (!post) return notFoundMetadata(`/knowledge/${slug}`, "Article");
 
-  const title = post.seo?.title || post.title;
-  const description = post.seo?.description || post.excerpt;
-
-  return {
-    title,
-    description,
+  return pageMetadata({
+    title: post.seo?.title || post.title,
+    description: post.seo?.description || post.excerpt,
+    path: `/knowledge/${post.slug}`,
+    canonicalOverride: post.seo?.canonical,
     keywords: post.tag_list,
-    alternates: { canonical: post.seo?.canonical || `/knowledge/${post.slug}` },
-    robots: post.seo?.noindex ? { index: false, follow: true } : undefined,
-    openGraph: {
-      type: "article",
-      title,
-      description,
-      url: absoluteUrl(`/knowledge/${post.slug}`),
+    image: post.cover_image,
+    imageAlt: post.cover_alt || post.title,
+    ogType: "article",
+    noindex: post.seo?.noindex,
+    article: {
       publishedTime: post.published_at,
       modifiedTime: post.updated_at,
       authors: post.author?.name ? [post.author.name] : undefined,
-      images: post.cover_image ? [{ url: post.cover_image, alt: post.cover_alt }] : undefined,
     },
-  };
+  });
 }
 
 export default async function ArticlePage({ params }: Params) {
@@ -62,9 +59,16 @@ export default async function ArticlePage({ params }: Params) {
   const post = await loadPost(slug);
   if (!post) notFound();
 
+  // No category crumb. It used to be `/knowledge?category=<slug>` — a
+  // parameter URL published as an intermediate BreadcrumbList item on every
+  // article, which the indexing policy marks `noindex, follow`. A breadcrumb
+  // must name a crawlable, canonical URL, and there is no clean
+  // `/knowledge/category/<slug>` route to name: with six articles across seven
+  // categories, minting seven near-empty landing pages to satisfy a crumb
+  // would trade one thin-content problem for a worse one. The category is
+  // still shown, as the hero eyebrow and as a filter link on /knowledge.
   const crumbs = [
     { name: "Knowledge", url: "/knowledge" },
-    { name: post.category_name, url: `/knowledge?category=${post.category_slug}` },
     { name: post.title, url: `/knowledge/${post.slug}` },
   ];
 

@@ -8,10 +8,26 @@ import { TrustStrip } from "@/components/home/trust-strip";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Section } from "@/components/shared/section";
 import { SupplyCoverage } from "@/components/shared/supply-coverage";
+import type { Metadata } from "next";
+
 import { api } from "@/lib/api";
+import { pageMetadata } from "@/lib/metadata";
+import { contact, seo } from "@/lib/site";
 import { faqSchema, itemListSchema, localBusinessSchema } from "@/lib/schema";
 
 export const revalidate = 300;
+
+/**
+ * Explicit rather than inherited. The root layout no longer carries a
+ * canonical, so the homepage declares its own like every other route, and the
+ * H1 below ("Industrial Chemical Distributor in Kenya") and this title now
+ * target the same query.
+ */
+export const metadata: Metadata = pageMetadata({
+  title: seo.title || `Industrial Chemical Distributor in ${contact.country || "Kenya"}`,
+  description: seo.description,
+  path: "/",
+});
 
 /**
  * The homepage answers four questions in order: what do you sell, why should

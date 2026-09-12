@@ -1,93 +1,132 @@
 import type { MetadataRoute } from "next";
 
 import { api } from "@/lib/api";
+import { cleanPath, indexingFor } from "@/lib/indexing";
+import { REDIRECTS } from "@/lib/redirects.mjs";
 import { absoluteUrl } from "@/lib/site";
+import type { SitemapEntry } from "@/types";
 
 // Generated per request, never prerendered. Two reasons:
-//  1. Correctness — a sitemap baked at build time freezes the catalog as it was
-//     the moment the image was built, so every product and article added
+//  1. Correctness — a sitemap baked at build time freezes the catalogue as it
+//     was the moment the image was built, so every product and article added
 //     afterwards stays invisible to crawlers until the next deploy.
-//  2. Buildability — unlike the page loaders, the calls below are not wrapped in
-//     the api `safe()` fallback, so during `next build` (where the backend
-//     container does not exist yet) they hang until Next's 60s static-generation
-//     timeout and fail the build outright.
+//  2. Buildability — the call below is not wrapped in the api `safe()`
+//     fallback, so during `next build` (where the backend container does not
+//     exist yet) it would hang until Next's static-generation timeout and fail
+//     the build outright.
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-/** Dynamic XML sitemap covering every indexable URL. */
+/**
+ * Every URL in here must be publicly reachable, HTTP 200, canonical,
+ * indexable, un-redirected and not a parameter variation.
+ *
+ * The previous sitemap met almost none of that. It listed 249 URLs assembled
+ * by walking the browse API, which cannot see `noindex` or `canonical_url`,
+ * and stamped `lastModified: new Date()` on all but the articles — telling
+ * crawlers the entire catalogue changes on every fetch, which is a signal
+ * Google learns to discard. It carried the duplicate
+ * `water-treatment-chemicals-2` and all eighteen empty categories.
+ *
+ * Each exclusion below is enforced once, here, and asserted by
+ * `tests/sitemap.test.ts`; the live crawl in `tests/live/` then fetches every
+ * URL this produces and fails on a redirect, a non-200, a `noindex` or a
+ * canonical pointing elsewhere.
+ */
+
+/** Sources that must never appear: anything we 301 away from. */
+const REDIRECTED_PATHS = new Set(REDIRECTS.map((rule) => cleanPath(rule.source)));
+
+type Rule = { changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number };
+
+/**
+ * Shared gate for a CMS-backed URL.
+ *
+ * Returns null — i.e. "leave it out" — when the entity declares itself
+ * noindex, canonicalises somewhere else, is the source of a redirect, or the
+ * site's own indexing policy says the path is not indexable.
+ */
+function entryFor(path: string, entry: SitemapEntry, rule: Rule, fallback: Date) {
+  if (entry.noindex) return null;
+  // A row that names a different canonical is a duplicate by the owner's own
+  // declaration. Listing it asks Google to index a page we have told it to
+  // ignore, which is the contradiction Search Console reports as
+  // "Duplicate, Google chose different canonical than user".
+  if (entry.canonical && cleanPath(entry.canonical.replace(/^https?:\/\/[^/]+/, "")) !== cleanPath(path)) {
+    return null;
+  }
+  if (REDIRECTED_PATHS.has(cleanPath(path))) return null;
+  if (indexingFor(path).noindex) return null;
+
+  return {
+    url: absoluteUrl(cleanPath(path)),
+    // Real content timestamps, from `content_updated_at` — which only moves
+    // when a field a reader would notice changes. Never the request time.
+    lastModified: entry.lastmod ? new Date(entry.lastmod) : fallback,
+    changeFrequency: rule.changeFrequency,
+    priority: rule.priority,
+  };
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
+  // Core business pages. `lastModified` is omitted rather than faked: these are
+  // code-owned templates with no content timestamp to report, and an honest
+  // absence beats a fabricated "today".
+  const staticRoutes: MetadataRoute.Sitemap = (
+    [
+      ["/", "weekly", 1],
+      ["/products", "daily", 0.9],
+      ["/quote", "monthly", 0.9],
+      ["/industries", "monthly", 0.8],
+      ["/services", "monthly", 0.8],
+      ["/knowledge", "weekly", 0.8],
+      ["/about", "monthly", 0.7],
+      ["/contact", "monthly", 0.7],
+    ] as const
+  ).map(([path, changeFrequency, priority]) => ({
+    url: absoluteUrl(path),
+    changeFrequency,
+    priority,
+  }));
 
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: absoluteUrl("/"), lastModified: now, changeFrequency: "weekly", priority: 1 },
-    { url: absoluteUrl("/products"), lastModified: now, changeFrequency: "daily", priority: 0.9 },
-    { url: absoluteUrl("/industries"), lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: absoluteUrl("/services"), lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: absoluteUrl("/knowledge"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: absoluteUrl("/about"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: absoluteUrl("/contact"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: absoluteUrl("/quote"), lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-  ];
-
-  // A crawler hitting /sitemap.xml while the backend is briefly unreachable
-  // should still get the static routes, not a 500 — same "degrade, don't fail"
-  // principle the rest of the app applies through api.ts's `safe()`. This route
-  // can't reuse `safe()` directly (it needs to distinguish a truly empty catalog
-  // from a fetch failure while paging), so the same try/catch shape is inlined.
   try {
-    // Pull the full catalog; the API caps page_size, so walk the pages.
-    const products: MetadataRoute.Sitemap = [];
-    for (let page = 1; page <= 20; page += 1) {
-      const response = await api.products({ page, page_size: 96 });
-      products.push(
-        ...response.results.map((product) => ({
-          url: absoluteUrl(`/products/${product.slug}`),
-          lastModified: now,
-          changeFrequency: "weekly" as const,
-          priority: 0.8,
-        })),
-      );
-      if (!response.has_next) break;
-    }
+    const inventory = await api.sitemapInventory();
+    // Only used when a row somehow has no timestamp at all; every row gets one
+    // from the 0009 backfill, so in practice this is unreachable.
+    const fallback = new Date();
 
-    const [categoryTree, industries, posts] = await Promise.all([
-      api.categoryTree(),
-      api.industries(),
-      api.posts({ page: 1 }),
-    ]);
-    // Flatten parent + child categories — each gets its own crawlable
-    // /categories/{slug} page (see app/(site)/categories/[slug]/page.tsx).
-    // Blog categories are deliberately not listed here: they only exist as
-    // /knowledge?category=... query filters, which robots.ts disallows —
-    // listing a robots-blocked URL in the sitemap is a Search Console error,
-    // not a shortcut to indexing it.
-    const categories = categoryTree.flatMap((category) => [category, ...(category.children ?? [])]);
+    const products = inventory.products.flatMap((entry) => {
+      const row = entryFor(`/products/${entry.slug}`, entry, { changeFrequency: "weekly", priority: 0.8 }, fallback);
+      return row ? [row] : [];
+    });
 
-    return [
-      ...staticRoutes,
-      ...products,
-      ...categories.map((category) => ({
-        url: absoluteUrl(`/categories/${category.slug}`),
-        lastModified: now,
-        changeFrequency: "weekly" as const,
-        priority: 0.75,
-      })),
-      ...industries.map((industry) => ({
-        url: absoluteUrl(`/industries/${industry.slug}`),
-        lastModified: now,
-        changeFrequency: "monthly" as const,
-        priority: 0.75,
-      })),
-      ...posts.results.map((post) => ({
-        url: absoluteUrl(`/knowledge/${post.slug}`),
-        lastModified: post.published_at ? new Date(post.published_at) : now,
-        changeFrequency: "monthly" as const,
-        priority: 0.7,
-      })),
-    ];
+    const categories = inventory.categories.flatMap((entry) => {
+      // A category with nothing in it is a thin page competing with the
+      // categories that do have stock. It stays crawlable and keeps its
+      // `noindex, follow`; it just stops being advertised.
+      if (entry.product_count === 0) return [];
+      const row = entryFor(`/categories/${entry.slug}`, entry, { changeFrequency: "weekly", priority: 0.75 }, fallback);
+      return row ? [row] : [];
+    });
+
+    const industries = inventory.industries.flatMap((entry) => {
+      if (entry.product_count === 0) return [];
+      const row = entryFor(`/industries/${entry.slug}`, entry, { changeFrequency: "monthly", priority: 0.75 }, fallback);
+      return row ? [row] : [];
+    });
+
+    const posts = inventory.posts.flatMap((entry) => {
+      const row = entryFor(`/knowledge/${entry.slug}`, entry, { changeFrequency: "monthly", priority: 0.7 }, fallback);
+      return row ? [row] : [];
+    });
+
+    return [...staticRoutes, ...products, ...categories, ...industries, ...posts];
   } catch (error) {
+    // A crawler hitting /sitemap.xml while the backend is briefly unreachable
+    // should still get the core pages, not a 500 — the same "degrade, don't
+    // fail" principle api.ts applies through `safe()`.
     if (process.env.NODE_ENV !== "production") {
-      console.warn("[sitemap] backend unreachable, serving static routes only:", (error as Error).message);
+      console.warn("[sitemap] inventory unreachable, serving core routes only:", (error as Error).message);
     }
     return staticRoutes;
   }

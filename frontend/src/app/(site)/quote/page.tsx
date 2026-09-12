@@ -5,13 +5,28 @@ import { Suspense } from "react";
 import { PageHero } from "@/components/shared/page-hero";
 import { QuoteBuilder } from "@/components/shared/quote-builder";
 import { Skeleton } from "@/components/ui";
+import { pageMetadata } from "@/lib/metadata";
 import { brand } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Request a Quotation — Industrial & Laboratory Chemicals",
-  description: `Request a written quotation from ${brand.fullName}. Add multiple products, specify quantities and packaging, and receive pricing with lead times within one business day.`,
-  alternates: { canonical: "/quote" },
-};
+type SearchParams = Record<string, string | string[] | undefined>;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  // Every product page links here with `?product=<slug>` to prefill the form.
+  // That is 182 near-identical URLs for one form. They canonicalise to /quote
+  // and carry `noindex, follow`, so the prefill keeps working for humans
+  // without asking Google to index a form 182 times.
+  return pageMetadata({
+    title: "Request a Quotation — Industrial & Laboratory Chemicals",
+    description: `Request a written quotation from ${brand.fullName}. Add multiple products, specify quantities and packaging, and receive pricing with lead times within one business day.`,
+    path: "/quote",
+    searchParams: await searchParams,
+    image: "/images/pages/quote.jpg",
+  });
+}
 
 const ASSURANCES = [
   { Icon: Clock, title: "One business day", note: "Written quotation with lead times." },

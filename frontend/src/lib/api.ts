@@ -13,6 +13,7 @@ import type {
   ProductDetail,
   QuoteItemInput,
   Service,
+  SitemapInventory,
   TeamMember,
 } from "@/types";
 
@@ -194,6 +195,15 @@ export const api = {
       faqs: [],
       latest_posts: [],
     }),
+
+  /**
+   * Everything the XML sitemap needs, in one call.
+   *
+   * Deliberately NOT wrapped in `safe()`: a sitemap that silently drops 180
+   * URLs because the backend blinked is worse than one that fails loudly, and
+   * the route has its own fallback for that case.
+   */
+  sitemapInventory: () => request<SitemapInventory>("/sitemap-inventory/"),
 
   products: (query: ProductQuery = {}) =>
     safe(

@@ -96,7 +96,9 @@ export type ClaimId =
   | "in-house-qc"
   | "documents-with-every-batch"
   | "company-history"
-  | "social-profiles";
+  | "social-profiles"
+  | "stock-status"
+  | "minimum-order-quantity";
 
 /**
  * What each gated claim asserts and what would unlock it.
@@ -144,6 +146,18 @@ export const CLAIMS: Record<ClaimId, { asserts: string; needs: string }> = {
   "social-profiles": {
     asserts: "Organization sameAs links to Facebook, Instagram, LinkedIn and X.",
     needs: "Confirmation each handle belongs to NOKS. x.com/noks returned 404 when probed.",
+  },
+  "stock-status": {
+    asserts: '"In stock" on every product page and card.',
+    needs:
+      "All 182 published products carry the model default `in_stock` and there is " +
+      "no inventory system. Either connect one, or curate the field per product.",
+  },
+  "minimum-order-quantity": {
+    asserts: "A per-product minimum order quantity.",
+    needs:
+      "All 182 products carry the model default of 1, including bulk acids and " +
+      "tanker-delivered commodities. Set real MOQs, or leave it off the page.",
   },
 };
 

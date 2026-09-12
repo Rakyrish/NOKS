@@ -8,16 +8,18 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { RevealGroup, RevealItem } from "@/components/shared/motion";
 import { PageHero } from "@/components/shared/page-hero";
 import { api } from "@/lib/api";
+import { pageMetadata } from "@/lib/metadata";
 import { itemListSchema } from "@/lib/schema";
 import { brand } from "@/lib/site";
 
 export const revalidate = 900;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Industries We Serve — Chemical Supply Across East Africa",
   description: `${brand.fullName} supplies water treatment, food processing, agriculture, mining, construction, paint, manufacturing, textile, laboratory, oil & gas, hospitality and healthcare sectors across Kenya and East Africa.`,
-  alternates: { canonical: "/industries" },
-};
+  path: "/industries",
+  image: "/images/pages/industries.jpg",
+});
 
 export default async function IndustriesPage() {
   const industries = await api.industries();
