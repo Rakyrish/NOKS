@@ -101,6 +101,16 @@ async function request<T>(path: string, options: FetchOptions = {}): Promise<T> 
         // headers state facts that are true of the request being rendered on
         // the visitor's behalf, just not of this particular hop.
         ...(isServer ? { "X-Forwarded-Proto": "https", "X-Forwarded-Host": new URL(siteUrl).host } : {}),
+        // Identifies this call as our own server-side render rather than an
+        // anonymous visitor. Without it every rendered page counted against a
+        // single 120/hour anon bucket, so a crawl of the 182 product URLs ran
+        // the API out of budget and the routes returned 500 — precisely under
+        // the crawler traffic this work exists to attract. Server-only: read
+        // from a non-NEXT_PUBLIC variable, so it cannot reach the browser
+        // bundle. See backend/apps/core/throttling.py.
+        ...(isServer && process.env.INTERNAL_API_TOKEN
+          ? { "X-Internal-Renderer": process.env.INTERNAL_API_TOKEN }
+          : {}),
         ...(init.headers ?? {}),
       },
       ...(isServer && init.method === undefined

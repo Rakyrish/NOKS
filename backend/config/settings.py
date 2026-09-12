@@ -24,6 +24,12 @@ env = environ.Env()
 
 # ─────────────────────────────── CORE ─────────────────────────────
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="insecure-dev-key-change-me")
+
+# Shared secret proving a request came from our own Next.js renderer rather
+# than from the public internet. Server-to-server only — deliberately NOT a
+# NEXT_PUBLIC_* value, so it never reaches a browser bundle. Empty means no
+# caller is trusted and everything is throttled as anonymous.
+INTERNAL_API_TOKEN = env("INTERNAL_API_TOKEN", default="")
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
 ENVIRONMENT = env("DJANGO_ENV", default="production")
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
@@ -204,8 +210,14 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "apps.core.pagination.StandardPagination",
     "PAGE_SIZE": env.int("API_PAGE_SIZE", default=12),
     "DEFAULT_THROTTLE_CLASSES": [
-        "rest_framework.throttling.AnonRateThrottle",
-        "rest_framework.throttling.UserRateThrottle",
+        # Not the stock AnonRateThrottle: every server-rendered page calls this
+        # API unauthenticated from one address, so the whole site's rendering
+        # shared a single 120/hour anon bucket and a full crawl turned into
+        # 429s and then 500s. See apps/core/throttling.py.
+        "apps.core.throttling.RendererAwareAnonThrottle",
+        # Also ours: UserRateThrottle keys on the client IP when there is no
+        # authenticated user, so it counts the renderer a second time.
+        "apps.core.throttling.RendererAwareUserThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
         "anon": env("THROTTLE_ANON_RATE", default="120/hour"),
