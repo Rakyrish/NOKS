@@ -4,8 +4,9 @@ import Link from "next/link";
 import * as React from "react";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/shared/motion";
-import { stats } from "@/lib/site";
+import { isVerified } from "@/lib/business";
 import { cn } from "@/lib/utils";
+import type { CatalogFacts } from "@/types";
 
 type Tile = {
   title: string;
@@ -18,7 +19,17 @@ type Tile = {
   priority?: boolean;
 };
 
-const TILES: Tile[] = [
+/**
+ * Two of these tiles asserted capabilities nothing in the system evidences —
+ * a road-tanker fleet and an in-house QC laboratory — and a third promised
+ * same-day dispatch. Each falls back to what is demonstrably true (we sell
+ * bulk packs; we publish a specification; we hold stock in Industrial Area)
+ * until its claim is verified. See CLAIMS in lib/business.ts.
+ *
+ * The headline counter reads the live catalogue rather than the `1200`
+ * configured in .env, which the 182-product catalogue contradicts outright.
+ */
+const tiles = (facts: CatalogFacts): Tile[] => [
   {
     title: "Bulk drums & IBCs",
     caption:
@@ -27,31 +38,50 @@ const TILES: Tile[] = [
     icon: Boxes,
     href: "/products",
     stat: {
-      value: `${stats.products.toLocaleString("en-KE")}+`,
-      label: "product lines supplied",
+      value: facts.products.toLocaleString("en-KE"),
+      label: "product lines listed",
     },
     className: "sm:col-span-2 sm:row-span-2",
   },
-  {
-    title: "Tanker & fleet delivery",
-    caption: "Bulk road tankers across the EAC corridor.",
-    image: "/images/sections/tanker.jpg",
-    icon: Truck,
-    href: "/services",
-    className: "",
-  },
-  {
-    title: "In-house QC",
-    caption: "Batch verification before every release.",
-    image: "/images/sections/qc-powder.jpg",
-    icon: FlaskConical,
-    href: "/services",
-    className: "",
-  },
+  isVerified("logistics-fleet")
+    ? {
+        title: "Tanker & fleet delivery",
+        caption: "Bulk road tankers across the EAC corridor.",
+        image: "/images/sections/tanker.jpg",
+        icon: Truck,
+        href: "/services",
+        className: "",
+      }
+    : {
+        title: "Bulk & packed delivery",
+        caption: "Delivery arranged to your site, from a 25 kg bag to a full road load.",
+        image: "/images/sections/tanker.jpg",
+        icon: Truck,
+        href: "/services",
+        className: "",
+      },
+  isVerified("in-house-qc")
+    ? {
+        title: "In-house QC",
+        caption: "Batch verification before every release.",
+        image: "/images/sections/qc-powder.jpg",
+        icon: FlaskConical,
+        href: "/services",
+        className: "",
+      }
+    : {
+        title: "Published specifications",
+        caption: "CAS number, grade, purity and packaging stated on every listing.",
+        image: "/images/sections/qc-powder.jpg",
+        icon: FlaskConical,
+        href: "/products",
+        className: "",
+      },
   {
     title: "Nairobi warehouse",
-    caption:
-      "Industrial Area stock holding, repacking and same-day dispatch across the city.",
+    caption: isVerified("same-day-dispatch")
+      ? "Industrial Area stock holding, repacking and same-day dispatch across the city."
+      : "Enterprise Road, Industrial Area — stock holding and repacking, with a written lead time on every line.",
     image: "/images/sections/warehouse-drums.jpg",
     icon: Warehouse,
     href: "/about",
@@ -59,7 +89,7 @@ const TILES: Tile[] = [
   },
 ];
 
-export const SupplyMosaic = () => (
+export const SupplyMosaic = ({ facts }: { facts: CatalogFacts }) => (
   <section className="relative border-b border-rule bg-white py-16 lg:py-24">
     <div className="container-noks">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.55fr)] lg:gap-14">
@@ -80,12 +110,17 @@ export const SupplyMosaic = () => (
             with the documentation your auditors ask for, on the schedule your plant runs on.
           </p>
 
+          {/* Counts, not claims. "4 EAC countries served" contradicted the 8 in
+              .env and neither was evidenced; "100% Orders with COA & MSDS"
+              stood against zero stored documents. Both are gone. What is left
+              is either computed from the catalogue or a service level we set
+              ourselves and state identically on /quote. */}
           <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-7 border-t border-rule pt-8">
             {[
-              { value: "12", label: "Industries supplied" },
-              { value: "24 hr", label: "Typical quote turnaround" },
-              { value: "4", label: "EAC countries served" },
-              { value: "100%", label: "Orders with COA & MSDS" },
+              { value: String(facts.industries), label: "Industries supplied" },
+              { value: String(facts.categories), label: "Chemical categories" },
+              { value: String(facts.products), label: "Products listed" },
+              { value: "1 day", label: "Target quote turnaround" },
             ].map((item) => (
               <div key={item.label}>
                 <dt className="font-display text-3xl font-extrabold text-blue-600">
@@ -110,7 +145,7 @@ export const SupplyMosaic = () => (
 
         {/* ── Mosaic ───────────────────────────────────────────── */}
         <RevealGroup className="grid auto-rows-[168px] grid-cols-1 gap-3.5 sm:auto-rows-[190px] sm:grid-cols-3 lg:auto-rows-[205px]">
-          {TILES.map((tile) => {
+          {tiles(facts).map((tile) => {
             const Icon = tile.icon;
             return (
               <RevealItem key={tile.title} className={cn("group", tile.className)}>
@@ -150,9 +185,7 @@ export const SupplyMosaic = () => (
                       </span>
                     </span>
                     <span
-                      className="mt-1.5 block max-w-sm text-[12.5px] leading-snug text-silver-300
-                                 opacity-0 transition-opacity duration-300 group-hover:opacity-100
-                                 max-sm:opacity-100"
+                      className="mt-1.5 block max-w-sm text-[12.5px] leading-snug text-silver-200"
                     >
                       {tile.caption}
                     </span>

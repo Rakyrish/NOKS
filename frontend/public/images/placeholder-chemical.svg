@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Local fallback illustration for a product with no photograph on file.
+
+  Display only. It is deliberately never emitted into Product JSON-LD, Open
+  Graph or sitemap image entries — telling a crawler this generic beaker is a
+  photograph of the product would be inaccurate structured data.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" width="640" height="480"
+     role="img" aria-label="Product photography not yet available">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EEF3FF"/>
+      <stop offset="55%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#ECFDF5"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="640" height="480" fill="url(#bg)"/>
+
+  <g fill="none" stroke="#93B4FF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Beaker outline -->
+    <path d="M266 150v88L196 349a30 30 0 0 0 26 45h196a30 30 0 0 0 26-45l-70-111v-88"/>
+    <path d="M252 150h136"/>
+  </g>
+
+  <!-- Liquid -->
+  <path d="M222 300h196l16 26a30 30 0 0 1-26 45H232a30 30 0 0 1-26-45z" fill="#C7D9FF" opacity="0.75"/>
+  <circle cx="286" cy="332" r="9" fill="#FFFFFF" opacity="0.85"/>
+  <circle cx="332" cy="350" r="6" fill="#FFFFFF" opacity="0.7"/>
+  <circle cx="366" cy="328" r="7" fill="#FFFFFF" opacity="0.75"/>
+
+  <text x="320" y="438" text-anchor="middle"
+        font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+        font-size="21" fill="#7C8DB0">Product photography available on request</text>
+</svg>

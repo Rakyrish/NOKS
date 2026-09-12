@@ -50,7 +50,7 @@ export default async function HomePage() {
       <TrustStrip />
 
       {/* ── 3. What we actually do ────────────────────────────── */}
-      <SupplyMosaic />
+      <SupplyMosaic facts={data.catalog_facts} />
 
       {/* ── 4. The catalogue, filterable by sector ────────────── */}
       <IndustryTabs products={data.featured_products} />

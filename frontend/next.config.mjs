@@ -2,6 +2,8 @@ import path from "node:path";
 
 import dotenv from "dotenv";
 
+import { nextRedirects } from "./src/lib/redirects.mjs";
+
 // The whole stack reads ONE .env, at the repo root — never a local copy.
 dotenv.config({ path: path.resolve(process.cwd(), "../.env") });
 
@@ -47,10 +49,19 @@ const nextConfig = {
 
   images: {
     formats: ["image/avif", "image/webp"],
-    remotePatterns: imageDomains.flatMap((hostname) => [
-      { protocol: "https", hostname },
-      { protocol: "http", hostname },
-    ]),
+    // HTTPS only, and only the hosts we actually serve images from. The `http`
+    // variant used to be registered alongside every host, which made a
+    // downgraded image URL renderable — and `images.unsplash.com` was in the
+    // list without a single reference to it in the codebase. An entry here is
+    // permission for arbitrary remote content to be proxied through our own
+    // optimiser, so the list stays as short as the asset inventory.
+    remotePatterns: imageDomains.map((hostname) => ({ protocol: "https", hostname })),
+  },
+
+  async redirects() {
+    // Verified one-hop 301s for URLs that used to resolve. See
+    // src/lib/redirects.mjs — the same array backs tests/redirects.test.ts.
+    return nextRedirects();
   },
 
   async rewrites() {

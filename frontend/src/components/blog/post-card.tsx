@@ -3,11 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui";
-import { formatDate, mediaUrl } from "@/lib/utils";
+import { imageSrc } from "@/lib/images";
+import { formatDate } from "@/lib/utils";
 import type { PostSummary } from "@/types";
 
 export const PostCard = ({ post }: { post: PostSummary }) => {
-  const cover = mediaUrl(post.cover_image);
+  const cover = imageSrc(post.cover_image);
 
   return (
     <article

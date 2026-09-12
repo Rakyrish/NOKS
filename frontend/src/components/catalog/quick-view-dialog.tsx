@@ -10,7 +10,7 @@ import Link from "next/link";
 import { AvailabilityBadge, Badge } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
-import { mediaUrl } from "@/lib/utils";
+import { imageSrc } from "@/lib/images";
 
 export const QuickViewDialog = ({
   slug,
@@ -28,7 +28,7 @@ export const QuickViewDialog = ({
     staleTime: 5 * 60_000,
   });
 
-  const image = mediaUrl(product?.image ?? null);
+  const image = imageSrc(product?.image ?? null);
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>

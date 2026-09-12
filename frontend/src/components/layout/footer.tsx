@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
+import { nap } from "@/lib/business";
 import { brand, contact, social } from "@/lib/site";
 
 const PRODUCT_CATEGORIES = [
@@ -145,19 +146,21 @@ export const Footer = () => {
                 </div>
               )}
 
-              <div>
-                <span className="block text-[11px] text-silver-400 uppercase font-semibold">
-                  WhatsApp Direct
-                </span>
-                <a
-                  href={contact.whatsappUrl || "https://wa.me/254700000000"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-0.5 inline-flex items-center gap-1.5 font-bold text-[#25D366] hover:underline"
-                >
-                  <span>Chat with Sales Chemist</span>
-                </a>
-              </div>
+              {nap.whatsappUrl && (
+                <div>
+                  <span className="block text-[11px] text-silver-400 uppercase font-semibold">
+                    WhatsApp Direct
+                  </span>
+                  <a
+                    href={nap.whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-0.5 inline-flex items-center gap-1.5 font-bold text-[#25D366] hover:underline"
+                  >
+                    <span>Chat with Sales Chemist</span>
+                  </a>
+                </div>
+              )}
 
               {contact.email && (
                 <div>

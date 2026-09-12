@@ -2,26 +2,33 @@
 
 import { Counter, RevealGroup, RevealItem } from "@/components/shared/motion";
 import { Icon } from "@/components/shared/icon";
-import { stats as envStats } from "@/lib/site";
-import type { Stat } from "@/types";
+import { isVerified } from "@/lib/business";
+import type { CatalogFacts, Stat } from "@/types";
 
-/** Falls back to the .env figures when the CMS has no stats yet. */
-const FALLBACK: Omit<Stat, "id" | "order">[] = [
-  { label: "Years Experience", value: envStats.years, suffix: "+", icon: "calendar" },
-  { label: "Products", value: envStats.products, suffix: "+", icon: "package" },
-  { label: "Countries Served", value: envStats.countries, suffix: "", icon: "globe" },
-  { label: "Industries", value: envStats.industries, suffix: "", icon: "factory" },
-  { label: "Deliveries Completed", value: envStats.deliveries, suffix: "+", icon: "truck" },
-  { label: "Customer Satisfaction", value: envStats.satisfaction, suffix: "%", icon: "smile" },
+/**
+ * Counters the site can prove, straight from the catalogue.
+ *
+ * The editable counters this band used to render were claims, and one of them
+ * was checkably false: "1,200+ product lines" against a catalogue of 182
+ * published products. "25,000 deliveries", "98% customer satisfaction",
+ * "15 years" and "8 countries" are unverifiable from here. All five are gated
+ * behind CLAIMS["operational-stats"]; until the owner supplies the evidence,
+ * the band shows counts that are recomputed on every request and cannot drift.
+ */
+const verifiableStats = (facts: CatalogFacts): Omit<Stat, "id" | "order">[] => [
+  { label: "Products in catalogue", value: facts.products, suffix: "", icon: "package" },
+  { label: "Chemical categories", value: facts.categories, suffix: "", icon: "layers" },
+  { label: "Industries supplied", value: facts.industries, suffix: "", icon: "factory" },
 ];
 
-export const StatsBand = ({ stats }: { stats: Stat[] }) => {
-  const items = stats.length ? stats : FALLBACK;
+export const StatsBand = ({ stats, facts }: { stats: Stat[]; facts: CatalogFacts }) => {
+  const items = isVerified("operational-stats") && stats.length ? stats : verifiableStats(facts);
 
   return (
     <section className="relative border-y border-line bg-surface-muted py-14 sm:py-16">
       <RevealGroup
-        className="container-noks grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-6"
+        className="container-noks grid grid-cols-2 justify-center gap-x-6 gap-y-10 sm:grid-cols-3
+                   lg:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]"
         staggerChildren={0.07}
       >
         {items.map((stat) => (

@@ -3,6 +3,7 @@
  * Every value traces back to the root .env or the CMS — nothing invented here.
  */
 
+import { absoluteImageUrl, schemaImages } from "./images";
 import { absoluteUrl, brand, contact, seo, siteUrl, social } from "./site";
 import type { FAQ, Industry, PostDetail, ProductDetail } from "@/types";
 
@@ -44,8 +45,8 @@ export const organizationSchema = () => ({
   name: brand.fullName,
   legalName: brand.fullName,
   url: siteUrl,
-  logo: { "@type": "ImageObject", url: absoluteUrl(brand.logo) },
-  image: absoluteUrl(brand.logo),
+  logo: { "@type": "ImageObject", url: absoluteImageUrl(brand.logo) ?? undefined },
+  image: absoluteImageUrl(brand.logo) ?? undefined,
   description: brand.mission || seo.description,
   slogan: brand.tagline,
   email: contact.email || undefined,
@@ -91,7 +92,7 @@ export const localBusinessSchema = () => ({
   "@type": "LocalBusiness",
   "@id": `${siteUrl}/#localbusiness`,
   name: brand.fullName,
-  image: absoluteUrl(brand.logo),
+  image: absoluteImageUrl(brand.logo) ?? undefined,
   url: siteUrl,
   telephone: contact.phone,
   email: contact.email,
@@ -148,21 +149,28 @@ export const breadcrumbSchema = (items: { name: string; url: string }[]) => ({
 });
 
 export const productSchema = (product: ProductDetail) => {
+  /**
+   * Mirrors, field for field, the "Technical specifications" table rendered on
+   * the product page (see app/(site)/products/[slug]/page.tsx). Structured data
+   * that asserts a property the visitor cannot see is a Google guideline
+   * violation, so the two lists are built from the same source fields and must
+   * be changed together.
+   */
+  const property = (name: string, value: string | null | undefined) =>
+    value ? [{ "@type": "PropertyValue", name, value: String(value) }] : [];
+
   const additionalProperty = [
-    ...(product.chemical_formula
-      ? [{ "@type": "PropertyValue", name: "Chemical formula", value: product.chemical_formula }]
-      : []),
-    ...(product.cas_number
-      ? [{ "@type": "PropertyValue", name: "CAS number", value: product.cas_number }]
-      : []),
-    ...(product.purity
-      ? [{ "@type": "PropertyValue", name: "Purity", value: product.purity }]
-      : []),
     ...Object.entries(product.specifications ?? {}).map(([name, value]) => ({
       "@type": "PropertyValue",
       name,
       value: String(value),
     })),
+    ...property("Purity", product.purity),
+    ...property("CAS number", product.cas_number),
+    ...property("Chemical formula", product.chemical_formula),
+    ...property("Grade", product.grade_display),
+    ...property("HS code", product.hs_code),
+    ...property("Manufacturer", product.manufacturer_name),
   ];
 
   // A real, transactable price is required for Offer eligibility in Google's
@@ -182,10 +190,24 @@ export const productSchema = (product: ProductDetail) => {
     description: product.description || product.short_description,
     category: product.category_name,
     url: absoluteUrl(`/products/${product.slug}`),
-    ...(product.image ? { image: [absoluteUrl(product.image)] } : {}),
+    // Every gallery image, absolute and validated. `schemaImages` returns
+    // undefined when nothing is publishable, so a product with no photograph
+    // omits `image` rather than passing off the local placeholder as one.
+    ...(() => {
+      const image = schemaImages(
+        product.image,
+        ...(product.images ?? []).map((entry) => entry.image),
+      );
+      return image ? { image } : {};
+    })(),
+    // Brand is asserted ONLY from a recorded manufacturer, which the page also
+    // shows in the specification table. NOKS distributes third-party chemicals;
+    // naming ourselves as `brand` on goods we did not manufacture was an
+    // unverifiable claim, and Google treats Product.brand as the maker. A
+    // product with no manufacturer on file omits the property.
     ...(product.manufacturer_name
       ? { brand: { "@type": "Brand", name: product.manufacturer_name } }
-      : { brand: { "@type": "Brand", name: brand.fullName } }),
+      : {}),
     ...(additionalProperty.length ? { additionalProperty } : {}),
     ...(hasRealPrice
       ? {
@@ -225,7 +247,10 @@ export const articleSchema = (post: PostDetail) => ({
   headline: post.title,
   description: post.excerpt,
   url: absoluteUrl(`/knowledge/${post.slug}`),
-  ...(post.cover_image ? { image: [absoluteUrl(post.cover_image)] } : {}),
+  ...(() => {
+    const image = schemaImages(post.cover_image);
+    return image ? { image } : {};
+  })(),
   datePublished: post.published_at,
   dateModified: post.updated_at || post.published_at,
   articleSection: post.category_name,

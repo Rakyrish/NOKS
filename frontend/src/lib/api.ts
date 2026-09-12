@@ -180,6 +180,7 @@ export type ProductQuery = {
 export const api = {
   homepage: () =>
     safe(request<HomepageData>("/homepage/"), {
+      catalog_facts: { products: 0, categories: 0, industries: 0 },
       stats: [],
       industries: [],
       categories: [],

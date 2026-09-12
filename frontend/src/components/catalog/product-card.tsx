@@ -9,7 +9,8 @@ import * as React from "react";
 import { AvailabilityBadge, Badge } from "@/components/ui";
 import { useCompare } from "@/lib/use-compare";
 import { useWishlist } from "@/lib/use-wishlist";
-import { cn, mediaUrl } from "@/lib/utils";
+import { imageSrc } from "@/lib/images";
+import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 
 import { ProductContactActions } from "./product-contact-actions";
@@ -36,7 +37,7 @@ export const ProductCard = ({
   const { toggle: toggleCompare, has: inCompare } = useCompare();
   const { toggle: toggleWishlist, has: inWishlist } = useWishlist();
 
-  const image = mediaUrl(product.image);
+  const image = imageSrc(product.image);
   const href = `/products/${product.slug}`;
 
   const actions = (

@@ -5,13 +5,14 @@ import { Beaker } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
 
-import { cn, mediaUrl } from "@/lib/utils";
+import { imageSrc } from "@/lib/images";
+import { cn } from "@/lib/utils";
 import type { ProductDetail } from "@/types";
 
 export const ProductGallery = ({ product }: { product: ProductDetail }) => {
   const [active, setActive] = React.useState(0);
   const images = product.images ?? [];
-  const current = mediaUrl(images[active]?.image ?? product.image);
+  const current = imageSrc(images[active]?.image ?? product.image);
 
   return (
     <div className="rounded-2xl border border-line bg-white p-4 sm:p-6">
@@ -46,7 +47,7 @@ export const ProductGallery = ({ product }: { product: ProductDetail }) => {
       {images.length > 1 && (
         <div className="mt-4 flex gap-2.5 overflow-x-auto pb-1">
           {images.map((image, index) => {
-            const thumb = mediaUrl(image.image);
+            const thumb = imageSrc(image.image);
             if (!thumb) return null;
             return (
               <button

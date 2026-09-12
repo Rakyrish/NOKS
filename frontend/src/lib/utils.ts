@@ -13,12 +13,12 @@ export const formatDate = (value: string | Date, locale = "en-KE") =>
 export const formatNumber = (value: number, locale = "en-KE") =>
   new Intl.NumberFormat(locale).format(value);
 
-/** Turn a media path from the API into something <Image> can load. */
-export const mediaUrl = (path: string | null | undefined): string | null => {
-  if (!path) return null;
-  if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  return path.startsWith("/") ? path : `/${path}`;
-};
+// Image URL handling lives in lib/images.ts — `imageSrc()` for display,
+// `absoluteImageUrl()`/`schemaImages()` for structured data, OG and sitemaps.
+// It used to be split between a permissive `mediaUrl()` here and
+// `absoluteUrl()` in lib/site.ts, which disagreed about absolute values and
+// produced `https://<site>/https://res.cloudinary.com/...` in every Product
+// JSON-LD. One helper, one rule.
 
 export const truncate = (text: string, max: number) =>
   text.length <= max ? text : `${text.slice(0, max - 1).trimEnd()}…`;

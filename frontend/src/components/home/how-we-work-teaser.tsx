@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, FileCheck2, HelpCircle, Phone, Send } from "l
 import Link from "next/link";
 import * as React from "react";
 
+import { nap } from "@/lib/business";
 import { brand, contact } from "@/lib/site";
 
 const STEPS = [
@@ -92,14 +93,16 @@ export const HowWeWorkTeaser = () => {
                   <ArrowRight className="size-4" />
                 </Link>
 
-                <a
-                  href={`https://wa.me/${contact.whatsapp || "254700000000"}?text=${encodeURIComponent("Hello NOKS, I'd like to talk to a chemical sales specialist about pricing and availability.")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 px-6 text-sm font-bold text-navy-950 transition-transform hover:scale-[1.02]"
-                >
-                  <span>Chat on WhatsApp</span>
-                </a>
+                {nap.whatsappUrl && (
+                  <a
+                    href={`${nap.whatsappUrl}?text=${encodeURIComponent("Hello NOKS, I'd like to talk to a chemical sales specialist about pricing and availability.")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 px-6 text-sm font-bold text-navy-950 transition-transform hover:scale-[1.02]"
+                  >
+                    <span>Chat on WhatsApp</span>
+                  </a>
+                )}
 
                 {contact.phone && (
                   <a

@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from apps.blog.models import Post
 from apps.blog.serializers import PostListSerializer
 from apps.catalog.models import Category, Industry, Product
+from apps.core.seo import category_product_counts
 from apps.catalog.serializers import (
     CategorySerializer,
     IndustrySerializer,
@@ -103,13 +104,25 @@ def homepage(request):
     categories = (
         Category.objects.published()
         .filter(parent__isnull=True)
-        .annotate(product_count=Count("products", filter=published_products, distinct=True))
+        # Descendant-aware, like the category pages themselves — see
+        # apps.core.seo.category_product_counts.
+        .annotate(product_count=category_product_counts())
     )
     featured = Product.objects.published().with_relations().filter(is_featured=True)[:8]
     posts = Post.objects.published().select_related("category", "author")[:3]
 
     return Response(
         {
+            # Counts the site can prove, read live from the catalogue. The
+            # editable `stats` counters below are claims (1,200 product lines
+            # against a 182-product catalogue, 25,000 deliveries, 98%
+            # satisfaction) and are gated on the frontend until the owner
+            # verifies them; these are facts, and cannot drift.
+            "catalog_facts": {
+                "products": Product.objects.published().count(),
+                "categories": Category.objects.published().count(),
+                "industries": Industry.objects.published().count(),
+            },
             "stats": StatSerializer(Stat.objects.published(), many=True).data,
             "industries": IndustrySerializer(industries, many=True, context=ctx).data,
             "categories": CategorySerializer(categories, many=True, context=ctx).data,

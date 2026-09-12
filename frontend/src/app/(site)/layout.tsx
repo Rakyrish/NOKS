@@ -27,9 +27,14 @@ const alice = Alice({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  // No `template` here on purpose. It used to be `%s | NOKS Chemical Division`,
+  // which double-appended the brand on the 56 CMS rows whose `meta_title`
+  // already ended with it. Branding is applied exactly once, by
+  // `withBrand()` in lib/metadata.ts, and every page below sets
+  // `title.absolute`.
   title: {
-    default: seo.title || `${brand.fullName}`,
-    template: `%s | ${brand.name} ${brand.division}`,
+    default: seo.title || brand.fullName,
+    absolute: seo.title || brand.fullName,
   },
   description: seo.description,
   keywords: seo.keywords,
@@ -37,6 +42,10 @@ export const metadata: Metadata = {
   authors: [{ name: brand.fullName, url: siteUrl }],
   creator: brand.fullName,
   publisher: brand.fullName,
+  // Inherited by any route that does not set its own — which is how soft-404s
+  // ended up canonicalised to the homepage. Every route below now sets an
+  // explicit canonical (see lib/metadata.ts), and tests/metadata.test.ts holds
+  // that line.
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",

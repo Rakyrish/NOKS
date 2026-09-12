@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 
+import { nap } from "@/lib/business";
 import { brand, contact } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -133,17 +134,19 @@ export const Header = () => {
               </a>
             )}
 
-            <a
-              href={contact.whatsappUrl || "https://wa.me/254700000000"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 font-medium text-[#25D366] transition-colors hover:underline"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor" className="size-3.5">
-                <path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-6.99A9.82 9.82 0 0 0 12.04 2z" />
-              </svg>
-              <span>WhatsApp</span>
-            </a>
+            {nap.whatsappUrl && (
+              <a
+                href={nap.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 font-medium text-[#25D366] transition-colors hover:underline"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" className="size-3.5">
+                  <path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-6.99A9.82 9.82 0 0 0 12.04 2z" />
+                </svg>
+                <span>WhatsApp</span>
+              </a>
+            )}
 
             {contact.email && (
               <a

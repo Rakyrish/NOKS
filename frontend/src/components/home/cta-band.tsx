@@ -6,6 +6,7 @@ import Link from "next/link";
 import * as React from "react";
 
 import { Reveal } from "@/components/shared/motion";
+import { nap } from "@/lib/business";
 import { contact } from "@/lib/site";
 
 export const CtaBand = ({
@@ -69,15 +70,17 @@ export const CtaBand = ({
           </a>
         )}
 
-        <a
-          href={contact.whatsappUrl || "https://wa.me/254700000000"}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5 text-sm font-bold text-navy-950 transition-transform hover:scale-[1.02]"
-        >
-          <MessageCircle className="size-4" />
-          <span>Chat on WhatsApp</span>
-        </a>
+        {nap.whatsappUrl && (
+          <a
+            href={nap.whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5 text-sm font-bold text-navy-950 transition-transform hover:scale-[1.02]"
+          >
+            <MessageCircle className="size-4" />
+            <span>Chat on WhatsApp</span>
+          </a>
+        )}
       </div>
 
       <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-silver-400 border-t border-white/10 pt-6 max-w-xl mx-auto">

@@ -293,7 +293,21 @@ export interface Facets {
   total: number;
 }
 
+/**
+ * Counts computed from the catalogue on every request.
+ *
+ * Distinct from `Stat[]`, which is editable marketing copy. These cannot be
+ * wrong: they are `COUNT(*)`. See lib/business.ts for why that distinction
+ * earns its own type.
+ */
+export interface CatalogFacts {
+  products: number;
+  categories: number;
+  industries: number;
+}
+
 export interface HomepageData {
+  catalog_facts: CatalogFacts;
   stats: Stat[];
   industries: Industry[];
   categories: Category[];

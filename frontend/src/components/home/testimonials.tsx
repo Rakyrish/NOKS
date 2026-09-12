@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 import * as React from "react";
 
 import { Section, SectionHeading } from "@/components/shared/section";
+import { isVerified } from "@/lib/business";
 import type { ClientLogo, Testimonial } from "@/types";
 
 export const Testimonials = ({
@@ -37,7 +38,13 @@ export const Testimonials = ({
     return () => clearInterval(timer);
   }, [paused, testimonials.length]);
 
-  if (!testimonials.length) return null;
+  // Both halves of this section name third parties: five quotes attributed to
+  // named individuals, and eight named organisations presented as customers —
+  // including real, listed companies. Nothing in the repository shows any of
+  // them consented, so neither renders until the owner confirms it. The rows
+  // are untouched in the database and in the admin.
+  // See CLAIMS.testimonials / CLAIMS["client-list"] in lib/business.ts.
+  if (!isVerified("testimonials") || !testimonials.length) return null;
   const active = testimonials[index];
 
   return (

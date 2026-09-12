@@ -1,114 +1,123 @@
-import { Mail, Phone } from "lucide-react";
+"use client";
 
-import { brand, contact } from "@/lib/site";
+import { Mail, MessageCircle, Phone, Plus, X } from "lucide-react";
+import * as React from "react";
+
+import { nap } from "@/lib/business";
+import { brand } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 /**
- * Persistent contact shortcuts.
+ * Persistent contact shortcuts, behind one launcher.
  *
- * These deliberately render on the server with no mount guard and no
- * JS-driven entrance. Both were previously in play — a `mounted` flag kept
- * the whole block out of the server HTML, and framer's `initial={{opacity:0}}`
- * left the markup at zero opacity until hydration ran — so the buttons only
- * existed once JS had loaded, and never appeared at all without it. Nothing
- * here needs the browser: every value is inlined from the environment at
- * build time.
+ * Two things were wrong before:
+ *
+ * 1. Three always-on buttons stacked ~180px up the right edge, with the AI
+ *    assistant launcher holding the left edge — four floating affordances,
+ *    and on a short phone screen the right-hand stack sat on top of whatever
+ *    the visitor was reading. They now collapse into a single button that
+ *    expands on demand.
+ *
+ * 2. Every value carried a hardcoded placeholder fallback — a dummy Kenyan
+ *    number for tel:, for WhatsApp and for the tooltip, plus a literal email
+ *    address. One blank environment variable away from publishing a fake
+ *    phone number sitewide, and a fake number in the visible NAP is worse for
+ *    local search than no number at all. A channel with no configured value
+ *    is simply not rendered.
  */
+
+const WHATSAPP_MESSAGE = (name: string) =>
+  `Hello ${name}, I would like to inquire about industrial chemicals and request a quotation.`;
+
 export const FloatingContacts = () => {
-  const phoneHref = contact.telHref || "tel:+254700000000";
-  const displayPhone = contact.phone || "+254 700 000 000";
-  const emailHref = contact.email ? `mailto:${contact.email}` : "mailto:info@noksindustrial.com";
-  const displayEmail = contact.email || "info@noksindustrial.com";
-  const whatsappHref = contact.whatsappUrl
-    ? `${contact.whatsappUrl}?text=${encodeURIComponent(
-      `Hello ${brand.name}, I would like to inquire about industrial chemicals and request a quotation.`,
-      )}`
-    : `https://wa.me/254700000000?text=${encodeURIComponent(
-      `Hello ${brand.name}, I would like to inquire about industrial chemicals and request a quotation.`,
-      )}`;
+  const [open, setOpen] = React.useState(false);
+
+  const channels = [
+    nap.phoneDisplay && {
+      key: "phone",
+      href: nap.telHref,
+      label: `Call ${nap.phoneDisplay}`,
+      short: nap.phoneDisplay,
+      Icon: Phone,
+      className: "bg-gradient-to-br from-[#1c2f5e] to-[#040b1f] ring-blue-500/30",
+      external: false,
+    },
+    nap.email && {
+      key: "email",
+      href: `mailto:${nap.email}`,
+      label: `Email ${nap.email}`,
+      short: nap.email,
+      Icon: Mail,
+      className: "bg-gradient-to-br from-[#0c48e6] via-[#0a38c2] to-[#0d2f9c] ring-white/20",
+      external: false,
+    },
+    nap.whatsappUrl && {
+      key: "whatsapp",
+      href: `${nap.whatsappUrl}?text=${encodeURIComponent(WHATSAPP_MESSAGE(brand.name))}`,
+      label: "Chat on WhatsApp",
+      short: "WhatsApp",
+      Icon: MessageCircle,
+      className: "bg-[#25D366] ring-white/30",
+      external: true,
+    },
+  ].filter(Boolean) as {
+    key: string;
+    href: string;
+    label: string;
+    short: string;
+    Icon: React.ElementType;
+    className: string;
+    external: boolean;
+  }[];
+
+  if (!channels.length) return null;
 
   return (
     <div
-      className="fixed right-5 bottom-6 z-50 flex flex-col items-end gap-3 sm:right-6"
-      aria-label="Quick contact shortcuts"
+      className="fixed right-4 bottom-5 z-50 flex flex-col items-end gap-2.5 sm:right-6 sm:bottom-6"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node)) setOpen(false);
+      }}
     >
-      {/* Phone Button (Deep Navy with Blue Ring) */}
-      <div className="group relative flex items-center">
-        <span
-          className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap
-                     rounded-lg bg-[#040b1f] px-3 py-1.5 text-xs font-semibold text-white
-                     shadow-lg opacity-0 transition-all duration-200 group-hover:opacity-100
-                     group-hover:-translate-x-1 sm:block border border-blue-500/30"
-        >
-          Call {displayPhone}
-        </span>
-        <a
-          href={phoneHref}
-          aria-label={`Call us at ${displayPhone}`}
-          className="flex size-12 items-center justify-center rounded-full
-                     bg-gradient-to-br from-[#1c2f5e] to-[#040b1f] text-white
-                     shadow-[0_6px_20px_rgba(4,11,31,0.5)] ring-2 ring-blue-500/30
-                     transition-all duration-200 hover:scale-110 hover:ring-blue-400
-                     active:scale-95"
-        >
-          <Phone className="size-5 text-blue-300" />
-        </a>
+      <div
+        id="floating-contact-channels"
+        // `hidden` rather than opacity: a collapsed panel must be out of the
+        // tab order and out of the accessibility tree, not merely invisible.
+        hidden={!open}
+        className="flex flex-col items-end gap-2.5"
+      >
+        {channels.map(({ key, href, label, short, Icon, className, external }) => (
+          <a
+            key={key}
+            href={href}
+            aria-label={label}
+            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            className={cn(
+              "flex items-center gap-2.5 rounded-full py-2 pr-3 pl-2 text-[13px] font-semibold",
+              "text-white shadow-lg ring-2 transition-transform hover:scale-[1.03] active:scale-95",
+              className,
+            )}
+          >
+            <span className="grid size-8 place-items-center rounded-full bg-white/15">
+              <Icon className="size-4" />
+            </span>
+            <span className="max-w-[9.5rem] truncate">{short}</span>
+          </a>
+        ))}
       </div>
 
-      {/* Email Button (NOKS Royal Blue) */}
-      <div className="group relative flex items-center">
-        <span
-          className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap
-                     rounded-lg bg-[#040b1f] px-3 py-1.5 text-xs font-semibold text-white
-                     shadow-lg opacity-0 transition-all duration-200 group-hover:opacity-100
-                     group-hover:-translate-x-1 sm:block border border-blue-500/30"
-        >
-          Email: {displayEmail}
-        </span>
-        <a
-          href={emailHref}
-          aria-label={`Email us at ${displayEmail}`}
-          className="flex size-12 items-center justify-center rounded-full
-                     bg-gradient-to-br from-[#0c48e6] via-[#0a38c2] to-[#0d2f9c] text-white
-                     shadow-[0_6px_20px_rgba(12,72,230,0.5)] ring-2 ring-white/20
-                     transition-all duration-200 hover:scale-110 hover:ring-white/40
-                     active:scale-95"
-        >
-          <Mail className="size-5" />
-        </a>
-      </div>
-
-      {/* WhatsApp Button (WhatsApp Green) */}
-      <div className="group relative flex items-center">
-        <span
-          className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap
-                     rounded-lg bg-[#040b1f] px-3 py-1.5 text-xs font-semibold text-white
-                     shadow-lg opacity-0 transition-all duration-200 group-hover:opacity-100
-                     group-hover:-translate-x-1 sm:block border border-white/15"
-        >
-          Chat on WhatsApp
-        </span>
-        <a
-          href={whatsappHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Chat with us on WhatsApp"
-          className="relative flex size-14 items-center justify-center rounded-full
-                     bg-[#25D366] text-white
-                     shadow-[0_8px_25px_rgba(37,211,102,0.55)] ring-2 ring-white/30
-                     transition-all duration-200 hover:scale-110 hover:ring-white/60
-                     active:scale-95"
-        >
-          {/* Soft pulsing ring */}
-          <span
-            className="absolute inset-0 -z-10 animate-ping rounded-full bg-[#25D366]/40
-                       [animation-duration:3s]"
-            aria-hidden
-          />
-          <svg viewBox="0 0 24 24" fill="currentColor" className="size-7">
-            <path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-6.99A9.82 9.82 0 0 0 12.04 2zM17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.174.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884a9.825 9.825 0 016.988 2.898 9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.548 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.488" />
-          </svg>
-        </a>
-      </div>
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-controls="floating-contact-channels"
+        aria-label={open ? "Hide contact options" : "Show contact options"}
+        className="grid size-13 place-items-center rounded-full bg-[var(--brand-primary)] text-white
+                   shadow-[0_8px_25px_rgba(12,72,230,0.45)] ring-2 ring-white/25
+                   transition-transform hover:scale-105 active:scale-95"
+      >
+        {open ? <X className="size-5" /> : <Plus className="size-5" />}
+      </button>
     </div>
   );
 };

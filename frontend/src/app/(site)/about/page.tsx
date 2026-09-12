@@ -43,7 +43,7 @@ export default async function AboutPage() {
         image="/images/pages/about.jpg"
       />
 
-      <StatsBand stats={data.stats} />
+      <StatsBand stats={data.stats} facts={data.catalog_facts} />
 
       {/* Story */}
       <Section>

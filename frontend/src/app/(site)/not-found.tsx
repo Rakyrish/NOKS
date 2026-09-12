@@ -1,7 +1,33 @@
 import { ArrowLeft, Search } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { brand } from "@/lib/site";
+
+/**
+ * Authoritative head for every 404.
+ *
+ * When a route calls `notFound()`, Next discards that route's
+ * `generateMetadata()` result and renders this boundary against the *root
+ * layout's* metadata instead. That is how missing products came to serve
+ * `<link rel="canonical" href="https://chemicals.noksindustrial.com">` and
+ * `<meta name="robots" content="index, follow">` — both inherited from
+ * app/(site)/layout.tsx, neither correct for a page that does not exist.
+ *
+ * `canonical: null` removes the inherited tag rather than replacing it: a
+ * missing page has no canonical, and pointing one at the homepage tells Google
+ * these two URLs are the same document.
+ */
+export const metadata: Metadata = {
+  title: { absolute: `Page not found | ${brand.fullName}` },
+  description:
+    "The page you requested is not in the NOKS chemical catalogue. Search the catalogue or tell us which chemical you need.",
+  alternates: { canonical: null },
+  robots: { index: false, follow: true, googleBot: { index: false, follow: true } },
+  openGraph: null,
+  twitter: null,
+};
 
 export default function NotFound() {
   return (

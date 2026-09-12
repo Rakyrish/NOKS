@@ -26,9 +26,9 @@ import { Section, SectionHeading } from "@/components/shared/section";
 import { AvailabilityBadge, Badge } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
+import { notFoundMetadata, pageMetadata } from "@/lib/metadata";
 import { faqSchema, productSchema } from "@/lib/schema";
 import { brand, contact } from "@/lib/site";
-import { absoluteUrl } from "@/lib/site";
 
 export const revalidate = 600;
 
@@ -46,25 +46,21 @@ async function loadProduct(slug: string) {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const product = await loadProduct(slug);
-  if (!product) return { title: "Product not found" };
+  // Canonicalise the *requested* URL, not the homepage, and mark it noindex.
+  // Returning a bare `{ title }` here used to inherit the root layout's
+  // `canonical: "/"` and its `index, follow`.
+  if (!product) return notFoundMetadata(`/products/${slug}`, "Product");
 
-  const title = product.seo?.title || `${product.name} — Supplier in ${contact.country || "Kenya"}`;
-  const description = product.seo?.description || product.short_description;
-
-  return {
-    title,
-    description,
-    keywords: product.seo?.keywords ? product.seo.keywords.split(",") : undefined,
-    alternates: { canonical: product.seo?.canonical || `/products/${product.slug}` },
-    robots: product.seo?.noindex ? { index: false, follow: true } : undefined,
-    openGraph: {
-      type: "website",
-      title,
-      description,
-      url: absoluteUrl(`/products/${product.slug}`),
-      images: product.image ? [{ url: product.image, alt: product.name }] : undefined,
-    },
-  };
+  return pageMetadata({
+    title: product.seo?.title || `${product.name} — Supplier in ${contact.country || "Kenya"}`,
+    description: product.seo?.description || product.short_description,
+    path: `/products/${product.slug}`,
+    canonicalOverride: product.seo?.canonical,
+    keywords: product.seo?.keywords,
+    image: product.image,
+    imageAlt: product.name,
+    noindex: product.seo?.noindex,
+  });
 }
 
 export default async function ProductPage({ params }: Params) {
@@ -78,7 +74,35 @@ export default async function ProductPage({ params }: Params) {
     { name: product.name, url: `/products/${product.slug}` },
   ];
 
-  const specs = Object.entries(product.specifications ?? {});
+  /**
+   * Everything the Product JSON-LD asserts, rendered as a visible table.
+   *
+   * Google requires structured data to match what a human sees on the page.
+   * CAS number, formula, purity and the specification map were already
+   * published as `additionalProperty`, and the manufacturer as `brand`, but
+   * only some of them appeared on screen — the manufacturer never did unless
+   * it happened to have a website. Building both from this one list keeps them
+   * in step by construction.
+   */
+  const specs: [string, string][] = [
+    ...Object.entries(product.specifications ?? {}).map(
+      ([key, value]) => [key, String(value)] as [string, string],
+    ),
+    ...(product.purity ? ([["Purity", product.purity]] as [string, string][]) : []),
+    ...(product.cas_number
+      ? ([["CAS number", product.cas_number]] as [string, string][])
+      : []),
+    ...(product.chemical_formula
+      ? ([["Chemical formula", product.chemical_formula]] as [string, string][])
+      : []),
+    ...(product.grade_display
+      ? ([["Grade", product.grade_display]] as [string, string][])
+      : []),
+    ...(product.hs_code ? ([["HS code", product.hs_code]] as [string, string][]) : []),
+    ...(product.manufacturer_name
+      ? ([["Manufacturer", product.manufacturer_name]] as [string, string][])
+      : []),
+  ];
 
   return (
     <>
@@ -156,20 +180,10 @@ export default async function ProductPage({ params }: Params) {
                             {key}
                           </th>
                           <td className="px-4 py-3 font-semibold text-navy-900">
-                            {String(value)}
+                            {value}
                           </td>
                         </tr>
                       ))}
-                      {product.purity && (
-                        <tr className={specs.length % 2 ? "bg-surface-muted/60" : undefined}>
-                          <th scope="row" className="px-4 py-3 text-left font-medium text-slate-500">
-                            Purity
-                          </th>
-                          <td className="px-4 py-3 font-semibold text-navy-900">
-                            {product.purity}
-                          </td>
-                        </tr>
-                      )}
                     </tbody>
                   </table>
                 </div>

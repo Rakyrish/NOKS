@@ -14,7 +14,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ApiError, api } from "@/lib/api";
 import { articleSchema, faqSchema } from "@/lib/schema";
 import { absoluteUrl } from "@/lib/site";
-import { formatDate, mediaUrl } from "@/lib/utils";
+import { imageSrc } from "@/lib/images";
+import { formatDate } from "@/lib/utils";
 
 export const revalidate = 900;
 
@@ -67,7 +68,7 @@ export default async function ArticlePage({ params }: Params) {
     { name: post.title, url: `/knowledge/${post.slug}` },
   ];
 
-  const cover = mediaUrl(post.cover_image);
+  const cover = imageSrc(post.cover_image);
 
   return (
     <>
