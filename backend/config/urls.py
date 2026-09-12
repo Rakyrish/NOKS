@@ -10,7 +10,7 @@ from apps.blog import views as blog_views
 from apps.catalog import admin_views as catalog_admin_views
 from apps.catalog import views as catalog_views
 from apps.core import admin_views as core_admin_views
-from apps.core import auth_views, views as core_views
+from apps.core import auth_views, seo as core_seo, views as core_views
 from apps.leads import admin_views as leads_admin_views
 from apps.leads import views as leads_views
 
@@ -116,6 +116,7 @@ api_v1 = [
     path("homepage/", core_views.homepage, name="homepage"),
     path("site-config/", core_views.site_config, name="site-config"),
     path("health/", core_views.health, name="health"),
+    path("sitemap-inventory/", core_seo.sitemap_inventory, name="sitemap-inventory"),
     path("assistant/chat/", assistant_views.chat, name="assistant-chat"),
     path("assistant/lead/", assistant_views.capture_lead, name="assistant-lead"),
     path("assistant/config/", assistant_views.assistant_config, name="assistant-config"),

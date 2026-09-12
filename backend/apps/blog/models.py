@@ -4,10 +4,17 @@ from django.db import models
 from django.utils import timezone
 from taggit.managers import TaggableManager
 
-from apps.core.models import OrderedModel, SEOModel, SluggedModel, TimeStampedModel
+from apps.core.models import (
+    ContentTimeStampedModel,
+    OrderedModel,
+    SEOModel,
+    SluggedModel,
+    TimeStampedModel,
+    UniquelyNamedModel,
+)
 
 
-class BlogCategory(TimeStampedModel, SluggedModel, SEOModel, OrderedModel):
+class BlogCategory(TimeStampedModel, SluggedModel, UniquelyNamedModel, SEOModel, OrderedModel):
     description = models.TextField(blank=True)
     icon = models.CharField(max_length=40, blank=True)
     color = models.CharField(max_length=9, blank=True)
@@ -29,7 +36,7 @@ class PostQuerySet(models.QuerySet):
         return self.filter(status=Post.Status.PUBLISHED, published_at__lte=timezone.now())
 
 
-class Post(TimeStampedModel, SluggedModel, SEOModel):
+class Post(ContentTimeStampedModel, SluggedModel, SEOModel):
     class Status(models.TextChoices):
         DRAFT = "draft", "Draft"
         REVIEW = "review", "In review"
@@ -67,6 +74,11 @@ class Post(TimeStampedModel, SluggedModel, SEOModel):
     view_count = models.PositiveIntegerField(default=0, editable=False)
 
     objects = PostQuerySet.as_manager()
+
+    CONTENT_FIELDS = (
+        "title", "slug", "excerpt", "body", "cover_alt", "category_id", "author_id",
+        "status", "published_at", "meta_title", "meta_description", "noindex",
+    )
 
     class Meta:
         ordering = ["-published_at", "-created_at"]

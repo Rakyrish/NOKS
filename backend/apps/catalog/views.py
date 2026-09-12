@@ -3,6 +3,8 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from apps.core.seo import category_product_counts
+
 from .filters import ProductFilter
 from .models import Category, Industry, Manufacturer, PackageSize, Product
 from .serializers import (
@@ -24,9 +26,14 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
 
     def get_queryset(self):
+        # Descendant-aware, to agree with what the category page actually
+        # lists: ProductFilter.filter_category matches the category OR its
+        # parent, so a parent page shows its children's products. Counting
+        # only direct products made every parent category advertise "0
+        # products" next to a grid full of them.
         qs = (
             Category.objects.published()
-            .annotate(product_count=Count("products", filter=_PUBLISHED_PRODUCTS, distinct=True))
+            .annotate(product_count=category_product_counts())
             .prefetch_related("children")
         )
         if self.action == "list" and self.request.query_params.get("tree") != "false":

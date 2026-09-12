@@ -59,8 +59,14 @@ class CategorySerializer(SEOFieldsMixin, serializers.ModelSerializer):
     def get_children(self, obj):
         if self.context.get("flat"):
             return []
+        # Annotate here too. Without it `product_count` resolves to nothing on
+        # the child instances and DRF drops the key entirely, so every
+        # subcategory chip on a category page rendered without its count.
+        from apps.core.seo import category_product_counts
+
+        children = obj.children.published().annotate(product_count=category_product_counts())
         return CategorySerializer(
-            obj.children.published(), many=True, context={**self.context, "flat": True}
+            children, many=True, context={**self.context, "flat": True}
         ).data
 
 

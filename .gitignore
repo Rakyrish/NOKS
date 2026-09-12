@@ -13,3 +13,6 @@ backend/staticfiles/
 *.log
 .pytest_cache/
 coverage/
+
+# Local helper for running manage.py against the live DB from the working tree.
+backend/.dev-manage.sh

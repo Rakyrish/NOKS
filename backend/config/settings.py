@@ -352,8 +352,19 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = False
 
+# `manage.py test` runs with the production settings module and DEBUG=False (that
+# is what CI does too), and Django's test client always speaks plain HTTP. With
+# SECURE_SSL_REDIRECT on, SecurityMiddleware answered 301 to every request before
+# any view ran, so the whole suite failed on the redirect rather than on anything
+# real — 19 failures + 5 errors out of 32, and a CI job that gated nothing. The
+# other hardening below is inert under the test client, so only the redirect is
+# lifted, and only while a test run is actually in progress.
+TESTING = "test" in sys.argv[1:2] or bool(env("PYTEST_CURRENT_TEST", default=""))
+
 if not DEBUG:
-    SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT", default=True)
+    SECURE_SSL_REDIRECT = not TESTING and env.bool(
+        "DJANGO_SECURE_SSL_REDIRECT", default=True
+    )
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = env.int("DJANGO_HSTS_SECONDS", default=31536000)

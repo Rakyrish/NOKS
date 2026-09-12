@@ -1,8 +1,27 @@
 """Shared abstract bases + editable site content (stats, services, FAQ, …)."""
 
+import re
+
 from django.core.files.storage import FileSystemStorage
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
+
+
+def normalize_name(name: str) -> str:
+    """Collapse a name to the key used to detect a duplicate listing.
+
+    Case, punctuation and spacing carry no meaning in a chemical or taxonomy
+    name, so "Water Treatment Chemicals" and "water treatment chemicals" are
+    the same thing and must not both exist. British/American -sulph-/-sulf-
+    spellings fold together for the same reason.
+
+    Digits are deliberately kept: concentration and grade numbers DO
+    distinguish products ("Hydrochloric Acid 33%" vs "... 25%").
+    """
+    key = (name or "").lower().replace("sulph", "sulf")
+    key = re.sub(r"[^a-z0-9]+", " ", key)
+    return " ".join(key.split())
 
 
 class TimeStampedModel(models.Model):
@@ -11,6 +30,55 @@ class TimeStampedModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class ContentTimeStampedModel(TimeStampedModel):
+    """Adds a timestamp that only moves when the *content* actually changes.
+
+    `updated_at` is `auto_now`, so it fires on every save — including a staff
+    member toggling a flag, a re-import that rewrites identical values, or any
+    future bookkeeping write. Publishing that as a sitemap `lastmod` tells
+    crawlers the page changed when it did not, and a `lastmod` that is always
+    "now" is a signal Google learns to ignore.
+
+    Subclasses list the fields a reader would notice in `CONTENT_FIELDS`; the
+    stamp advances only when one of those differs from what is already stored.
+    Writes that bypass `save()` (`QuerySet.update()`, e.g. the `view_count`
+    bump in the product viewset) correctly leave it alone.
+    """
+
+    content_updated_at = models.DateTimeField(
+        null=True, blank=True, db_index=True, editable=False
+    )
+
+    #: Fields whose change means the published page changed. Overridden below.
+    CONTENT_FIELDS: tuple[str, ...] = ()
+
+    class Meta:
+        abstract = True
+
+    def _content_snapshot(self):
+        return {field: getattr(self, field, None) for field in self.CONTENT_FIELDS}
+
+    def save(self, *args, **kwargs):
+        if self.content_updated_at is None:
+            # New row, or an existing one migrated in before this field existed.
+            self.content_updated_at = timezone.now()
+        elif self.pk and self.CONTENT_FIELDS:
+            stored = (
+                type(self)
+                ._base_manager.filter(pk=self.pk)
+                .values(*self.CONTENT_FIELDS)
+                .first()
+            )
+            if stored is not None and stored != self._content_snapshot():
+                self.content_updated_at = timezone.now()
+            # `update_fields` callers must be told about the extra column, or
+            # the new stamp is computed and then silently dropped.
+            update_fields = kwargs.get("update_fields")
+            if update_fields is not None:
+                kwargs["update_fields"] = {*update_fields, "content_updated_at"}
+        super().save(*args, **kwargs)
 
 
 class PublishableQuerySet(models.QuerySet):
@@ -37,7 +105,6 @@ class SEOModel(models.Model):
 class SluggedModel(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=220, unique=True, blank=True)
-
     class Meta:
         abstract = True
 
@@ -49,10 +116,44 @@ class SluggedModel(models.Model):
             base = slugify(self.name)[:200] or "item"
             slug, counter = base, 2
             model = self.__class__
-            while model.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+            # `_base_manager`, not `objects`: a publishable model's default
+            # manager may hide unpublished rows, and a slug taken by a hidden
+            # row is still taken.
+            while model._base_manager.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base}-{counter}"
                 counter += 1
             self.slug = slug
+        if kwargs.get("update_fields") is not None:
+            kwargs["update_fields"] = {*kwargs["update_fields"], "slug"}
+        super().save(*args, **kwargs)
+
+
+class UniquelyNamedModel(models.Model):
+    """A slugged model the database itself refuses to list twice.
+
+    `SluggedModel.save()` resolves a slug collision by appending -2, -3, …,
+    which silently *creates* the duplicate instead of rejecting it. That is
+    where `/categories/water-treatment-chemicals-2` came from: someone re-added
+    "water treatment chemicals" next to the existing "Water Treatment
+    Chemicals" and got a second published, indexable, empty landing page.
+
+    `Product` has carried this guard since catalog migration 0004. Category and
+    Industry gained it in 0007, BlogCategory here — all three are just as
+    URL-bearing.
+
+    Mix in *after* `SluggedModel` so `name` is defined by the time `save()`
+    reads it.
+    """
+
+    name_key = models.CharField(max_length=220, unique=True, editable=False)
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        self.name_key = normalize_name(self.name)
+        if (update_fields := kwargs.get("update_fields")) is not None:
+            kwargs["update_fields"] = {*update_fields, "name_key"}
         super().save(*args, **kwargs)
 
 

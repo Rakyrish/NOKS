@@ -1,35 +1,30 @@
 """Chemical product catalog: categories, industries, manufacturers, products."""
 
-import re
-
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
 
-from apps.core.models import OrderedModel, SEOModel, SluggedModel, TimeStampedModel
+from apps.core.models import (
+    ContentTimeStampedModel,
+    OrderedModel,
+    SEOModel,
+    SluggedModel,
+    TimeStampedModel,
+    UniquelyNamedModel,
+    normalize_name,
+)
+
+# Historical alias: the name-collapsing rule now lives in apps.core.models so
+# the taxonomies share it with Product, but migration 0004 and the admin import
+# path still reference this name.
+normalize_product_name = normalize_name
 
 
-def normalize_product_name(name: str) -> str:
-    """Collapse a product name to the key used to detect duplicate listings.
-
-    Case, punctuation and spacing carry no meaning in a chemical name, so
-    "Acetone, Technical Grade" and "Acetone Technical Grade" are the same
-    product and must not both exist — that punctuation-only difference is
-    exactly what let a pile of duplicates through before Product.name_key
-    was made unique. British/American -sulph-/-sulf- spellings are folded
-    together for the same reason ("Sulphuric Acid 98%" == "Sulfuric Acid 98%").
-
-    Digits are deliberately kept: concentration and grade numbers DO
-    distinguish products ("Hydrochloric Acid 33%" vs "... 25%").
-    """
-    key = name.lower().replace("sulph", "sulf")
-    key = re.sub(r"[^a-z0-9]+", " ", key)
-    return " ".join(key.split())
-
-
-class Category(TimeStampedModel, SluggedModel, SEOModel, OrderedModel):
+class Category(ContentTimeStampedModel, SluggedModel, UniquelyNamedModel, SEOModel, OrderedModel):
     """Self-nesting product taxonomy (Industrial Chemicals → Acids → …)."""
+
+    CONTENT_FIELDS = ("name", "slug", "description", "parent_id", "is_published", "noindex")
 
     parent = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE, related_name="children"
@@ -47,8 +42,12 @@ class Category(TimeStampedModel, SluggedModel, SEOModel, OrderedModel):
         return f"{self.parent.name} / {self.name}" if self.parent else self.name
 
 
-class Industry(TimeStampedModel, SluggedModel, SEOModel, OrderedModel):
+class Industry(ContentTimeStampedModel, SluggedModel, UniquelyNamedModel, SEOModel, OrderedModel):
     """Water Treatment, Food Processing, Mining, …"""
+
+    CONTENT_FIELDS = (
+        "name", "slug", "tagline", "description", "applications", "is_published", "noindex",
+    )
 
     tagline = models.CharField(max_length=200, blank=True)
     description = models.TextField(blank=True)
@@ -81,7 +80,7 @@ class ProductQuerySet(models.QuerySet):
         )
 
 
-class Product(TimeStampedModel, SluggedModel, SEOModel):
+class Product(ContentTimeStampedModel, SluggedModel, UniquelyNamedModel, SEOModel):
     class Availability(models.TextChoices):
         IN_STOCK = "in_stock", "In stock"
         LOW_STOCK = "low_stock", "Low stock"
@@ -97,11 +96,8 @@ class Product(TimeStampedModel, SluggedModel, SEOModel):
 
     # ── Identity ────────────────────────────────────────────────
     sku = models.CharField(max_length=64, unique=True, db_index=True)
-    # Normalized form of `name`, kept unique so the database itself refuses a
-    # second listing of the same product. SluggedModel.save() would otherwise
-    # quietly resolve the collision by appending -2/-3 to the slug and create
-    # the duplicate anyway. Maintained in save(); never edited directly.
-    name_key = models.CharField(max_length=220, unique=True, editable=False)
+    # `name_key`, the unique duplicate-detection key, comes from
+    # UniquelyNamedModel (migration 0004).
     chemical_formula = models.CharField(max_length=120, blank=True)
     cas_number = models.CharField(
         max_length=40, blank=True, db_index=True, verbose_name="CAS number"
@@ -177,6 +173,15 @@ class Product(TimeStampedModel, SluggedModel, SEOModel):
 
     objects = ProductQuerySet.as_manager()
 
+    CONTENT_FIELDS = (
+        "name", "slug", "sku", "short_description", "description", "applications",
+        "benefits", "specifications", "packaging_options", "faqs", "storage_handling",
+        "safety_information", "hazard_class", "cas_number", "chemical_formula", "hs_code",
+        "purity", "grade", "category_id", "manufacturer_id", "availability", "unit",
+        "min_order_quantity", "price_on_request", "indicative_price", "currency",
+        "lead_time", "is_published", "noindex", "meta_title", "meta_description",
+    )
+
     class Meta:
         ordering = ["-is_featured", "name"]
         indexes = [
@@ -191,7 +196,6 @@ class Product(TimeStampedModel, SluggedModel, SEOModel):
         if not self.sku:
             base = slugify(self.name).upper().replace("-", "")[:10] or "PROD"
             self.sku = f"NOKS-{base}-{Product.objects.count() + 1:04d}"
-        self.name_key = normalize_product_name(self.name)
         super().save(*args, **kwargs)
 
     @property
