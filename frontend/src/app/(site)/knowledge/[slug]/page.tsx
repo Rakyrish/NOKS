@@ -168,8 +168,17 @@ export default async function ArticlePage({ params }: Params) {
                 <p className="text-[11px] font-bold tracking-[0.12em] text-slate-400 uppercase">
                   Written by
                 </p>
+                {/* Linked, so the Person named as `author` in the Article
+                    JSON-LD resolves to a page a reader (or a crawler) can
+                    check. An unlinked byline asserts authorship and gives
+                    nobody a way to verify it. */}
                 <p className="mt-3 font-display text-[15px] font-bold text-navy-900">
-                  {post.author.name}
+                  <Link
+                    href={`/knowledge/authors/${post.author.slug}`}
+                    className="transition-colors hover:text-[var(--brand-primary)]"
+                  >
+                    {post.author.name}
+                  </Link>
                 </p>
                 {post.author.role && (
                   <p className="text-[13px] text-[var(--brand-primary)]">{post.author.role}</p>

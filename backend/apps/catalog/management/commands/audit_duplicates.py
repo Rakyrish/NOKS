@@ -120,10 +120,12 @@ class Command(BaseCommand):
             )
 
         if options["markdown"]:
-            self._write_markdown(options["markdown"], safe, review, site_url)
+            self._write_markdown(
+                options["markdown"], safe, review, site_url, options["apply_canonicals"]
+            )
             self.stdout.write(f"Markdown written to {options['markdown']}")
 
-    def _write_markdown(self, path, safe, review, site_url):
+    def _write_markdown(self, path, safe, review, site_url, applied):
         out = [
             "# Duplicate product listings",
             "",
@@ -133,10 +135,15 @@ class Command(BaseCommand):
             "product distinctions, so only clusters where all of those agree are",
             "treated as consolidatable.",
             "",
-            f"- **{len(safe)}** clusters consolidated by canonical URL",
+            f"- **{len(safe)}** clusters {'consolidated by' if applied else 'eligible for'} "
+            "canonical URL",
             f"- **{len(review)}** clusters left for owner review",
             "",
-            "## Consolidated automatically",
+            "## Consolidated automatically" if applied else "## Eligible for consolidation",
+            "",
+            ""
+            if applied
+            else "_Not yet applied — run with `--apply-canonicals` to write these._",
             "",
             "| CAS | Canonical listing | Now canonicalises to it |",
             "| --- | --- | --- |",

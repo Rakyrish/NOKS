@@ -1,5 +1,6 @@
 import { apiUrl, internalApiUrl, siteUrl } from "./site";
 import type {
+  Author,
   BlogCategory,
   Category,
   Facets,
@@ -204,6 +205,9 @@ export const api = {
    * the route has its own fallback for that case.
    */
   sitemapInventory: () => request<SitemapInventory>("/sitemap-inventory/"),
+
+  author: (slug: string) => request<Author>(`/authors/${encodeURIComponent(slug)}/`),
+  authors: () => safe(request<Author[]>("/authors/"), [] as Author[]),
 
   products: (query: ProductQuery = {}) =>
     safe(
