@@ -23,7 +23,7 @@ export async function generateMetadata({
   // canonicalise here and stay out of the index. Every article they can reach
   // is linked from the unfiltered first page and listed in the sitemap.
   return pageMetadata({
-    title: "Knowledge Centre — Chemical Guides & Technical Articles",
+    title: "Chemical Guides & Technical Articles — Knowledge Centre",
     description: `Technical guidance from ${brand.fullName}: water treatment practice, food grade compliance, laboratory science, chemical safety and buying guides for East African industry.`,
     path: "/knowledge",
     searchParams: await searchParams,

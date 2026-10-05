@@ -28,13 +28,99 @@ export const TITLE_SOFT_LIMIT = 60;
 const DESCRIPTION_SOFT_LIMIT = 165;
 
 /**
- * Append the brand exactly once.
+ * Title builders, shaped by what Kenyan buyers actually type.
+ *
+ * Google's Kenya autocomplete (gl=ke, sampled 2026-10-05) is consistent across
+ * products: "<product> price in kenya" first, then "<product> suppliers in
+ * kenya", "where to buy <product> in kenya"; for groups, "<group> suppliers in
+ * kenya" and "chemical suppliers in nairobi". The old titles matched none of
+ * it — 168 of 182 product titles were spec lines ("Caustic Soda Flakes NaOH
+ * 1310-73-2 Industrial Grade") with no place in them, and category titles
+ * rendered lower-case CMS names ("cleaning and disinfectants Suppliers in
+ * Kenya").
+ *
+ * Products are quote-only, so titles say "Get Price" (true: the page is where
+ * you get one) rather than "Price in Kenya" (which would promise a figure the
+ * page does not show).
+ */
+
+/** Longest title we aim for, *including* the brand suffix. */
+const TITLE_TARGET = TITLE_SOFT_LIMIT;
+
+/** "… in Kenya", "… across East Africa": an authored title already aimed at a market. */
+const MARKET_PHRASE = /\b(in|across)\s+(kenya|nairobi|mombasa|east africa|uganda|tanzania)\b/i;
+
+const market = (country?: string | null) => country || "Kenya";
+
+/** Room left for the page's own words once the shortest brand suffix is added. */
+const fits = (title: string) => title.length + ` | ${brand.name}`.length <= TITLE_TARGET;
+
+/** First candidate that fits the SERP width, or the last (shortest) one. */
+const firstThatFits = (candidates: string[]) =>
+  candidates.find(fits) ?? candidates[candidates.length - 1];
+
+/** A CMS title is honoured only when an editor has already aimed it at a market. */
+const authoredForMarket = (cmsTitle?: string | null) => {
+  // Drop any brand the editor typed so `withBrand` can re-add the length that
+  // fits — CMS rows ending "| NOKS Chemical Division" ran to 76 characters.
+  const authored = (cmsTitle ?? "")
+    .trim()
+    .replace(new RegExp(`\\s*[|·—–-]\\s*(${escapeRegExp(brand.fullName)}|${escapeRegExp(brand.name)})\\s*$`, "i"), "")
+    .trim();
+  return authored && MARKET_PHRASE.test(authored) ? authored : null;
+};
+
+/** Product page: "Caustic Soda Flakes Supplier in Kenya — Get Price". */
+export function productTitle(name: string, cmsTitle?: string | null, country?: string | null): string {
+  const authored = authoredForMarket(cmsTitle);
+  if (authored) return authored;
+  const clean = name.trim();
+  const where = market(country);
+  return firstThatFits([
+    `${clean} Supplier in ${where} — Get Price`,
+    `${clean} Supplier in ${where}`,
+    `${clean} in ${where}`,
+  ]);
+}
+
+/** Category page: "Water Treatment Chemicals Suppliers in Kenya". */
+export function categoryTitle(name: string, cmsTitle?: string | null, country?: string | null): string {
+  const authored = authoredForMarket(cmsTitle);
+  if (authored) return authored;
+  const clean = name.trim();
+  const where = market(country);
+  return firstThatFits([`${clean} Suppliers in ${where}`, `${clean} in ${where}`]);
+}
+
+/**
+ * Industry page: "Chemicals for Water Treatment in Kenya".
+ *
+ * Deliberately a different shape from the category title. /industries/water-
+ * treatment and /categories/water-treatment-chemicals would otherwise both be
+ * "Water Treatment Chemicals … in Kenya" and compete for one query. The CMS
+ * titles on industries were all the same seeded template
+ * ("<Industry> Chemicals in Kenya | NOKS Chemical Division"), so they are not
+ * honoured here.
+ */
+export function industryTitle(name: string, country?: string | null): string {
+  const clean = name.trim();
+  const where = market(country);
+  return firstThatFits([`Chemicals for ${clean} in ${where}`, `${clean} Chemicals in ${where}`]);
+}
+
+/**
+ * Append the brand exactly once, as long as the SERP has room for.
  *
  * Accepts a title that already carries the brand (CMS-authored `meta_title`
  * values commonly do) and leaves it alone. Matching is done on the brand name
  * rather than the full "NOKS Chemical Division" string so that
  * "… | NOKS" — which is what a few category rows use — also counts as already
  * branded and is not doubled up.
+ *
+ * The full "| NOKS Chemical Division" is 25 characters: on a 60-character
+ * title it pushed most of the page's own words past Google's cut-off. It is
+ * used when it fits; otherwise the short "| NOKS". Google shows the site name
+ * separately (from the WebSite schema) either way.
  */
 export function withBrand(title: string): string {
   const clean = title.trim().replace(/\s*[|·—–-]\s*$/, "");
@@ -44,7 +130,9 @@ export function withBrand(title: string): string {
   const alreadyBranded = brandNames.some((name) =>
     new RegExp(`(^|[|·—–])\\s*${escapeRegExp(name)}\\s*$`, "i").test(clean),
   );
-  return alreadyBranded ? clean : `${clean} | ${brand.fullName}`;
+  if (alreadyBranded) return clean;
+  const full = `${clean} | ${brand.fullName}`;
+  return full.length <= TITLE_TARGET ? full : `${clean} | ${brand.name}`;
 }
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

@@ -129,7 +129,7 @@ export default async function ComparePage({
                     {products.map((product) => (
                       <td key={product.id} className="p-5">
                         <Button asChild size="sm">
-                          <Link href={`/quote?product=${product.slug}`}>Quick Quote</Link>
+                          <Link href={`/quote?product=${product.slug}`} rel="nofollow">Quick Quote</Link>
                         </Button>
                       </td>
                     ))}

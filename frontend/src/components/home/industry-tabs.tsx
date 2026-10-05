@@ -14,217 +14,6 @@ interface IndustryTabsProps {
   products?: Product[];
 }
 
-const DEFAULT_PRODUCTS: Product[] = [
-  {
-    id: 1,
-    name: "Caustic Soda Flakes",
-    slug: "caustic-soda-flakes",
-    sku: "CHEM-CS-001",
-    cas_number: "1310-73-2",
-    chemical_formula: "NaOH",
-    category_name: "Industrial Chemicals",
-    category_slug: "industrial-chemicals",
-    grade: "industrial",
-    grade_display: "Industrial Grade",
-    purity: "",
-    manufacturer_name: "NOKS Industrial",
-    availability: "in_stock",
-    availability_display: "In Stock",
-    unit: "kg",
-    lead_time: "3-5 days",
-    price_on_request: true,
-    indicative_price: null,
-    currency: "USD",
-    is_featured: true,
-    is_bestseller: false,
-    image: null,
-    short_description: "High-purity sodium hydroxide flakes (98% min) for pH correction, saponification, and industrial cleaning.",
-    industry_slugs: ["water-treatment", "textile", "manufacturing"],
-  },
-  {
-    id: 2,
-    name: "Aluminum Sulphate 17%",
-    slug: "aluminum-sulphate-17",
-    sku: "CHEM-AS-002",
-    cas_number: "10043-01-3",
-    chemical_formula: "Al2(SO4)3",
-    category_name: "Water Treatment Chemicals",
-    category_slug: "water-treatment-chemicals",
-    grade: "industrial",
-    grade_display: "Industrial Grade",
-    purity: "",
-    manufacturer_name: "NOKS Industrial",
-    availability: "in_stock",
-    availability_display: "In Stock",
-    unit: "kg",
-    lead_time: "3-5 days",
-    price_on_request: true,
-    indicative_price: null,
-    currency: "USD",
-    is_featured: true,
-    is_bestseller: false,
-    image: null,
-    short_description: "Standard municipal and industrial coagulant for water purification, suspended solids removal, and turbidity reduction.",
-    industry_slugs: ["water-treatment", "pulp-paper"],
-  },
-  {
-    id: 3,
-    name: "Citric Acid Anhydrous",
-    slug: "citric-acid-anhydrous",
-    sku: "CHEM-CA-003",
-    cas_number: "77-92-9",
-    chemical_formula: "C6H8O7",
-    category_name: "Food Grade Chemicals",
-    category_slug: "food-grade-chemicals",
-    grade: "food",
-    grade_display: "Food Grade",
-    purity: "",
-    manufacturer_name: "NOKS Industrial",
-    availability: "in_stock",
-    availability_display: "In Stock",
-    unit: "kg",
-    lead_time: "3-5 days",
-    price_on_request: true,
-    indicative_price: null,
-    currency: "USD",
-    is_featured: true,
-    is_bestseller: false,
-    image: null,
-    short_description: "High-purity food grade acidulant and preservative meeting BP/USP/FCC standards for beverage and food manufacturing.",
-    industry_slugs: ["food-processing", "cosmetics"],
-  },
-  {
-    id: 4,
-    name: "Sodium Lauryl Ether Sulphate (SLES 70%)",
-    slug: "sles-70",
-    sku: "CHEM-SLES-004",
-    cas_number: "68585-34-2",
-    chemical_formula: "C12H25O(C2H4O)2SO3Na",
-    category_name: "Industrial Chemicals",
-    category_slug: "industrial-chemicals",
-    grade: "industrial",
-    grade_display: "Industrial Grade",
-    purity: "",
-    manufacturer_name: "NOKS Industrial",
-    availability: "in_stock",
-    availability_display: "In Stock",
-    unit: "kg",
-    lead_time: "3-5 days",
-    price_on_request: true,
-    indicative_price: null,
-    currency: "USD",
-    is_featured: true,
-    is_bestseller: false,
-    image: null,
-    short_description: "Primary anionic surfactant offering excellent foaming, detergency, and wetting for liquid detergents and shampoo formulation.",
-    industry_slugs: ["manufacturing", "hospitality"],
-  },
-  {
-    id: 5,
-    name: "Linear Alkyl Benzene Sulphonic Acid (LABSA 96%)",
-    slug: "labsa-96",
-    sku: "CHEM-LABSA-005",
-    cas_number: "27176-87-0",
-    chemical_formula: "RC6H4SO3H",
-    category_name: "Industrial Chemicals",
-    category_slug: "industrial-chemicals",
-    grade: "industrial",
-    grade_display: "Industrial Grade",
-    purity: "",
-    manufacturer_name: "NOKS Industrial",
-    availability: "in_stock",
-    availability_display: "In Stock",
-    unit: "kg",
-    lead_time: "3-5 days",
-    price_on_request: true,
-    indicative_price: null,
-    currency: "USD",
-    is_featured: true,
-    is_bestseller: false,
-    image: null,
-    short_description: "High-active biodegradable anionic surfactant base for powder and liquid detergent manufacturing.",
-    industry_slugs: ["manufacturing"],
-  },
-  {
-    id: 6,
-    name: "Hydrochloric Acid 33%",
-    slug: "hydrochloric-acid-33",
-    sku: "CHEM-HA-006",
-    cas_number: "7647-01-0",
-    chemical_formula: "HCl",
-    category_name: "Industrial Chemicals",
-    category_slug: "industrial-chemicals",
-    grade: "industrial",
-    grade_display: "Industrial Grade",
-    purity: "",
-    manufacturer_name: "NOKS Industrial",
-    availability: "in_stock",
-    availability_display: "In Stock",
-    unit: "kg",
-    lead_time: "3-5 days",
-    price_on_request: true,
-    indicative_price: null,
-    currency: "USD",
-    is_featured: true,
-    is_bestseller: false,
-    image: null,
-    short_description: "Technical grade aqueous solution for pH control, boiler descaling, pickling, and resin regeneration.",
-    industry_slugs: ["water-treatment", "mining", "manufacturing"],
-  },
-  {
-    id: 7,
-    name: "Sodium Hypochlorite 10-15%",
-    slug: "sodium-hypochlorite-15",
-    sku: "CHEM-SH-007",
-    cas_number: "7681-52-9",
-    chemical_formula: "NaOCl",
-    category_name: "Water Treatment Chemicals",
-    category_slug: "water-treatment-chemicals",
-    grade: "industrial",
-    grade_display: "Industrial Grade",
-    purity: "",
-    manufacturer_name: "NOKS Industrial",
-    availability: "in_stock",
-    availability_display: "In Stock",
-    unit: "kg",
-    lead_time: "3-5 days",
-    price_on_request: true,
-    indicative_price: null,
-    currency: "USD",
-    is_featured: true,
-    is_bestseller: false,
-    image: null,
-    short_description: "Broad-spectrum oxidizing disinfectant and bleaching agent for drinking water chlorination and sanitization.",
-    industry_slugs: ["water-treatment", "hospitality", "healthcare"],
-  },
-  {
-    id: 8,
-    name: "Potassium Chloride (AR Grade)",
-    slug: "potassium-chloride-ar",
-    sku: "CHEM-PC-008",
-    cas_number: "7447-40-7",
-    chemical_formula: "KCl",
-    category_name: "Laboratory Reagents",
-    category_slug: "laboratory-reagents",
-    grade: "analytical",
-    grade_display: "Analytical Grade",
-    purity: "",
-    manufacturer_name: "NOKS Industrial",
-    availability: "in_stock",
-    availability_display: "In Stock",
-    unit: "kg",
-    lead_time: "3-5 days",
-    price_on_request: true,
-    indicative_price: null,
-    currency: "USD",
-    is_featured: true,
-    is_bestseller: false,
-    image: null,
-    short_description: "Analytical reagent grade potassium chloride (≥99.5%) for standard solutions, buffers, and diagnostic laboratories.",
-    industry_slugs: ["laboratories", "healthcare"],
-  },
-];
-
 const TABS: { key: TabKey; label: string; filter: (p: Product) => boolean }[] = [
   { key: "all", label: "All Chemicals", filter: () => true },
   {
@@ -275,10 +64,18 @@ const TABS: { key: TabKey; label: string; filter: (p: Product) => boolean }[] = 
 export const IndustryTabs = ({ products = [] }: IndustryTabsProps) => {
   const [activeTab, setActiveTab] = React.useState<TabKey>("all");
 
-  const catalog = products.length > 0 ? products : DEFAULT_PRODUCTS;
+  // No fabricated fallback. This used to fall back to eight hardcoded
+  // "products" with invented SKUs (CHEM-CS-001), an invented manufacturer
+  // ("NOKS Industrial") and slugs that do not exist — the homepage was
+  // linking to five 404s, because `api.homepage()` degrades to an empty
+  // payload when the backend is unreachable and the fallback filled the gap
+  // with fiction. An empty catalogue now renders nothing.
+  const catalog = products;
   const currentTabDef = TABS.find((t) => t.key === activeTab) || TABS[0];
   const filtered = catalog.filter(currentTabDef.filter);
   const displayItems = filtered.length > 0 ? filtered : catalog.slice(0, 6);
+
+  if (catalog.length === 0) return null;
 
   return (
     <section className="industry-tabs py-12 lg:py-16 bg-silver-100/60 border-b border-rule">
@@ -293,7 +90,8 @@ export const IndustryTabs = ({ products = [] }: IndustryTabsProps) => {
               Featured Industrial & Specialty Chemicals
             </h2>
             <p className="mt-2 text-sm text-steel-700 max-w-2xl">
-              Select an industry sector to filter available ex-stock products in our Nairobi warehouse. Technical datasheets and COA available for every chemical.
+              Select an industry sector to filter our catalogue. Every listing publishes
+              its CAS number, grade and packaging.
             </p>
           </div>
           <Link
@@ -381,6 +179,7 @@ export const IndustryTabs = ({ products = [] }: IndustryTabsProps) => {
                 <div className="p-5 pt-0 border-t border-rule/50 flex flex-col gap-2 mt-2">
                   <Link
                     href={`/quote?product=${product.slug}`}
+                    rel="nofollow"
                     className="flex items-center justify-center gap-1.5 rounded-md bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 py-2 px-3 text-xs font-bold text-white shadow-sm transition-all hover:brightness-110"
                   >
                     <span>Request Quotation</span>

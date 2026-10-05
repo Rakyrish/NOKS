@@ -65,6 +65,10 @@ COPY --from=builder  /app/frontend/.next        ./.next
 COPY --from=builder  /app/frontend/public       ./public
 COPY frontend/package.json frontend/next.config.mjs frontend/tsconfig.json ./
 COPY frontend/scripts ./scripts
+# next.config.mjs imports the redirect table at startup (`next start` re-reads
+# the config), so the runtime image needs it too. Without this line the
+# container exits with ERR_MODULE_NOT_FOUND before serving a single request.
+COPY frontend/src/lib/redirects.mjs ./src/lib/redirects.mjs
 
 EXPOSE 3000
 

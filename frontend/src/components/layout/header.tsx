@@ -21,30 +21,37 @@ const NAV = [
   { label: "Contact", href: "/contact" },
 ] as const;
 
-const INDUSTRIES = [
-  { name: "Water Treatment", href: "/products?category=water-treatment-chemicals", count: "32 products" },
-  { name: "Food-Grade & Additives", href: "/products?category=food-grade-chemicals", count: "28 products" },
-  { name: "Cosmetics & Detergents", href: "/products?category=industrial-chemicals", count: "45 products" },
-  { name: "Agriculture & Feed", href: "/products?category=industrial-chemicals", count: "24 products" },
-  { name: "Construction Chemicals", href: "/products?category=specialty-chemicals", count: "19 products" },
-  { name: "Paints, Inks & Coatings", href: "/products?category=specialty-chemicals", count: "26 products" },
-  { name: "Laboratory Reagents", href: "/products?category=laboratory-reagents", count: "60+ items" },
-  { name: "Mining & Flotation", href: "/products?category=industrial-chemicals", count: "14 products" },
-  { name: "Oil, Gas & Lubricants", href: "/products?category=industrial-chemicals", count: "18 products" },
-  { name: "Textile & Leather", href: "/products?category=specialty-chemicals", count: "15 products" },
+/**
+ * The catalogue menu, pointing at clean category routes.
+ *
+ * Every entry here used to be a `/products?category=…` facet URL — the exact
+ * shape the indexing policy marks `noindex, follow` — so the site's main
+ * navigation spent its equity on pages Google is told not to index. Several
+ * also pointed at the wrong category ("Agriculture & Feed" and "Mining" both
+ * went to industrial-chemicals; "Construction" and "Textile" both went to
+ * specialty-chemicals, which holds no products at all), and each carried a
+ * hardcoded product count that matched nothing in the catalogue.
+ *
+ * Slugs verified against catalog_category; counts are gone rather than guessed
+ * — the category page states the real one.
+ */
+const CATALOGUE_MENU = [
+  { name: "Water Treatment", href: "/categories/water-treatment-chemicals" },
+  { name: "Agriculture & Feed", href: "/categories/agricultural-chemicals" },
+  { name: "Cleaning & Disinfectants", href: "/categories/cleaning-and-disinfectants" },
+  { name: "Paints, Inks & Coatings", href: "/categories/paints-an-coatings" },
+  { name: "Food & Beverage", href: "/categories/food-and-beverages" },
+  { name: "Soaps & Detergents", href: "/categories/soaps-and-detergents" },
+  { name: "Pharma & Cosmetic", href: "/categories/pharm-and-cosmetic" },
+  { name: "Preservatives", href: "/categories/preservation-and-chemicals" },
+  { name: "Industrial Chemicals", href: "/categories/industrial-chemicals" },
+  { name: "Laboratory Reagents", href: "/categories/laboratory-reagents" },
 ] as const;
 
 const CATEGORY_CHIPS = [
   { label: "All products", href: "/products" },
-  { label: "Water Treatment Chemicals", href: "/products?category=water-treatment-chemicals" },
-  { label: "Food-Grade & Additives", href: "/products?category=food-grade-chemicals" },
-  { label: "Cosmetic & Detergent Raw Materials", href: "/products?category=industrial-chemicals" },
-  { label: "Construction Chemicals", href: "/products?category=specialty-chemicals" },
-  { label: "Paints, Inks & Coatings", href: "/products?category=specialty-chemicals" },
-  { label: "Agriculture & Animal Feed", href: "/products?category=industrial-chemicals" },
-  { label: "Laboratory Reagents", href: "/products?category=laboratory-reagents" },
-  { label: "Specialty Chemicals", href: "/products?category=specialty-chemicals" },
-  { label: "Cleaning & Hygiene", href: "/products?category=water-treatment-chemicals" },
+  { label: "Full catalogue A–Z", href: "/catalogue" },
+  ...CATALOGUE_MENU.map((item) => ({ label: item.name, href: item.href })),
 ] as const;
 
 export const Header = () => {
@@ -382,26 +389,25 @@ export const Header = () => {
                 >
                   <div className="px-4 py-2 border-b border-rule">
                     <p className="text-[11px] font-bold uppercase tracking-wider text-navy-800">
-                      Chemical Industries
+                      Chemical Categories
                     </p>
                   </div>
                   <div className="max-h-80 overflow-y-auto py-1">
-                    {INDUSTRIES.map((ind) => (
+                    {CATALOGUE_MENU.map((item) => (
                       <Link
-                        key={ind.name}
-                        href={ind.href}
+                        key={item.name}
+                        href={item.href}
                         onClick={() => setMegaOpen(false)}
-                        className="flex items-center justify-between px-4 py-2 text-sm text-ink
+                        className="flex items-center px-4 py-2 text-sm font-medium text-ink
                                    transition-colors hover:bg-blue-50 hover:text-blue-700"
                       >
-                        <span className="font-medium">{ind.name}</span>
-                        <span className="text-[11px] text-muted-fg">{ind.count}</span>
+                        {item.name}
                       </Link>
                     ))}
                   </div>
                   <div className="border-t border-rule px-4 py-2 bg-silver-100">
                     <Link
-                      href="/products"
+                      href="/catalogue"
                       onClick={() => setMegaOpen(false)}
                       className="text-xs font-bold text-blue-600 hover:underline"
                     >
@@ -418,11 +424,14 @@ export const Header = () => {
             <Link href="/products" className="hover:text-blue-300 transition-colors">
               All products
             </Link>
-            <Link href="/products" className="hover:text-blue-300 transition-colors">
-              All categories
+            {/* Was a second link to /products labelled "All categories", and a
+                `?featured=true` facet. Both now point somewhere that exists and
+                is indexable. */}
+            <Link href="/catalogue" className="hover:text-blue-300 transition-colors">
+              Full catalogue A–Z
             </Link>
-            <Link href="/products?featured=true" className="hover:text-blue-300 transition-colors">
-              Featured
+            <Link href="/industries" className="hover:text-blue-300 transition-colors">
+              Industries
             </Link>
             <Link href="/knowledge" className="hover:text-blue-300 transition-colors">
               Buying guides

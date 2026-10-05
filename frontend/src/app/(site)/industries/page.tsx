@@ -15,7 +15,7 @@ import { brand } from "@/lib/site";
 export const revalidate = 900;
 
 export const metadata: Metadata = pageMetadata({
-  title: "Industries We Serve — Chemical Supply Across East Africa",
+  title: "Industrial Chemicals by Sector — Kenya & East Africa",
   description: `${brand.fullName} supplies water treatment, food processing, agriculture, mining, construction, paint, manufacturing, textile, laboratory, oil & gas, hospitality and healthcare sectors across Kenya and East Africa.`,
   path: "/industries",
   image: "/images/pages/industries.jpg",

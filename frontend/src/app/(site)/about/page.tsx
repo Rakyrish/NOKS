@@ -21,7 +21,7 @@ import { brand } from "@/lib/site";
 export const revalidate = 900;
 
 export const metadata: Metadata = pageMetadata({
-  title: "About NOKS — Industrial Chemical Supplier in Nairobi",
+  title: "About NOKS — Chemical Supplier in Nairobi, Kenya",
   description: `${brand.mission} Who we are, where we are, how an order runs and who to call.`,
   path: "/about",
   image: "/images/pages/about.jpg",

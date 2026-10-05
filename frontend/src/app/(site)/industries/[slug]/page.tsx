@@ -10,7 +10,7 @@ import { PageHero } from "@/components/shared/page-hero";
 import { Section, SectionHeading } from "@/components/shared/section";
 import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
-import { notFoundMetadata, pageMetadata } from "@/lib/metadata";
+import { industryTitle, notFoundMetadata, pageMetadata } from "@/lib/metadata";
 import { serviceSchema } from "@/lib/schema";
 import { brand, contact } from "@/lib/site";
 import Link from "next/link";
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!industry) return notFoundMetadata(`/industries/${slug}`, "Industry");
 
   return pageMetadata({
-    title: industry.seo?.title || `${industry.name} Chemicals in ${contact.country || "Kenya"}`,
+    title: industryTitle(industry.name, contact.country),
     description:
       industry.seo?.description ||
       `${brand.fullName} supplies chemicals for ${industry.name.toLowerCase()} in Kenya and across East Africa. ${industry.tagline}`,

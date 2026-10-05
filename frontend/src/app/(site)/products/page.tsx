@@ -30,7 +30,7 @@ export async function generateMetadata({
       ? category.replace(/-/g, " ")
       : "Industrial & Laboratory Chemicals";
 
-  const title = term || category ? `${label} — Product Catalog` : "Product Catalog";
+  const title = term || category ? `${label} — Chemical Catalogue` : "Buy Industrial & Lab Chemicals in Kenya";
 
   // The robots directive and the canonical both come from lib/indexing.ts.
   // The old rule here excluded only `?q=` and left every other facet

@@ -78,7 +78,10 @@ export const metadata: Metadata = {
   verification: seo.googleVerification
     ? { google: seo.googleVerification }
     : undefined,
-  icons: { icon: brand.logo, apple: brand.logo },
+  // No `icons` here: src/app/favicon.ico, icon.png and apple-icon.png are
+  // picked up by file convention. The wordmark logo used to be passed instead,
+  // but it is 1300x409 and Google only shows a square favicon in results, so
+  // the SERP fell back to a generic globe and /favicon.ico was a 404.
   category: "Chemical Supplier",
 };
 

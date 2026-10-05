@@ -20,7 +20,7 @@ export async function generateMetadata({
   // and carry `noindex, follow`, so the prefill keeps working for humans
   // without asking Google to index a form 182 times.
   return pageMetadata({
-    title: "Request a Quotation — Industrial & Laboratory Chemicals",
+    title: "Request a Chemical Price Quote — Kenya & East Africa",
     description: `Request a written quotation from ${brand.fullName}. Add multiple products, specify quantities and packaging, and receive pricing with lead times within one business day.`,
     path: "/quote",
     searchParams: await searchParams,

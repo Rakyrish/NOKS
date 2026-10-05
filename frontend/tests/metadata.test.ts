@@ -5,6 +5,9 @@ import {
   normalizeDescription,
   notFoundMetadata,
   pageMetadata,
+  categoryTitle,
+  industryTitle,
+  productTitle,
   withBrand,
 } from "@/lib/metadata";
 
@@ -12,9 +15,15 @@ const SITE = "https://chemicals.noksindustrial.com";
 const BRAND = "NOKS Chemical Division";
 
 describe("the brand appears exactly once in a title", () => {
-  it("appends it when it is missing", () => {
+  it("appends the full brand when it fits", () => {
+    expect(withBrand("Acids Suppliers in Kenya")).toBe(`Acids Suppliers in Kenya | ${BRAND}`);
+  });
+
+  it("falls back to the short brand when the full one would overflow the SERP", () => {
+    // "| NOKS Chemical Division" is 25 characters; on a long title it pushed
+    // the page's own words past Google's cut-off.
     expect(withBrand("Calcium Propionate Food Grade CAS 4075-81-4")).toBe(
-      `Calcium Propionate Food Grade CAS 4075-81-4 | ${BRAND}`,
+      "Calcium Propionate Food Grade CAS 4075-81-4 | NOKS",
     );
   });
 
@@ -180,5 +189,59 @@ describe("noindexMetadata", () => {
     const meta = noindexMetadata({ title: "Compare", path: "/compare" });
     expect(meta.robots).toMatchObject({ index: false, follow: true });
     expect(meta.alternates?.canonical).toBe("/compare");
+  });
+});
+
+describe("titles match what Kenyan buyers search", () => {
+  it("replaces a spec-line CMS title with product + market + price intent", () => {
+    // Live CMS value with no location, served as the whole <title>.
+    expect(productTitle("Caustic Soda Flakes", "Caustic Soda Flakes NaOH 1310-73-2 Industrial Grade")).toBe(
+      "Caustic Soda Flakes Supplier in Kenya — Get Price",
+    );
+  });
+
+  it("keeps a CMS title an editor already aimed at a market", () => {
+    expect(productTitle("Sodium Hypochlorite", "Sodium Hypochlorite 12% Supplier in Nairobi")).toBe(
+      "Sodium Hypochlorite 12% Supplier in Nairobi",
+    );
+  });
+
+  it("does not honour a bare place name without 'in' as market-aimed", () => {
+    // The seeded template "Acids Suppliers Kenya" is not how anyone searches.
+    expect(categoryTitle("Acids", "Acids Suppliers Kenya | NOKS Chemical Division")).toBe(
+      "Acids Suppliers in Kenya",
+    );
+  });
+
+  it("sheds the price phrase, then 'Supplier', as product names get longer", () => {
+    expect(productTitle("Acetone", null, "")).toBe("Acetone Supplier in Kenya — Get Price");
+    expect(productTitle("Sodium Hydrosulfite, Technical Grade, 85%")).toBe(
+      "Sodium Hydrosulfite, Technical Grade, 85% in Kenya",
+    );
+  });
+
+  it("keeps industry and category titles from competing for one query", () => {
+    expect(categoryTitle("Water Treatment Chemicals")).toBe("Water Treatment Chemicals Suppliers in Kenya");
+    expect(industryTitle("Water Treatment")).toBe("Chemicals for Water Treatment in Kenya");
+  });
+
+  it("stays within the display limit once branded, for typical names", () => {
+    for (const title of [
+      productTitle("Caustic Soda Flakes"),
+      productTitle("Calcium Hypochlorite 70%"),
+      categoryTitle("Pharmaceutical & Cosmetic Chemicals"),
+      industryTitle("Food Processing"),
+    ]) {
+      expect(withBrand(title).length).toBeLessThanOrEqual(60);
+    }
+  });
+});
+
+describe("authored market titles are re-branded to fit", () => {
+  it("drops an editor-typed long brand so the short one can be used", () => {
+    const title = withBrand(
+      productTitle("Soda Ash Dense", `Soda Ash Dense (Sodium Carbonate) Supplier in Kenya | ${BRAND}`),
+    );
+    expect(title).toBe("Soda Ash Dense (Sodium Carbonate) Supplier in Kenya | NOKS");
   });
 });

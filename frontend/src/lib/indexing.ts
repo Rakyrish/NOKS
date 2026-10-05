@@ -24,6 +24,7 @@
 const INDEXABLE_ROOTS = [
   "/",
   "/products",
+  "/catalogue",
   "/categories",
   "/industries",
   "/knowledge",

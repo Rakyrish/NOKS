@@ -142,7 +142,7 @@ export const QuickViewDialog = ({
 
                       <div className="mt-6 flex flex-wrap gap-2">
                         <Button asChild size="sm">
-                          <Link href={`/quote?product=${product.slug}`}>Request Quote</Link>
+                          <Link href={`/quote?product=${product.slug}`} rel="nofollow">Request Quote</Link>
                         </Button>
                         <Button asChild size="sm" variant="outline">
                           <Link href={`/products/${product.slug}`}>

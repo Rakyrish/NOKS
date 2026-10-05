@@ -11,7 +11,7 @@ import { brand } from "@/lib/site";
 export const revalidate = 900;
 
 export const metadata: Metadata = pageMetadata({
-  title: "Our Services — Chemical Supply, Sourcing & Technical Support",
+  title: "Chemical Supply, Sourcing & Technical Support in Kenya",
   description: `${brand.fullName} offers chemical supply, technical consultation, import & export, custom packaging, chemical sourcing, bulk distribution, laboratory support and turnkey industrial solutions across Kenya and East Africa.`,
   path: "/services",
   image: "/images/pages/services.jpg",

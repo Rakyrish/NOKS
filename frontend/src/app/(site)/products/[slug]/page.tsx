@@ -27,7 +27,7 @@ import { AvailabilityBadge, Badge } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
 import { isVerified } from "@/lib/business";
-import { notFoundMetadata, pageMetadata } from "@/lib/metadata";
+import { notFoundMetadata, pageMetadata, productTitle } from "@/lib/metadata";
 import { faqSchema, productSchema } from "@/lib/schema";
 import { brand, contact } from "@/lib/site";
 
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!product) return notFoundMetadata(`/products/${slug}`, "Product");
 
   return pageMetadata({
-    title: product.seo?.title || `${product.name} — Supplier in ${contact.country || "Kenya"}`,
+    title: productTitle(product.name, product.seo?.title, contact.country),
     description: product.seo?.description || product.short_description,
     path: `/products/${product.slug}`,
     canonicalOverride: product.seo?.canonical,
@@ -391,7 +391,7 @@ export default async function ProductPage({ params }: Params) {
                       : "Ask for the technical datasheet, Safety Data Sheet or Certificate of Analysis for this product and we will send the current version with your quotation."}
                   </p>
                   <Button asChild size="sm" variant="outline" className="mt-3">
-                    <Link href={`/quote?product=${product.slug}`}>Request documentation</Link>
+                    <Link href={`/quote?product=${product.slug}`} rel="nofollow">Request documentation</Link>
                   </Button>
                 </div>
               )}

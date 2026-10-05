@@ -7,115 +7,13 @@ import * as React from "react";
 import { Icon } from "@/components/shared/icon";
 import type { Industry } from "@/types";
 
-const DEFAULT_INDUSTRIES: Industry[] = [
-  {
-    id: 1,
-    name: "Water Treatment",
-    slug: "water-treatment",
-    icon: "droplets",
-    image: null,
-    accent_color: "#0C48E6",
-    is_featured: true,
-    tagline: "Municipal & industrial water and effluent treatment",
-    description: "Coagulants, flocculants, chlorine, and pH regulators for potable drinking water and trade wastewater.",
-    applications: ["Coagulation & flocculation", "Disinfection", "pH correction", "Scale & corrosion control"],
-    order: 1,
-  },
-  {
-    id: 2,
-    name: "Food & Beverage",
-    slug: "food-processing",
-    icon: "utensils",
-    image: null,
-    accent_color: "#0C48E6",
-    is_featured: true,
-    tagline: "Food grade ingredients and processing aids",
-    description: "Acidulants, preservatives, sweeteners, and food-safe sanitation chemicals meeting strict compliance.",
-    applications: ["Preservation", "Acidity regulation", "Fortification", "CIP sanitation"],
-    order: 2,
-  },
-  {
-    id: 3,
-    name: "Cosmetics & Detergents",
-    slug: "manufacturing",
-    icon: "factory",
-    image: null,
-    accent_color: "#0C48E6",
-    is_featured: true,
-    tagline: "Surfactants and personal care raw materials",
-    description: "SLES 70%, LABSA 96%, caustic soda, foam boosters, and fragrance binders for high-yield formulation.",
-    applications: ["Surfactant bases", "Viscosity builders", "Emulsifiers", "pH adjusters"],
-    order: 3,
-  },
-  {
-    id: 4,
-    name: "Agriculture & Livestock",
-    slug: "agriculture",
-    icon: "sprout",
-    image: null,
-    accent_color: "#0C48E6",
-    is_featured: true,
-    tagline: "Crop nutrition, soil conditioners and feed inputs",
-    description: "Custom fertiliser blending salts, trace elements, soil buffers, and feed premix additives.",
-    applications: ["Fertiliser blending", "Soil conditioning", "Feed minerals", "Irrigation sanitizing"],
-    order: 4,
-  },
-  {
-    id: 5,
-    name: "Paints, Inks & Coatings",
-    slug: "paint-coatings",
-    icon: "paint-roller",
-    image: null,
-    accent_color: "#0C48E6",
-    is_featured: true,
-    tagline: "Pigments, resins, solvents and performance additives",
-    description: "Titanium dioxide, solvents, binders, and defoamers for decorative and protective architectural coatings.",
-    applications: ["Pigment dispersion", "Solvent blending", "Resin binders", "Anti-corrosion"],
-    order: 5,
-  },
-  {
-    id: 6,
-    name: "Construction Chemistry",
-    slug: "construction",
-    icon: "hard-hat",
-    image: null,
-    accent_color: "#0C48E6",
-    is_featured: true,
-    tagline: "Admixtures, waterproofing, and surface treatments",
-    description: "Concrete plasticizers, accelerators, curing agents, and integral waterproofing additives.",
-    applications: ["Concrete admixtures", "Waterproofing", "Surface etching", "Grouting"],
-    order: 6,
-  },
-  {
-    id: 7,
-    name: "Mining & Metallurgy",
-    slug: "mining",
-    icon: "mountain",
-    image: null,
-    accent_color: "#0C48E6",
-    is_featured: true,
-    tagline: "Extraction reagents, collectors and flocculants",
-    description: "Cyanide alternatives, frothers, activators, and mineral processing chemicals for extraction plants.",
-    applications: ["Flotation reagents", "Leaching aids", "Dust suppression", "Tailings clarification"],
-    order: 7,
-  },
-  {
-    id: 8,
-    name: "Laboratories & Research",
-    slug: "laboratories",
-    icon: "flask-conical",
-    image: null,
-    accent_color: "#0C48E6",
-    is_featured: true,
-    tagline: "High purity analytical reagents and standard solutions",
-    description: "AR grade acids, HPLC solvents, volumetric standards, and certified quality control consumables.",
-    applications: ["Sample preparation", "Titration standards", "Buffer preparation", "Analytical testing"],
-    order: 8,
-  },
-];
-
 export const IndustriesGrid = ({ industries = [] }: { industries?: Industry[] }) => {
-  const items = industries.length > 0 ? industries : DEFAULT_INDUSTRIES;
+  // Was a hardcoded list of eight sectors with invented taglines and
+  // application lists, shown whenever the API returned nothing. Sector
+  // descriptions are editorial content the business owns; inventing them on a
+  // backend hiccup is not a fallback, it is publishing fiction.
+  const items = industries;
+  if (items.length === 0) return null;
 
   const tones = [
     { bg: "bg-navy-950 text-white", badge: "bg-blue-600 text-white", border: "border-t-navy-950" },
@@ -144,7 +42,7 @@ export const IndustriesGrid = ({ industries = [] }: { industries?: Industry[] })
             href="/industries"
             className="inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors shrink-0"
           >
-            <span>View all 12 industries</span>
+            <span>View all {items.length} industries</span>
             <ArrowRight className="size-4" />
           </Link>
         </div>

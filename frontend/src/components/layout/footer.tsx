@@ -8,19 +8,28 @@ import * as React from "react";
 import { nap } from "@/lib/business";
 import { brand, contact, social } from "@/lib/site";
 
+// Clean category routes, matching the header's CATALOGUE_MENU. These were
+// `/products?category=…` facet URLs — `noindex, follow` by policy — linked from
+// every page on the site, and three of them pointed at specialty-chemicals,
+// which holds no products. Slugs and product counts verified against
+// catalog_category on 2026-10-05.
 const PRODUCT_CATEGORIES = [
-  { label: "Water Treatment Chemicals", href: "/products?category=water-treatment-chemicals" },
-  { label: "Food-Grade & Additives", href: "/products?category=food-grade-chemicals" },
-  { label: "Cosmetic & Detergent Raw Materials", href: "/products?category=industrial-chemicals" },
-  { label: "Construction Chemicals", href: "/products?category=specialty-chemicals" },
-  { label: "Paints, Inks & Coatings", href: "/products?category=specialty-chemicals" },
-  { label: "Agriculture & Animal Feed", href: "/products?category=industrial-chemicals" },
-  { label: "Laboratory Reagents", href: "/products?category=laboratory-reagents" },
-  { label: "Specialty Chemicals", href: "/products?category=specialty-chemicals" },
+  { label: "Water Treatment Chemicals", href: "/categories/water-treatment-chemicals" },
+  { label: "Cleaning & Disinfectants", href: "/categories/cleaning-and-disinfectants" },
+  { label: "Agriculture & Animal Feed", href: "/categories/agricultural-chemicals" },
+  { label: "Paints, Inks & Coatings", href: "/categories/paints-an-coatings" },
+  { label: "Food & Beverage Ingredients", href: "/categories/food-and-beverages" },
+  { label: "Soaps & Detergents", href: "/categories/soaps-and-detergents" },
+  { label: "Pharma & Cosmetic Raw Materials", href: "/categories/pharm-and-cosmetic" },
+  { label: "Textile Treatment", href: "/categories/textile-treatment" },
 ] as const;
 
 const QUICK_LINKS = [
   { label: "Chemical Catalogue", href: "/products" },
+  // The crawlable A–Z index. The browse UI paginates and filters through
+  // router.push, so beyond its first page there is no <a href> for a crawler
+  // to follow; this is the link that makes every product reachable.
+  { label: "Full catalogue A–Z", href: "/catalogue" },
   { label: "How We Work", href: "/#how-we-work" },
   { label: "About NOKS", href: "/about" },
   { label: "Buying Guides & Articles", href: "/knowledge" },

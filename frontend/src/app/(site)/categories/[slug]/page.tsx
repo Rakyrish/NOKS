@@ -9,7 +9,7 @@ import { PageHero } from "@/components/shared/page-hero";
 import { Section, SectionHeading } from "@/components/shared/section";
 import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
-import { notFoundMetadata, pageMetadata } from "@/lib/metadata";
+import { categoryTitle, notFoundMetadata, pageMetadata } from "@/lib/metadata";
 import { itemListSchema } from "@/lib/schema";
 import { brand, contact } from "@/lib/site";
 
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!category) return notFoundMetadata(`/categories/${slug}`, "Category");
 
   return pageMetadata({
-    title: category.seo?.title || `${category.name} Suppliers in ${contact.country || "Kenya"}`,
+    title: categoryTitle(category.name, category.seo?.title, contact.country),
     description:
       category.seo?.description ||
       category.description ||
@@ -57,7 +57,14 @@ export default async function CategoryPage({ params }: Params) {
   const category = await loadCategory(slug);
   if (!category) notFound();
 
-  const products = await api.products({ category: slug, page_size: 24 });
+  // Every product in the category, not the first 24. The link report found 33
+  // products orphaned — in the sitemap, reachable from no internal link —
+  // because the overflow was only reachable through "View all", which pointed
+  // at `/products?category=…`: a noindex parameter URL whose pagination is
+  // client-side `router.push` with no crawlable <a> for page 2. The largest
+  // category holds 38 products, so listing them all costs one extra API page
+  // and puts every product two clicks from the homepage.
+  const products = await api.products({ category: slug, page_size: 96 });
 
   const crumbs = [
     { name: "Products", url: "/products" },
@@ -85,7 +92,9 @@ export default async function CategoryPage({ params }: Params) {
       >
         <div className="mt-8 flex flex-wrap gap-3">
           <Button asChild className="bg-white text-navy-900 hover:bg-brand-50">
-            <Link href={`/products?category=${category.slug}`}>
+            {/* Anchors to the list below rather than bouncing through the
+                noindex `/products?category=…` facet. */}
+            <Link href="#category-products">
               Browse {category.product_count ?? products.count} products
             </Link>
           </Button>
@@ -120,7 +129,7 @@ export default async function CategoryPage({ params }: Params) {
       )}
 
       {products.results.length > 0 && (
-        <Section tone="muted" size="sm">
+        <Section tone="muted" size="sm" id="category-products">
           <div className="container-noks">
             <SectionHeading
               align="left"
@@ -136,8 +145,10 @@ export default async function CategoryPage({ params }: Params) {
             {products.count > products.results.length && (
               <div className="mt-10 text-center">
                 <Button asChild variant="outline">
-                  <Link href={`/products?category=${category.slug}`}>
-                    View all {products.count} products
+                  {/* The full catalogue index, which is crawlable — not the
+                      filtered facet, which is not. */}
+                  <Link href="/catalogue">
+                    See all {products.count} products in the full catalogue
                   </Link>
                 </Button>
               </div>

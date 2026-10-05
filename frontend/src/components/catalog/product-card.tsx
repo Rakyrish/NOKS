@@ -128,6 +128,7 @@ export const ProductCard = ({
                 </Link>
                 <Link
                   href={`/quote?product=${product.slug}`}
+                  rel="nofollow"
                   className="inline-flex h-9 items-center gap-1.5 rounded-full
                              bg-[var(--brand-primary)] px-4 text-[13px] font-semibold text-white
                              transition-colors hover:bg-[var(--brand-primary-dark)]"
@@ -230,6 +231,7 @@ export const ProductCard = ({
             </Link>
             <Link
               href={`/quote?product=${product.slug}`}
+              rel="nofollow"
               className="inline-flex h-9 flex-1 items-center justify-center rounded-full
                          bg-[var(--brand-primary)] text-[13px] font-semibold text-white
                          transition-colors hover:bg-[var(--brand-primary-dark)]"

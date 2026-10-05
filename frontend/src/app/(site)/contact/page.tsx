@@ -13,7 +13,7 @@ import { brand, contact, social } from "@/lib/site";
 export const revalidate = 3600;
 
 export const metadata: Metadata = pageMetadata({
-  title: "Contact Us — Chemical Sales & Technical Support",
+  title: "Contact Chemical Suppliers in Nairobi — Sales & Quotes",
   description: `Contact ${brand.fullName} in ${contact.city || "Nairobi"}. Phone ${contact.phone}, email ${contact.email}. Chemical sales, technical support and quotation requests across Kenya and East Africa.`,
   path: "/contact",
   image: "/images/pages/contact.jpg",
