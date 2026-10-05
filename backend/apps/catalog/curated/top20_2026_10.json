@@ -1,0 +1,505 @@
+{
+  "_about": "Hand-written copy for the 20 catalogue products with the most Kenyan search demand (Google gl=ke autocomplete, sampled 2026-10-05). Applied by `manage.py apply_curated_copy`; products listed here are skipped by `enrich_products`. Rules: state only the grade, purity, packaging and specifications held in the database; no stock, minimum-order, dispatch-speed, certification or per-batch-document claims (see frontend/src/lib/business.ts CLAIMS).",
+  "products": {
+    "hydrogen-peroxide-50": {
+      "short_description": "Industrial hydrogen peroxide at 50% w/w for bleaching, oxidation, disinfection and effluent treatment, supplied in 20 L, 200 L and 1,000 kg IBC packs.",
+      "meta_description": "Hydrogen peroxide 50% supplier in Kenya for textile bleaching, water and effluent treatment and CIP. 20 L, 200 L drums and IBCs. Request a price quote.",
+      "description": "Hydrogen peroxide 50% (H₂O₂, CAS 7722-84-1) is a clear, colourless oxidising liquid. It breaks down into nothing but water and oxygen, which is why it has replaced chlorine in many bleaching and disinfection duties where residues or chlorinated by-products are a problem.\n\nThis is an industrial concentrate at 50% ± 1% w/w, not the 3% solution sold in pharmacies for wound care or mouthwash. In Kenya it is bought by textile and cotton processors for bleaching, by water and effluent plants to oxidise iron, manganese and hydrogen sulphide and to cut COD, by food, dairy and beverage plants as a diluted sanitiser, and by mining operations for cyanide destruction. The specification calls for a minimum 97% stability at 100 °C and total carbon at or below 300 ppm.\n\nWe supply it in 20 L cans, 200 L drums and 1,000 kg IBCs. Tell us the concentration you dose at and your monthly volume, and we will quote the pack size that makes the most sense for your site, with delivery to your location included in the quotation.\n\nHandle it as a strong oxidiser. Keep it in its original vented container, out of direct sun and away from fuels, solvents, metals and organic material. Never return unused peroxide to the drum, because contamination is what starts decomposition. Wear chemical goggles, gloves and an apron when decanting or diluting.",
+      "applications": [
+        "Bleaching cotton, textiles and yarn",
+        "Pulp and paper brightening",
+        "Oxidising iron, manganese and hydrogen sulphide in water treatment",
+        "COD and odour reduction in industrial effluent",
+        "Diluted sanitiser for food, dairy and beverage CIP",
+        "Cyanide destruction in gold processing",
+        "Advanced oxidation with UV or ozone"
+      ],
+      "benefits": [
+        "Assay 50% ± 1% w/w per specification",
+        "Decomposes to water and oxygen with no chlorinated by-products",
+        "Stability of at least 97% at 100 °C per specification",
+        "Packed in 20 L, 200 L drum and 1,000 kg IBC sizes"
+      ],
+      "faqs": [
+        {"question": "What is the price of hydrogen peroxide 50% in Kenya?", "answer": "Price depends on pack size and quantity, and it moves with import costs and the exchange rate, so we quote each order rather than publish a list price. Send the quantity, pack size and delivery town through the quote form on this page and we will reply with a written quotation."},
+        {"question": "Is this the same as the hydrogen peroxide sold in pharmacies?", "answer": "No. Pharmacy hydrogen peroxide is usually 3%. This product is a 50% industrial concentrate that causes severe burns on skin and eyes. It is for industrial use only and must not be used for wound care, mouthwash or teeth whitening."},
+        {"question": "How do I dilute 50% hydrogen peroxide?", "answer": "Always add the peroxide slowly to clean water, never the other way round, and use clean plastic or stainless steel equipment. For example, 100 mL of 50% made up to 1 L with water gives roughly 5%. Confirm the target strength for your process against your SDS and process instructions."},
+        {"question": "How should hydrogen peroxide be stored?", "answer": "Store it upright in its original vented container, in a cool, shaded place away from fuels, solvents, metal powders and organic material. Do not seal it in an unvented container or pour unused product back into the drum."}
+      ]
+    },
+    "white-petroleum-jelly-usp-grade": {
+      "chemical_formula": "",
+      "short_description": "USP-grade white petroleum jelly (petrolatum) for ointments, body and baby jellies, lip balms, hair products and lotions, from 500 g up to 180 kg drums.",
+      "meta_description": "White petroleum jelly USP grade supplier in Kenya for body jelly, ointments, lip balm and hair products. 500 g to 180 kg packs. Request a price quote.",
+      "description": "White petroleum jelly, also called petrolatum or soft paraffin (CAS 8009-03-8), is a purified semi-solid blend of hydrocarbons. It is odourless, translucent white, insoluble in water, and melts between about 38 and 60 °C. It forms a barrier on skin that slows moisture loss, which makes it the base of most body jellies, ointments and lip balms.\n\nThis product is USP grade, the pharmacopoeia grade used for products applied to skin. Kenyan manufacturers buy it to make body and baby jellies, medicated ointments and balms, hair pomades and relaxer bases, lotions and creams, and lip care products. Industrial users also buy it for leather dressing, rust protection on tools and as a lubricant where a clean, inert grease is needed.\n\nWe supply it in 500 g, 5 kg and 25 kg tins or pails, 15 kg packs and 180 kg barrels, so you can trial a formula on a small pack and scale to drums for production. Send your monthly volume and preferred pack with your quote request.\n\nStore it in a cool place with the lid closed to keep out dust and moisture. When blending, melt it gently in a water bath or jacketed vessel rather than over a direct flame.",
+      "applications": [
+        "Body jelly and baby jelly manufacture",
+        "Ointment and balm bases",
+        "Lip balms and lip care sticks",
+        "Hair pomades, hair food and relaxer bases",
+        "Creams and lotions as an occlusive ingredient",
+        "Leather dressing and rust protection",
+        "Inert lubricant for moving parts"
+      ],
+      "benefits": [
+        "USP grade for products applied to skin",
+        "Odourless and translucent white",
+        "Melting range of about 38–60 °C",
+        "Pack sizes from 500 g to 180 kg"
+      ],
+      "faqs": [
+        {"question": "What is the price of petroleum jelly in Kenya?", "answer": "Price depends on pack size and quantity, so we quote each order. Tell us whether you need tins, pails or 180 kg barrels and your delivery town through the quote form, and we will send a written quotation."},
+        {"question": "Can I use this petroleum jelly to make body jelly?", "answer": "Yes. USP grade is the grade used for products applied to skin. Many producers blend it with fragrance, vitamin E or other oils. If you sell finished cosmetics in Kenya, check the product standards and registration requirements that apply to you."},
+        {"question": "What is the difference between white and yellow petroleum jelly?", "answer": "White petroleum jelly is more highly refined, with colour bodies and impurities removed. That is why it is preferred for cosmetic and pharmaceutical products. Yellow grades are generally used for industrial purposes."},
+        {"question": "How is petroleum jelly melted for blending?", "answer": "Heat it gently in a water bath or jacketed vessel to around 60–70 °C, then add your other ingredients. Avoid direct flame, which can scorch it."}
+      ]
+    },
+    "boric-acid-technical-grade": {
+      "short_description": "Technical-grade boric acid (≥99%) for glass, ceramic glazes, flame retardants, timber treatment, electroplating and boron fertiliser blends.",
+      "meta_description": "Boric acid supplier in Kenya, technical grade ≥99%, for glass, ceramics, timber treatment, electroplating and boron fertiliser. Request a price quote.",
+      "description": "Boric acid (H₃BO₃, CAS 10043-35-3) is a white crystalline powder that dissolves in water to give a very weak acid. It is the main way industry adds boron to a process, and boron changes how glass, glazes, timber and plants behave.\n\nThis is technical grade at ≥99% purity. In Kenya it is used to make glass and fibreglass, in ceramic glazes and enamels, as a flame retardant for timber, boards and cellulose insulation, and in timber preservation against borers and fungi. It is also used as a buffer in nickel electroplating baths, as a boron source in fertiliser blends and foliar feeds for crops prone to boron deficiency, and in insect baits.\n\nIt is technical grade only. It is not suitable for food, medicines or personal-care products, and it should not be used as a home remedy. We supply it in 25 kg bags, 50 kg drums and 1,000 kg bulk bags.\n\nBoric acid is classified as toxic to reproduction (GHS08). Avoid breathing the dust, wear gloves and eye protection, and keep it away from food and animal feed. Store it dry, because it cakes when it absorbs moisture.",
+      "applications": [
+        "Glass and fibreglass manufacture",
+        "Ceramic glazes, frits and enamels",
+        "Flame retardant for timber, board and cellulose insulation",
+        "Timber preservation against borers and fungi",
+        "Buffer in nickel electroplating baths",
+        "Boron source in fertiliser blends and foliar feeds",
+        "Insecticidal baits"
+      ],
+      "benefits": [
+        "Purity ≥99%",
+        "Water-soluble white crystalline powder",
+        "Packed in 25 kg bags, 50 kg drums and 1,000 kg bulk bags"
+      ],
+      "faqs": [
+        {"question": "What is the price of boric acid in Kenya?", "answer": "We quote each order based on quantity and pack size. Send your requirement and delivery town through the quote form on this page for a written quotation."},
+        {"question": "Can this boric acid be used for medical or personal use?", "answer": "No. This is technical grade for industrial use. It is not intended for medicines, food, cosmetics or home remedies, and it is classified as toxic to reproduction."},
+        {"question": "Is boric acid used in agriculture?", "answer": "Yes. Boric acid is one of the sources of boron in fertiliser blends and foliar sprays for crops prone to boron deficiency. Application rates are small and crop-specific, so base them on a soil or leaf test and your agronomist's advice."},
+        {"question": "What is the difference between boric acid and borax?", "answer": "Both supply boron. Boric acid is a weak acid (H₃BO₃), while borax is a sodium borate salt that gives an alkaline solution. Which one fits depends on your process chemistry. We supply both."}
+      ]
+    },
+    "jk-white-portland-cement-type-1": {
+      "short_description": "JK White Portland Cement Type 1 in 40 kg bags, conforming to ASTM C150 Type I and EN 197-1 CEM I 52.5N, for terrazzo, decorative plaster, grout and precast.",
+      "meta_description": "White cement supplier in Kenya: JK White Portland Cement Type 1, 40 kg bags, ASTM C150 / CEM I 52.5N, for terrazzo, grout and plaster. Get a price quote.",
+      "description": "JK White Portland Cement Type 1 is a white ordinary Portland cement supplied in 40 kg bags. It conforms to ASTM C150 Type I and EN 197-1 CEM I 52.5N, so it sets and gains strength like a high-grade grey cement. The difference is colour. Made from raw materials low in iron and manganese, it gives a bright white base that takes pigments cleanly.\n\nKenyan builders, fundis and precast producers use it wherever the cement will be seen. That includes terrazzo floors and staircases, white or coloured plaster and render, tile grout and joint fillers, wall putty and skim coats, decorative precast such as balustrades, cabros, copings and garden products, and swimming pool finishes. Mixed with iron oxide pigments it produces stable reds, yellows and browns that ordinary grey cement cannot.\n\nBecause it is a CEM I 52.5N cement, mix design follows normal Portland cement practice. Batch accurately and keep tools and mixers clean, so that grey cement residue does not stain the white finish.\n\nStore the bags off the floor on pallets, under cover and away from moisture, and use the oldest stock first. Wet cement is alkaline and can burn skin, so wear gloves and eye protection when mixing.",
+      "applications": [
+        "Terrazzo floors, stairs and worktops",
+        "White and coloured plaster and render",
+        "Tile grout and joint filling",
+        "Wall putty and skim coats",
+        "Decorative precast: balustrades, copings, cabros",
+        "Swimming pool finishes",
+        "Coloured concrete with iron oxide pigments"
+      ],
+      "benefits": [
+        "Conforms to ASTM C150 Type I and EN 197-1 CEM I 52.5N",
+        "Bright white base for clean, true pigment colours",
+        "Standard 40 kg bags"
+      ],
+      "faqs": [
+        {"question": "What is the price of white cement in Kenya?", "answer": "We quote per order, based on the number of bags and the delivery location. Send your requirement through the quote form on this page and we will reply with a written quotation."},
+        {"question": "What is the difference between white cement and ordinary grey cement?", "answer": "Both are Portland cements with similar strength. White cement is made from raw materials low in iron and manganese, which gives it its colour. It costs more, so it is used where the finish is visible or needs to be coloured."},
+        {"question": "Can white cement be coloured?", "answer": "Yes. Iron oxide pigments are the usual choice for red, yellow, brown and black, typically at a few percent of the cement weight. Always make a trial panel first, because colour depends on dosage, water content and curing."},
+        {"question": "How should white cement be stored?", "answer": "Keep bags on pallets, off the floor and under cover, away from moisture, and rotate stock so the oldest bags are used first. Cement that has absorbed moisture forms lumps and loses strength."}
+      ]
+    },
+    "carboxymethyl-cellulose": {
+      "chemical_formula": "",
+      "short_description": "Technical-grade carboxymethyl cellulose (CMC) powder for thickening liquid soaps and detergents, drilling fluids, textile sizing, paper and paints.",
+      "meta_description": "CMC (carboxymethyl cellulose) supplier in Kenya for liquid soap and detergent thickening, drilling mud, textiles and paints. 25 kg bags. Request a quote.",
+      "description": "Carboxymethyl cellulose (CMC, CAS 9000-11-7) is a water-soluble polymer made from cellulose. It is a white to off-white powder that dissolves in water to form a clear, viscous solution. CMC is one of the most widely used thickeners and binders in Kenyan manufacturing.\n\nThis is technical grade. Its best-known use in Kenya is thickening liquid soap, dishwashing liquid and other detergents, where it builds viscosity and helps keep soil from redepositing on fabric. It is also used in borehole and oil-well drilling fluids to control fluid loss, as a sizing agent for textiles, in paper coating, as a thickener in water-based paints and adhesives, and as a binder in ceramics.\n\nFood, beverage and pharmaceutical products need a food- or pharma-grade CMC with the matching documentation. Tell us your end use when you request a quote. We supply technical CMC in 25 kg bags and 500 kg and 1,000 kg bulk bags.\n\nCMC lumps if it is dumped into water all at once. Sprinkle it slowly into a stirred vortex, or pre-mix it with a little glycerine, salt or another dry ingredient before adding water, then allow time for it to hydrate fully. Store it in a dry place with the bag closed.",
+      "applications": [
+        "Thickening liquid soap and dishwashing liquid",
+        "Anti-redeposition agent in detergents",
+        "Fluid-loss control in drilling mud",
+        "Textile warp sizing",
+        "Paper coating and surface sizing",
+        "Thickener for water-based paints and adhesives",
+        "Binder in ceramics"
+      ],
+      "benefits": [
+        "Dissolves in water to a clear, viscous solution",
+        "Not classified as hazardous",
+        "Packed in 25 kg bags and 500 kg and 1,000 kg bulk bags"
+      ],
+      "faqs": [
+        {"question": "What is the price of CMC in Kenya?", "answer": "We quote per order based on quantity and pack size. Send your requirement and delivery town through the quote form on this page for a written quotation."},
+        {"question": "How much CMC do I add to liquid soap?", "answer": "It depends on your formula and the thickness you want. Liquid soap formulas commonly use somewhere between 0.5% and 2% of the batch weight. Start low, let it hydrate fully (it keeps thickening for some time), then adjust."},
+        {"question": "How do I dissolve CMC without lumps?", "answer": "Add it slowly to water that is being stirred strongly, or pre-mix it with glycerine, salt or another dry ingredient first so the particles separate. Then give it time to hydrate. Warm water speeds this up."},
+        {"question": "Is this CMC food grade?", "answer": "No. This listing is technical grade for detergents, drilling, textiles, paper and paints. For food or pharmaceutical use, ask us for a food- or pharma-grade CMC with its supporting documents."}
+      ]
+    },
+    "sodium-carbonate-soda-ash": {
+      "short_description": "Industrial soda ash (sodium carbonate, ≥99.0%) for detergents, glass, water treatment and pH control, textile dyeing and soap making.",
+      "meta_description": "Soda ash (sodium carbonate) supplier in Kenya, ≥99%, for detergent powder, glass, water treatment, pH control and dyeing. Request a price quote.",
+      "description": "Soda ash, or sodium carbonate (Na₂CO₃, CAS 497-19-8), is a white crystalline powder that dissolves readily in water to form an alkaline solution (pH about 11.5–12 at 1%). It is one of the most widely used alkalis in industry. It is milder and safer to handle than caustic soda, but strong enough to neutralise acids, soften water and build detergents.\n\nThis is industrial grade at ≥99.0% purity. Kenyan manufacturers use it as a builder in detergent powders and cleaners, in glass making, and in water treatment to raise pH and soften water, including in swimming pools. It is also used to fix reactive dyes in textile and batik dyeing, to neutralise acidic effluent, in soap making, and in ore processing.\n\nWe supply it in 50 lb (about 22.7 kg) bags. Send your monthly volume with your quote request so we can quote the right quantity.\n\nSoda ash is an irritant to eyes and skin, so wear eye protection and gloves and avoid raising dust. Keep bags closed and dry, because it absorbs moisture and cakes. It reacts with acids and gives off carbon dioxide.",
+      "applications": [
+        "Builder in detergent powders and cleaners",
+        "Glass manufacture",
+        "Raising pH and softening water, including pools",
+        "Fixing reactive dyes in textile and batik dyeing",
+        "Neutralising acidic effluent",
+        "Soap making",
+        "Ore and mineral processing"
+      ],
+      "benefits": [
+        "Purity ≥99.0%",
+        "pH of about 11.5–12.0 in 1% solution",
+        "Easier and safer to handle than caustic soda for many pH duties"
+      ],
+      "faqs": [
+        {"question": "What is the price of soda ash in Kenya?", "answer": "We quote per order based on quantity and delivery location. Send your requirement through the quote form on this page for a written quotation."},
+        {"question": "What is the difference between soda ash and caustic soda?", "answer": "Both are alkalis. Soda ash (sodium carbonate) is milder, with a pH of about 11.5 at 1%. Caustic soda (sodium hydroxide) is much stronger and more dangerous to handle. Soda ash suits water softening, detergents and gentle pH adjustment, while caustic soda is needed for saponification and strong cleaning."},
+        {"question": "Is soda ash the same as baking soda?", "answer": "No. Baking soda is sodium bicarbonate (NaHCO₃), a much weaker base used in food. Soda ash is sodium carbonate (Na₂CO₃), a stronger industrial alkali that is not for food use."},
+        {"question": "Can soda ash be used in swimming pools?", "answer": "Yes. Soda ash is commonly used to raise the pH of pool water. Dissolve it in a bucket of water first and add it gradually, testing pH as you go."}
+      ]
+    },
+    "epsom-salt": {
+      "short_description": "Technical-grade Epsom salt (magnesium sulphate heptahydrate, ≥99%), a water-soluble source of magnesium and sulphur for crops, fertigation and industry.",
+      "meta_description": "Epsom salt (magnesium sulphate) supplier in Kenya, ≥99%, for foliar feeding, fertigation, tea, coffee, flowers and vegetables. Request a price quote.",
+      "description": "Epsom salt is magnesium sulphate heptahydrate (MgSO₄·7H₂O, CAS 10034-99-8). It is a white crystalline powder that dissolves completely in water, which makes it one of the fastest ways to deliver magnesium and sulphur to a crop.\n\nThis is technical grade at ≥99%, used mainly in agriculture. Kenyan growers apply it as a foliar spray or through fertigation to correct magnesium deficiency, which shows as yellowing between the veins of older leaves. Typical crops include tea, coffee, tomatoes, potatoes, cabbages, avocados and greenhouse flowers. It is also blended into fertiliser mixes and used in textile finishing, leather tanning and some industrial processes.\n\nIt is not food or pharmaceutical grade, so it is not intended for human or animal consumption. For bath salts and cosmetics, check that the grade meets your product requirements. We supply it in 25 kg bags, 50 kg drums and bulk containers.\n\nKeep bags closed and dry, because it absorbs moisture and cakes. It is mildly irritating to eyes, so wear eye protection when mixing spray solutions.",
+      "applications": [
+        "Foliar spray to correct magnesium deficiency",
+        "Fertigation in greenhouses and open fields",
+        "Tea, coffee, avocado and vegetable nutrition",
+        "Floriculture nutrient programmes",
+        "Fertiliser blending",
+        "Textile finishing and leather tanning"
+      ],
+      "benefits": [
+        "Fully water-soluble magnesium and sulphur source",
+        "Purity ≥99%",
+        "pH of about 5.5–7.0 in 5% solution"
+      ],
+      "faqs": [
+        {"question": "What is the price of Epsom salt in Kenya?", "answer": "We quote per order based on quantity and pack size. Send your requirement and delivery town through the quote form on this page for a written quotation."},
+        {"question": "Is Epsom salt the same as magnesium sulphate?", "answer": "Yes. Epsom salt is the common name for magnesium sulphate heptahydrate, MgSO₄·7H₂O."},
+        {"question": "How much Epsom salt do I use for a foliar spray?", "answer": "Foliar sprays are commonly mixed at about 1–2% (10–20 g per litre of water), but the right rate depends on the crop, its growth stage and the severity of the deficiency. Base the programme on a soil or leaf test and your agronomist's advice, and test on a small area first."},
+        {"question": "Can I use this Epsom salt for bathing or as a laxative?", "answer": "This listing is technical grade for agriculture and industry. It is not for internal use. For personal-care products, use a grade documented for that purpose."}
+      ]
+    },
+    "diammonium-phosphate-dap-18-46-0-fertilizer": {
+      "short_description": "DAP 18-46-0 granular fertiliser, supplying 18% nitrogen and 46% P₂O₅ for planting maize, beans, wheat, potatoes and vegetables.",
+      "meta_description": "DAP fertiliser 18-46-0 supplier in Kenya for planting maize, beans, wheat and potatoes. 25 kg and 50 kg bags and 1-ton bulk bags. Request a price quote.",
+      "description": "Diammonium phosphate (DAP, (NH₄)₂HPO₄, CAS 7783-28-0) is the most widely used planting fertiliser in Kenya. Its 18-46-0 analysis supplies 18% nitrogen and 46% phosphate (as P₂O₅), and phosphate is what young roots need most in the weeks after germination.\n\nThe granules are white to light grey, mostly between 1 and 4 mm, and fully water-soluble. Farmers apply DAP at planting for maize, beans, wheat, sorghum, potatoes and vegetables, placing it in the planting hole or furrow and mixing it with soil so the seed does not sit directly on the fertiliser. A top-dressing nitrogen fertiliser such as CAN or urea usually follows later in the season.\n\nRates vary with soil, crop and expected yield. A soil test is the best guide, especially on acidic soils, which are common in parts of Kenya and may need liming or a different phosphate source. We supply DAP in 25 kg and 50 kg bags, 1-ton bulk bags and container loads for distributors and large farms.\n\nStore the bags off the ground in a dry, covered store, away from seed and animal feed. Wash your hands after handling.",
+      "applications": [
+        "Planting fertiliser for maize",
+        "Beans, peas and other legumes",
+        "Wheat, barley and sorghum",
+        "Potatoes and vegetables",
+        "Fertiliser blending",
+        "Pasture establishment"
+      ],
+      "benefits": [
+        "18% nitrogen and 46% P₂O₅ (18-46-0)",
+        "Granules mostly 1–4 mm for even spreading",
+        "Fully water-soluble",
+        "25 kg and 50 kg bags, 1-ton bulk bags and containers"
+      ],
+      "faqs": [
+        {"question": "What is the price of DAP fertiliser in Kenya?", "answer": "Fertiliser prices move with world markets and the exchange rate, so we quote each order. Send the number of bags or tonnes and your delivery location through the quote form on this page."},
+        {"question": "How much DAP should I use per acre of maize?", "answer": "A common Kenyan recommendation for maize is around one 50 kg bag of DAP per acre at planting, but the right rate depends on your soil, the variety and the yield you expect. A soil test, or advice from an agronomist or extension officer, will give a more accurate rate."},
+        {"question": "Is DAP used at planting or for top dressing?", "answer": "DAP is a planting fertiliser, because its high phosphate supports root development. Top dressing is normally done later with a nitrogen fertiliser such as CAN or urea."},
+        {"question": "Is DAP suitable for acidic soils?", "answer": "DAP can be used on many soils, but on strongly acidic soils agronomists often recommend liming or a different phosphate fertiliser. A soil pH test before planting will tell you which applies to your farm."}
+      ]
+    },
+    "caustic-soda-flakes": {
+      "short_description": "Industrial caustic soda flakes (sodium hydroxide, ≥98%) for soap making, detergents, water treatment, CIP cleaning, textiles and paper.",
+      "meta_description": "Caustic soda flakes supplier in Kenya, NaOH ≥98%, for soap making, detergents, water treatment and CIP. 25 kg bags and 200 kg drums. Get a price quote.",
+      "description": "Caustic soda flakes are solid sodium hydroxide (NaOH, CAS 1310-73-2), the strongest common alkali in industry. The white flakes absorb moisture from the air and dissolve in water with a lot of heat to form a highly corrosive solution, often called lye.\n\nThis is industrial grade at ≥98% purity. In Kenya the biggest use is soap making. Caustic soda reacts with oils and fats such as palm, coconut and tallow to make bar and liquid soap, and it neutralises LABSA in detergent production. It is also used to correct pH in water and effluent treatment, for caustic CIP cleaning in dairies, breweries and juice plants, for textile scouring and mercerising, in pulp and paper, and in drain and oven cleaners.\n\nWe supply the flakes in 25 kg polypropylene bags and 200 kg drums. Send your monthly volume with your quote request.\n\nCaustic soda causes severe burns and permanent eye damage. Always add the flakes slowly to cold water, never water to flakes, because the solution heats up and can boil and spatter. Wear chemical goggles, alkali-resistant gloves and long sleeves. Store it in a dry place in sealed bags or drums, away from acids and aluminium.",
+      "applications": [
+        "Bar and liquid soap making",
+        "Neutralising LABSA in detergent production",
+        "pH correction in water and effluent treatment",
+        "Caustic CIP cleaning in dairies, breweries and beverage plants",
+        "Textile scouring and mercerising",
+        "Pulp and paper processing",
+        "Drain and oven cleaner formulation"
+      ],
+      "benefits": [
+        "Purity ≥98% NaOH",
+        "Flake form dissolves quickly",
+        "25 kg bags and 200 kg drums"
+      ],
+      "faqs": [
+        {"question": "What is the price of caustic soda in Kenya?", "answer": "Caustic soda prices move with import costs and the exchange rate, so we quote each order. Send the quantity (number of 25 kg bags or drums) and your delivery town through the quote form on this page."},
+        {"question": "How much caustic soda do I need to make soap?", "answer": "It depends on the oils you use, because each oil needs a different amount of caustic soda to saponify (its SAP value). Use a soap or lye calculator for your exact recipe, and allow a small fat surplus so the finished soap is not harsh on skin."},
+        {"question": "What is the difference between caustic soda flakes and pearls?", "answer": "They are the same chemical, sodium hydroxide, in different physical forms. Pearls (prills) are small beads that flow and measure easily, while flakes dissolve quickly. Choose whichever suits your handling."},
+        {"question": "How do I mix caustic soda safely?", "answer": "Always add the caustic soda slowly to cold water while stirring, never the other way round. Wear goggles, gloves and long sleeves, work in a ventilated area, and keep children and animals away. If it splashes on skin or eyes, rinse with plenty of running water and seek medical help."}
+      ]
+    },
+    "acetone": {
+      "short_description": "Laboratory-grade acetone (≥99.5%) for cleaning and degreasing, lab work, resin and fibreglass clean-up, coatings, adhesives and nail polish remover manufacture.",
+      "meta_description": "Acetone supplier in Kenya, ≥99.5% laboratory grade, for cleaning, degreasing, labs, fibreglass and nail polish remover. 1 L, 5 L and 20 L. Get a quote.",
+      "description": "Acetone (C₃H₆O, CAS 67-64-1) is a clear, colourless, fast-evaporating solvent that mixes completely with water and most organic solvents. It dissolves greases, resins, paints, adhesives and many plastics, then evaporates without residue. That makes it a standard cleaning and degreasing solvent in workshops, laboratories and factories.\n\nThis product is laboratory grade at ≥99.5%. It is used to rinse and dry laboratory glassware, as a reagent and extraction solvent, for degreasing metal parts before painting or bonding, for cleaning polyester resin and fibreglass tools, as a component of lacquers, thinners and adhesives, and as the main ingredient in nail polish removers. For bulk degreasing where laboratory purity is not needed, see our technical-grade acetone.\n\nWe supply it in 1 L bottles, 5 L cans and 20 L drums. Acetone is listed internationally as a precursor chemical, so we may ask about your intended use when you order.\n\nAcetone is highly flammable and its vapour can travel to an ignition source. Use it in a well-ventilated area away from flames, sparks and smoking, keep containers closed, and store them in a cool place out of direct sun. Prolonged skin contact dries and cracks the skin, so wear nitrile or butyl gloves.",
+      "applications": [
+        "Rinsing and drying laboratory glassware",
+        "Laboratory reagent and extraction solvent",
+        "Degreasing metal before painting or bonding",
+        "Cleaning resin and fibreglass tools",
+        "Lacquers, thinners and adhesives",
+        "Nail polish remover manufacture"
+      ],
+      "benefits": [
+        "Purity ≥99.5% (laboratory grade)",
+        "Evaporates quickly without residue",
+        "Mixes fully with water and most solvents",
+        "1 L, 5 L and 20 L packs"
+      ],
+      "faqs": [
+        {"question": "What is the price of acetone in Kenya?", "answer": "We quote per order based on pack size and quantity. Send your requirement and delivery town through the quote form on this page for a written quotation."},
+        {"question": "Is acetone the same as nail polish remover?", "answer": "Acetone is the main active ingredient in most nail polish removers. Retail removers are usually diluted and contain added moisturisers and fragrance. Pure acetone works faster but dries the skin and nails more."},
+        {"question": "What is the difference between laboratory and technical grade acetone?", "answer": "Laboratory grade (≥99.5%) has tighter limits on water and impurities, which matters for analysis and residue-free cleaning. Technical grade suits general degreasing and thinning where that purity is not needed, and usually costs less."},
+        {"question": "How should acetone be stored?", "answer": "Keep it in tightly closed containers in a cool, well-ventilated area away from heat, sparks, flames and oxidising chemicals. Ground metal containers when decanting large volumes."}
+      ]
+    },
+    "calcium-carbonate": {
+      "short_description": "Industrial calcium carbonate powder (≥98%) used as a filler in paints, PVC, plastics, paper and rubber, in wall putty, and to raise soil pH.",
+      "meta_description": "Calcium carbonate supplier in Kenya, ≥98% powder, for paint, PVC pipes, plastics, wall putty and soil liming. 25 kg to 1-ton bags. Request a price quote.",
+      "description": "Calcium carbonate (CaCO₃) is a white mineral powder ground from limestone (CAS 1317-65-3). It is insoluble in water, chemically stable, bright and inexpensive, which makes it the most widely used mineral filler in industry.\n\nThis is industrial grade at ≥98%. Kenyan paint makers use it as an extender in emulsion and textured paints. PVC pipe, profile and plastics producers use it as a filler, and it also goes into paper, rubber, adhesives and sealants, and into wall putty and skim coats. Farmers and agronomists use calcium carbonate to raise the pH of acidic soils and supply calcium. It is sometimes called whiting.\n\nAnimal feed, food, toothpaste and pharmaceutical products need a grade documented for that purpose, so tell us your end use when you request a quote. We supply industrial calcium carbonate in 25 kg bags and 500 kg and 1,000 kg bulk bags.\n\nAvoid breathing the dust when handling large volumes, and use a dust mask and eye protection. Store it dry, as moisture causes caking.",
+      "applications": [
+        "Extender in emulsion and textured paints",
+        "Filler in PVC pipes, profiles and plastics",
+        "Paper, rubber, adhesives and sealants",
+        "Wall putty and skim coats",
+        "Raising the pH of acidic soils",
+        "Ceramics and glass batches"
+      ],
+      "benefits": [
+        "Purity ≥98% CaCO₃",
+        "Bright white, inert mineral filler",
+        "25 kg bags and 500 kg and 1,000 kg bulk bags"
+      ],
+      "faqs": [
+        {"question": "What is the price of calcium carbonate in Kenya?", "answer": "We quote per order based on quantity and pack size. Send your requirement and delivery town through the quote form on this page for a written quotation."},
+        {"question": "Is calcium carbonate the same as agricultural lime?", "answer": "Agricultural lime is largely calcium carbonate, so both raise soil pH and supply calcium. Liming rates depend on your soil pH and type, so base them on a soil test."},
+        {"question": "Can this calcium carbonate be used in animal feed?", "answer": "This listing is industrial grade. Feed, food and pharmaceutical uses need a grade with the matching documentation, so tell us your end use when you ask for a quote."},
+        {"question": "Why is calcium carbonate used in paint?", "answer": "It is a white, inert extender that adds body and opacity, helps control sheen and reduces cost per litre, while titanium dioxide provides most of the hiding power."}
+      ]
+    },
+    "borax-decahydrate-technical-granular": {
+      "short_description": "Technical-grade granular borax decahydrate (sodium borate) for detergents, glass and ceramics, metal fluxes, adhesives and boron fertilisers.",
+      "meta_description": "Borax supplier in Kenya: technical granular borax decahydrate for detergents, glass, ceramic glazes, flux, adhesives and boron fertiliser. Get a quote.",
+      "description": "Borax decahydrate (Na₂B₄O₇·10H₂O, CAS 1303-96-4) is a sodium borate. This technical granular form is free-flowing and white, and it dissolves in water to give a mildly alkaline solution. Like boric acid it is a source of boron, but its alkalinity and fluxing behaviour suit it to different jobs.\n\nIn Kenya borax is used in laundry and cleaning products as a buffer and booster, in glass, fibreglass and ceramic glazes and enamels, and as a flux in metal work, including brazing, soldering and gold smelting. It is also used in starch adhesives for corrugated board, in timber preservation, and as a boron source in fertiliser blends.\n\nWe supply it in small bags, bulk and intermediate bulk containers, so trial and production quantities are both possible. Tell us your end use and volume with your quote request.\n\nBorax is classified as toxic to reproduction. Avoid breathing the dust, wear gloves and eye protection, and keep it away from food, feed and children. It is not for food, medicine or personal-care use. Store it dry, as it cakes if it gets damp.",
+      "applications": [
+        "Laundry and cleaning product formulation",
+        "Glass, fibreglass and ceramic glazes",
+        "Flux for brazing, soldering and gold smelting",
+        "Starch adhesives for corrugated board",
+        "Timber preservation",
+        "Boron source in fertiliser blends"
+      ],
+      "benefits": [
+        "Free-flowing technical granular form",
+        "Mildly alkaline boron source",
+        "Small bags, bulk and IBC supply"
+      ],
+      "faqs": [
+        {"question": "What is the price of borax in Kenya?", "answer": "We quote per order based on quantity and pack type. Send your requirement and delivery town through the quote form on this page for a written quotation."},
+        {"question": "What is borax used for in gold processing?", "answer": "Borax is used as a flux when smelting gold. It lowers the melting point of impurities so they separate into slag. Follow safe smelting practice and local regulations."},
+        {"question": "What is the difference between borax and boric acid?", "answer": "Borax is a sodium borate that gives a mildly alkaline solution. Boric acid is a weak acid. Both supply boron, and the choice depends on the chemistry of your process."},
+        {"question": "Is borax safe to handle?", "answer": "Handle it with care. It is classified as toxic to reproduction. Wear gloves and eye protection, avoid dust, and keep it away from food, animal feed and children."}
+      ]
+    },
+    "sodium-bentonite-powder": {
+      "short_description": "Technical sodium bentonite powder for borehole drilling mud, piling and diaphragm-wall slurries, pond and dam sealing, and foundry sand binding.",
+      "meta_description": "Sodium bentonite supplier in Kenya for borehole drilling mud, piling slurry, pond and dam sealing and foundry sand. 50 kg bags. Request a price quote.",
+      "description": "Sodium bentonite (CAS 1302-78-9) is a natural clay made mostly of montmorillonite. Mixed with water it swells many times its dry volume and forms a smooth, gel-like slurry. That swelling is what lets it hold up borehole walls, carry drill cuttings and seal ponds.\n\nThis is technical grade. In Kenya it is used mainly in borehole and water-well drilling mud, and in civil engineering for piling and diaphragm-wall support slurries and grouts. It also seals and lines ponds, dams and lagoons, binds moulding sand in foundries, and serves as a carrier and binder in industrial products. The powder is off-white to light brown, and a 5% suspension has a pH of about 8.5–10.5.\n\nWine and juice clarification, animal feed and cosmetic clays need a grade documented for that use, so tell us your end use when you request a quote. We supply technical bentonite in 50 kg polypropylene bags, with 500 g and 2.5 kg containers for testing.\n\nTo mix drilling mud, add the bentonite slowly to agitated water and allow time to hydrate before use. Avoid breathing the dust, as it can contain crystalline silica, and store it dry.",
+      "applications": [
+        "Borehole and water-well drilling mud",
+        "Piling and diaphragm-wall support slurries",
+        "Pond, dam and lagoon sealing",
+        "Foundry moulding sand binder",
+        "Grouts and cut-off walls",
+        "Industrial binder and carrier"
+      ],
+      "benefits": [
+        "High swelling sodium montmorillonite clay",
+        "pH of about 8.5–10.5 in 5% suspension",
+        "50 kg bags plus 500 g and 2.5 kg test packs"
+      ],
+      "faqs": [
+        {"question": "What is the price of bentonite in Kenya?", "answer": "We quote per order based on the number of bags and your delivery location. Send your requirement through the quote form on this page for a written quotation."},
+        {"question": "How is bentonite mixed for borehole drilling?", "answer": "Add it gradually to water under strong agitation so it does not lump, then let it hydrate before use. Dosage depends on the formation and the viscosity your driller wants. Your drilling contractor will set the mud weight and viscosity for the job."},
+        {"question": "Can bentonite seal a leaking pond or dam?", "answer": "Yes. Sodium bentonite is commonly used to reduce seepage in ponds, dams and lagoons, either mixed into the soil liner or spread and compacted. The rate depends on the soil type and water depth."},
+        {"question": "Is this bentonite suitable for animal feed or cosmetics?", "answer": "This listing is technical grade. Feed, food and cosmetic uses need a grade with the matching documentation, so ask us when you request a quote."}
+      ]
+    },
+    "isopropyl-alcohol-99": {
+      "short_description": "Isopropyl alcohol (IPA) at ≥99% for disinfectant and sanitiser formulation, electronics and surface cleaning, printing, inks and coatings.",
+      "meta_description": "Isopropyl alcohol 99% (IPA) supplier in Kenya for sanitiser and disinfectant making, electronics cleaning and printing. 5 L, 20 L and 200 L. Get a quote.",
+      "description": "Isopropyl alcohol (IPA, isopropanol, C₃H₈O, CAS 67-63-0) is a clear, colourless solvent that evaporates quickly and mixes completely with water. At around 70% in water it is an effective disinfectant, and at full strength it is one of the most common cleaning solvents for electronics and precision parts.\n\nThis product is at least 99% IPA, with water at or below 0.2%. Kenyan manufacturers use it to make hand sanitisers, surface disinfectants and wipes, usually diluted to 70–75%. It is also used to clean circuit boards, screens and optical parts, in the printing industry for fountain solutions and press cleaning, and as a solvent for inks, coatings, resins and extraction.\n\nWe supply it in 5 L cans, 20 L drums and 200 L drums. If you are making a regulated product such as a hand sanitiser for sale, check the Kenyan standards and approvals that apply to the finished product.\n\nIPA is highly flammable. Keep it away from flames, sparks and heat, use it in well-ventilated areas, and keep containers tightly closed. Vapour can cause drowsiness, and liquid in the eyes causes serious irritation, so wear eye protection.",
+      "applications": [
+        "Hand sanitiser and surface disinfectant formulation",
+        "Disinfectant wipes",
+        "Cleaning circuit boards, screens and optics",
+        "Printing fountain solutions and press cleaning",
+        "Solvent for inks, coatings and resins",
+        "Laboratory cleaning and extraction"
+      ],
+      "benefits": [
+        "Purity ≥99% with water ≤0.2%",
+        "Evaporates quickly without residue",
+        "5 L, 20 L and 200 L packs"
+      ],
+      "faqs": [
+        {"question": "What is the price of isopropyl alcohol in Kenya?", "answer": "We quote per order based on pack size and quantity. Send your requirement and delivery town through the quote form on this page for a written quotation."},
+        {"question": "How do I dilute 99% IPA to 70%?", "answer": "To make 1 litre of about 70% IPA, measure roughly 707 mL of 99% IPA and top it up to 1 litre with clean or distilled water. Mix in a closed container and label it."},
+        {"question": "Why is 70% IPA used for disinfection rather than 99%?", "answer": "The water in a 70% solution slows evaporation, so the alcohol stays in contact with microbes for longer and penetrates their cells better. Undiluted 99% IPA is preferred for cleaning electronics, because it leaves almost no water behind."},
+        {"question": "What is the difference between isopropyl alcohol and ethanol?", "answer": "Both are alcohols used in sanitisers and cleaning. IPA is not for drinking and is the more common cleaning solvent. Ethanol is used where drinkable-grade or denatured alcohol is specified."}
+      ]
+    },
+    "activated-carbon": {
+      "short_description": "Industrial activated carbon (≥98% C) for water and borehole filtration, sugar and oil decolourising, gold recovery, and air and gas purification.",
+      "meta_description": "Activated carbon supplier in Kenya for water and borehole filters, sugar decolourising, gold recovery and air purification. 25 kg to 1-ton bags. Get a quote.",
+      "description": "Activated carbon is carbon processed to have an enormous internal surface area of fine pores. Contaminants in water, liquids or gases stick to that surface (adsorption), so activated carbon removes colour, taste, odour, chlorine and many organic compounds that ordinary filtration cannot.\n\nThis is industrial grade at ≥98% carbon. In Kenya it is used in municipal, borehole and household water filters to remove chlorine, taste, odour and organics, and in sugar and edible-oil refining to remove colour. Gold processors use it in carbon-in-pulp and carbon-in-leach circuits to recover dissolved gold. It also purifies air and gas in respirators and odour-control units, decolourises chemicals and pharmaceuticals, and treats effluent.\n\nActivated carbon comes as fine powder (PAC), which is dosed into a liquid and then filtered out, or as granules (GAC), which are packed into filter beds and columns. Tell us your application and filter type when you request a quote, so we offer the right form. We supply it in 25 kg bags and 500 kg and 1,000 kg bulk bags.\n\nFine carbon dust can irritate the lungs and is combustible, so handle it with dust control and keep it away from ignition sources and strong oxidisers. Store it sealed, because it adsorbs moisture and odours from the air.",
+      "applications": [
+        "Municipal, borehole and household water filtration",
+        "Chlorine, taste and odour removal",
+        "Sugar and edible-oil decolourising",
+        "Gold recovery in CIP and CIL circuits",
+        "Air and gas purification",
+        "Effluent and chemical purification"
+      ],
+      "benefits": [
+        "Carbon content ≥98%",
+        "Removes colour, taste, odour, chlorine and organics",
+        "25 kg bags and 500 kg and 1,000 kg bulk bags"
+      ],
+      "faqs": [
+        {"question": "What is the price of activated carbon in Kenya?", "answer": "Price depends on form (powder or granular), quantity and pack size, so we quote each order. Send your application and quantity through the quote form on this page."},
+        {"question": "What is the difference between powdered and granular activated carbon?", "answer": "Powdered activated carbon is dosed into a liquid and then removed by filtration, which suits batch treatment and decolourising. Granular activated carbon is packed into filters and columns that water or gas flows through, as in water filters and gold-recovery circuits."},
+        {"question": "Can activated carbon remove fluoride from water?", "answer": "Standard activated carbon is not effective for fluoride, which is a concern in some Kenyan boreholes. Fluoride removal normally uses bone char, activated alumina or reverse osmosis. Activated carbon is best for chlorine, taste, odour and organic contaminants."},
+        {"question": "How often does activated carbon need replacing?", "answer": "It depends on the contaminant load and flow rate. Once the pores are full, the carbon stops working. Most users replace or regenerate it when taste, odour or colour start coming through, or on a schedule set from testing."}
+      ]
+    },
+    "talc-powder": {
+      "short_description": "Technical-grade talc powder (≥98%) used as an extender in paints, a filler in plastics and rubber, and in ceramics and paper.",
+      "meta_description": "Talc powder supplier in Kenya, technical grade ≥98%, for paints and coatings, plastics, rubber, ceramics and paper. 25 kg and 1-ton bags. Get a quote.",
+      "description": "Talc is a natural magnesium silicate mineral (Mg₃Si₄O₁₀(OH)₂, CAS 14807-96-6) ground into a soft, white, platy powder. It is the softest common mineral. Its flat plates slide over each other, resist water and stay unaffected by most chemicals, which makes it a valuable functional filler.\n\nThis is technical grade at ≥98%. Paint makers use it as an extender, because the platy particles improve brushability, sag resistance, sanding and barrier properties in primers and emulsions. Plastics compounders use it to stiffen polypropylene and other polymers. It is also used as an anti-tack dusting agent in rubber, in ceramic bodies and glazes, and in paper making.\n\nTechnical talc is not intended for cosmetic, body or baby powders, or for food and pharmaceutical use. Those uses need a cosmetic or pharmaceutical grade documented as free of asbestos. We supply technical talc in 25 kg bags and 1,000 kg bulk bags.\n\nAvoid breathing talc dust. Use dust extraction or a suitable dust mask when handling it in bulk. Store it dry.",
+      "applications": [
+        "Extender in primers, emulsion and industrial paints",
+        "Filler for polypropylene and other plastics",
+        "Anti-tack dusting in rubber processing",
+        "Ceramic bodies and glazes",
+        "Paper making and coating"
+      ],
+      "benefits": [
+        "Purity ≥98%",
+        "Soft, platy and chemically inert",
+        "25 kg bags and 1,000 kg bulk bags"
+      ],
+      "faqs": [
+        {"question": "What is the price of talc powder in Kenya?", "answer": "We quote per order based on quantity and pack size. Send your requirement and delivery town through the quote form on this page for a written quotation."},
+        {"question": "Can this talc be used for baby powder or cosmetics?", "answer": "No. This is technical grade for paints, plastics, rubber and ceramics. Cosmetic and personal-care products need a cosmetic-grade talc documented as asbestos-free."},
+        {"question": "Why is talc used in paint?", "answer": "Its flat, plate-like particles improve brushing and sag resistance, make primers easier to sand and help paint films resist moisture. It also extends the more expensive pigments."},
+        {"question": "What is the difference between talc and calcium carbonate as fillers?", "answer": "Calcium carbonate is a low-cost, bright, blocky filler. Talc is platy, which adds stiffness, barrier and anti-sag properties. Many paint and plastic formulations use both."}
+      ]
+    },
+    "sulfuric-acid-98": {
+      "short_description": "Concentrated sulphuric acid (≥98%) in 500 mL, 2.5 L and 5 L glass bottles for laboratories, battery electrolyte preparation, pH control and metal treatment.",
+      "meta_description": "Sulphuric acid 98% supplier in Kenya for labs, battery acid preparation, pH control and metal treatment. 500 mL, 2.5 L and 5 L bottles. Request a quote.",
+      "description": "Sulphuric acid (H₂SO₄, CAS 7664-93-9) at 98% is a dense, oily, colourless to slightly yellow liquid and one of the most important industrial chemicals. It is a strong acid and a powerful dehydrating agent. It reacts violently with water, releasing a great deal of heat.\n\nThis product is ≥98% concentrated acid, supplied in 500 mL, 2.5 L and 5 L glass bottles for laboratories, workshops and smaller process users. It is used as a laboratory reagent and in analysis, to prepare lead-acid battery electrolyte by careful dilution, to lower the pH of alkaline water and effluent, in metal pickling and surface treatment, and in regenerating ion-exchange resins.\n\nSulphuric acid is listed internationally as a precursor chemical, so we supply it to businesses and institutions and may ask about your intended use. Tell us your volume when you request a quote.\n\nConcentrated sulphuric acid causes severe burns and blindness. When diluting, always add acid slowly to water, never water to acid, and stir continuously. Wear a face shield or goggles, acid-resistant gloves and an apron. Store it in its original container, upright, in a cool, ventilated place away from water, bases, metals and combustible material.",
+      "applications": [
+        "Laboratory reagent and analysis",
+        "Preparing lead-acid battery electrolyte",
+        "pH reduction of alkaline water and effluent",
+        "Metal pickling and surface treatment",
+        "Ion-exchange resin regeneration"
+      ],
+      "benefits": [
+        "Concentration ≥98% H₂SO₄",
+        "500 mL, 2.5 L and 5 L glass bottles"
+      ],
+      "faqs": [
+        {"question": "What is the price of sulphuric acid in Kenya?", "answer": "We quote per order based on bottle size and quantity. Send your requirement and delivery town through the quote form on this page for a written quotation."},
+        {"question": "How is battery acid made from 98% sulphuric acid?", "answer": "Battery electrolyte is diluted sulphuric acid, typically about 35–37% by weight (specific gravity around 1.26–1.28). It is made by slowly adding concentrated acid to distilled water in an acid-resistant container while stirring, never the reverse, and checking the result with a hydrometer. Only trained people with full protective equipment should do this."},
+        {"question": "Why must acid be added to water and not water to acid?", "answer": "Mixing releases intense heat. If water is poured into concentrated acid, it can boil instantly at the surface and spray acid out. Adding acid slowly to a larger volume of water spreads the heat safely."},
+        {"question": "Do I need to give details to buy sulphuric acid?", "answer": "Sulphuric acid is an internationally listed precursor chemical, so we supply it to businesses and institutions and may ask for your intended use."}
+      ]
+    },
+    "citric-acid-anhydrous": {
+      "short_description": "Technical-grade anhydrous citric acid (≥99%) for cleaning products, descalers, water and membrane treatment, metal cleaning and pH adjustment.",
+      "meta_description": "Citric acid anhydrous supplier in Kenya, ≥99%, for cleaning products, descalers, dishwashing liquid and pH control. 25 kg bags and drums. Get a quote.",
+      "description": "Citric acid anhydrous (C₆H₈O₇, CAS 77-92-9) is the water-free form of the natural acid found in citrus fruit. It is a colourless crystalline powder that dissolves easily in water. As well as being a mild, safe-to-handle acid, it binds calcium, magnesium and iron, which is why it is so effective against limescale and rust stains.\n\nThis is technical grade at ≥99%. Kenyan manufacturers use it in toilet and bathroom cleaners, descalers for kettles, boilers and coffee machines, dishwashing liquids, and laundry products. It is also used for cleaning reverse-osmosis membranes and removing scale from water systems, for metal cleaning and passivation, as a pH adjuster in formulations, and as a chelating agent.\n\nFor food, beverages, cosmetics or pharmaceuticals, use a food- or pharma-grade citric acid with the matching documentation. Tell us your end use when you request a quote. We supply it in 25 kg bags, 50 kg drums and 1,000 kg bulk containers.\n\nCitric acid powder irritates the eyes. Wear eye protection and gloves, and avoid creating dust. Store it dry with the bag sealed, as it absorbs moisture.",
+      "applications": [
+        "Toilet, bathroom and descaling cleaners",
+        "Dishwashing liquid and laundry products",
+        "Reverse-osmosis membrane and boiler descaling",
+        "Metal cleaning and stainless steel passivation",
+        "pH adjustment in formulations",
+        "Chelating agent for calcium, magnesium and iron"
+      ],
+      "benefits": [
+        "Purity ≥99%",
+        "Mild organic acid that is safer to handle than mineral acids",
+        "Binds calcium and iron, so it removes scale and rust stains",
+        "25 kg bags, 50 kg drums and 1,000 kg bulk containers"
+      ],
+      "faqs": [
+        {"question": "What is the price of citric acid in Kenya?", "answer": "We quote per order based on quantity and pack size. Send your requirement and delivery town through the quote form on this page for a written quotation."},
+        {"question": "What is the difference between citric acid anhydrous and monohydrate?", "answer": "The monohydrate contains one molecule of water of crystallisation. The anhydrous form contains none, so it is slightly stronger by weight and stays drier in powder blends. Either works in liquid cleaners once you adjust the dose."},
+        {"question": "Is this citric acid food grade?", "answer": "This listing is technical grade for cleaning and industrial use. For food, drinks or cosmetics, ask us for a food- or pharma-grade citric acid with its supporting documents."},
+        {"question": "How is citric acid used to descale?", "answer": "A warm solution of a few percent citric acid in water dissolves limescale from kettles, boilers, pipes and RO membranes. Follow the equipment maker's instructions and rinse well afterwards."}
+      ]
+    },
+    "sodium-bicarbonate-food-grade": {
+      "short_description": "Food-grade sodium bicarbonate (baking soda, ≥99% assay) for bakeries, baking powder, beverages and effervescent products, in 1 kg and 25 kg packs.",
+      "meta_description": "Food grade sodium bicarbonate (baking soda) supplier in Kenya, ≥99%, for bakeries, baking powder and beverages. 1 kg and 25 kg bags. Get a price quote.",
+      "description": "Sodium bicarbonate (NaHCO₃, CAS 144-55-8), better known as baking soda, is a white crystalline powder and a mild alkali. When it meets an acid, or is heated, it releases carbon dioxide. That is how it raises dough and batters and makes tablets fizz.\n\nThis is food grade with an assay of at least 99%, chloride at or below 0.02%, heavy metals at or below 5 ppm and loss on drying at or below 0.25%. Kenyan bakeries and food processors use it as a leavening agent in mandazi, cakes, biscuits, scones and quick breads, and as the alkali in baking powder blends. It is also used in effervescent drinks and tablets, as a pH buffer in food processing, and as a rumen buffer in dairy cattle rations. Outside food, it is used in cleaning products and dry-chemical fire extinguishers.\n\nWe supply it in 1 kg packs for small bakers and in 25 kg bags for production. Send your monthly volume with your quote request.\n\nSodium bicarbonate is low hazard, but keep it sealed and dry, away from strong odours and acids. In food, follow your recipe or formula dose, because too much gives a soapy, bitter taste.",
+      "applications": [
+        "Leavening for mandazi, cakes, biscuits and scones",
+        "Baking powder manufacture",
+        "Effervescent drinks and tablets",
+        "pH buffering in food processing",
+        "Rumen buffer in dairy cattle rations",
+        "Cleaning products and dry-chemical fire extinguishers"
+      ],
+      "benefits": [
+        "Food grade, assay ≥99% NaHCO₃",
+        "Chloride ≤0.02% and heavy metals ≤5 ppm per specification",
+        "1 kg packs and 25 kg bags"
+      ],
+      "faqs": [
+        {"question": "What is the price of baking soda in Kenya?", "answer": "We quote per order, from 1 kg packs to 25 kg bags in volume. Send your requirement and delivery town through the quote form on this page."},
+        {"question": "What is the difference between baking soda and baking powder?", "answer": "Baking soda is pure sodium bicarbonate and needs an acid in the recipe, such as buttermilk, yoghurt or lemon, to react. Baking powder is baking soda already mixed with a powdered acid and a filler, so it works with just moisture and heat."},
+        {"question": "Is sodium bicarbonate the same as soda ash?", "answer": "No. Soda ash is sodium carbonate, a stronger industrial alkali that is not for food. Sodium bicarbonate is the mild, food-grade baking soda."},
+        {"question": "How much baking soda goes into mandazi or cakes?", "answer": "Recipes typically use a small amount, often around half to one teaspoon per cup of flour, together with an acid ingredient. Follow your tested recipe, because too much gives a soapy taste and a yellow colour."}
+      ]
+    },
+    "hydrochloric-acid-33": {
+      "short_description": "Hydrochloric acid 33% (muriatic acid) for steel pickling, descaling, water treatment pH control, ion-exchange regeneration and construction cleaning.",
+      "meta_description": "Hydrochloric acid 33% supplier in Kenya for pickling, descaling, pH control and ion-exchange regeneration. 20 L, 200 L drums and bulk. Get a price quote.",
+      "description": "Hydrochloric acid (HCl, CAS 7647-01-0), also called muriatic acid or spirit of salt, is a solution of hydrogen chloride gas in water. At 33% it is a strong mineral acid that dissolves rust, scale and carbonate deposits quickly. It gives off sharp, corrosive fumes.\n\nThis product is industrial grade at 33% ± 1% HCl, clear to pale yellow, with iron at or below 5 ppm. Kenyan steel and galvanising plants use it to pickle steel and remove mill scale and rust. Maintenance teams use it to descale boilers, heat exchangers and pipework. Water treatment plants use it to lower pH and regenerate cation ion-exchange resins. It is also used in construction to clean cement and efflorescence from brick and tile, and in oil and gas well acidising.\n\nWe supply it in 20 L cans, 200 L drums and bulk tanker loads. Hydrochloric acid is listed internationally as a precursor chemical, so we supply it to businesses and institutions and may ask about your intended use.\n\nIt causes severe burns, and its fumes damage the eyes and lungs. Use it only with good ventilation, a face shield or goggles, acid-resistant gloves and an apron. When diluting, add the acid slowly to water. Store it in closed, acid-resistant containers away from metals, bases, bleach and oxidisers, because mixing it with bleach releases toxic chlorine gas.",
+      "applications": [
+        "Steel pickling before galvanising or coating",
+        "Descaling boilers, heat exchangers and pipework",
+        "pH reduction in water and effluent treatment",
+        "Cation ion-exchange resin regeneration",
+        "Cleaning cement and efflorescence from masonry and tiles",
+        "Oil and gas well acidising"
+      ],
+      "benefits": [
+        "Assay 33% ± 1% HCl",
+        "Iron ≤5 ppm per specification",
+        "20 L, 200 L drum and bulk tanker supply"
+      ],
+      "faqs": [
+        {"question": "What is the price of hydrochloric acid in Kenya?", "answer": "We quote per order based on pack size, quantity and delivery location. Send your requirement through the quote form on this page for a written quotation."},
+        {"question": "Is hydrochloric acid the same as muriatic acid?", "answer": "Yes. Muriatic acid and spirit of salt are traditional names for hydrochloric acid, usually at around 30–33% strength."},
+        {"question": "Can hydrochloric acid be mixed with bleach?", "answer": "No. Mixing hydrochloric acid with bleach (sodium hypochlorite) releases toxic chlorine gas. Never mix acids with chlorine products, and store them apart."},
+        {"question": "Do I need to give details to buy hydrochloric acid?", "answer": "Hydrochloric acid is an internationally listed precursor chemical, so we supply it to businesses and institutions and may ask for your intended use."}
+      ]
+    }
+  },
+  "corrections": {
+    "white-petroleum-jelly-usp-grade": {"chemical_formula": "", "_why": "Was C15H15N; petrolatum is a hydrocarbon mixture with no single formula."},
+    "carboxymethyl-cellulose": {"chemical_formula": "", "specifications_remove": ["Molecular Weight"], "_why": "Was C6H12O6 / 180.16 g/mol, which is glucose; CMC is a polymer."},
+    "epsom-salt": {"specifications_set": {"Melting Point": "Loses water of crystallisation from about 150 °C"}, "_why": "1124 °C is the decomposition point of anhydrous MgSO4, not the heptahydrate."},
+    "hydrogen-peroxide-50": {"hazard_class": "GHS03 Oxidising, GHS05 Corrosive, GHS07 Harmful — Danger", "_why": "Was a placeholder; H271/H302/H314/H332/H335 per harmonised classification for 50% H2O2."},
+    "hydrochloric-acid-33": {"hazard_class": "GHS05 Corrosive, GHS07 Harmful — Danger", "_why": "Was a placeholder; H290/H314/H335."},
+    "isopropyl-alcohol-99": {"hazard_class": "GHS02 Flammable, GHS07 Harmful — Danger", "_why": "Was a placeholder; H225/H319/H336."},
+    "sodium-bicarbonate-food-grade": {"hazard_class": "Not classified as hazardous", "_why": "Was a placeholder."}
+  }
+}

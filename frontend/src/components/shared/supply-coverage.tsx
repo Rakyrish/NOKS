@@ -2,6 +2,8 @@ import { MapPin, Ship, Truck } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
+import { isVerified } from "@/lib/business";
+import { brand, contact } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -55,13 +57,21 @@ export const SupplyCoverage = ({
       </div>
 
       <p className="mt-3 text-[14.5px] leading-relaxed text-slate-700">
-        NOKS Solutions Ltd supplies {subject} across{" "}
+        {/* The site's one brand name, matching the Organization schema — this
+            used to hardcode a different legal name on every product page. */}
+        {brand.fullName} supplies {subject} across{" "}
         <strong className="font-semibold text-navy-900">
           Kenya, Uganda, Tanzania and Ethiopia
         </strong>
-        , and also serves Rwanda, Burundi, South Sudan and eastern DR Congo. Stock is
-        held at our Nairobi warehouse on Enterprise Road, Industrial Area, so most
-        orders dispatch the same or next working day.
+        , and also serves Rwanda, Burundi, South Sudan and eastern DR Congo
+        {isVerified("same-day-dispatch") ? (
+          <>
+            . Stock is held at our Nairobi warehouse on {contact.street || "Enterprise Road, Industrial Area"}, so
+            most orders dispatch the same or next working day.
+          </>
+        ) : (
+          <>, from our base on {contact.street || "Enterprise Road, Industrial Area"}, Nairobi.</>
+        )}
       </p>
 
       {!compact && (

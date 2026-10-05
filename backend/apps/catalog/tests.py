@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
 from django.test import SimpleTestCase, TestCase, override_settings
@@ -265,3 +267,51 @@ class DraftCostTests(SimpleTestCase):
         self.assertNotIn("web_search tool", no_search)
 
         self.assertIn("web_search tool", _system_prompt(web_search=True))
+
+
+class CuratedCopyTests(SimpleTestCase):
+    """Hand-written copy in apps/catalog/curated/ must stay inside what we can back up."""
+
+    # Claims gated in frontend/src/lib/business.ts until the owner verifies them.
+    UNVERIFIED = (
+        "in stock", "ex-stock", "same-day", "same day", "fleet", "iso 9001", "kebs",
+        "certificate of analysis", "coa", "every batch", "minimum order", "moq",
+        "noks solutions ltd",
+    )
+
+    def setUp(self):
+        from apps.catalog.curated import COPY_FIELDS, curated_files, load
+
+        self.copy_fields = COPY_FIELDS
+        self.files = [(path.name, load(path)) for path in curated_files()]
+
+    def test_only_known_fields(self):
+        for name, data in self.files:
+            for slug, fields in data["products"].items():
+                unknown = set(fields) - set(self.copy_fields)
+                self.assertFalse(unknown, f"{name}:{slug} sets unknown fields {unknown}")
+
+    def test_meta_descriptions_fit_a_snippet(self):
+        for name, data in self.files:
+            for slug, fields in data["products"].items():
+                self.assertLessEqual(len(fields["meta_description"]), 160, f"{name}:{slug}")
+                self.assertIn("Kenya", fields["meta_description"], f"{name}:{slug}")
+
+    def test_no_unverified_business_claims(self):
+        import re
+
+        for name, data in self.files:
+            for slug, fields in data["products"].items():
+                text = json.dumps(fields, ensure_ascii=False).lower()
+                for claim in self.UNVERIFIED:
+                    self.assertIsNone(
+                        re.search(rf"\b{re.escape(claim)}\b", text),
+                        f"{name}:{slug} asserts unverified claim '{claim}'",
+                    )
+
+    def test_faqs_are_well_formed(self):
+        for name, data in self.files:
+            for slug, fields in data["products"].items():
+                for faq in fields["faqs"]:
+                    self.assertEqual(set(faq), {"question", "answer"}, f"{name}:{slug}")
+                    self.assertTrue(faq["question"].endswith("?"), f"{name}:{slug}")

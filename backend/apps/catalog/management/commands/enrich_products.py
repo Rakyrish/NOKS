@@ -12,6 +12,7 @@ from apps.catalog.content import (
     build_description,
     build_faqs,
 )
+from apps.catalog.curated import curated_slugs
 from apps.catalog.models import Product
 
 MIN_POINTS = 7
@@ -41,7 +42,13 @@ class Command(BaseCommand):
         dry = options["dry_run"]
         minimum = options["min_points"]
 
-        qs = Product.objects.all().select_related("category").prefetch_related("industries")
+        # Hand-written copy lives in apps/catalog/curated/; never overwrite it
+        # with template text.
+        qs = (
+            Product.objects.exclude(slug__in=curated_slugs())
+            .select_related("category")
+            .prefetch_related("industries")
+        )
         if options.get("slug"):
             qs = qs.filter(slug=options["slug"])
 

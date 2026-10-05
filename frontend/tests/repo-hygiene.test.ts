@@ -64,6 +64,12 @@ describe("defects that must never reappear anywhere in the repository", () => {
     expect(grep("noksindustrial\\.com/https://")).toEqual([]);
   });
 
+  it("names the company the same way the Organization schema does", () => {
+    // supply-coverage.tsx hardcoded "NOKS Solutions Ltd" on every product page
+    // while the schema, titles and footer said brand.fullName.
+    expect(grep("NOKS Solutions Ltd").filter((line) => line.includes("/frontend/src/"))).toEqual([]);
+  });
+
   it("has no doubled brand suffix", () => {
     expect(grep("NOKS Chemical Division | NOKS Chemical Division")).toEqual([]);
   });
