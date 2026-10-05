@@ -30,6 +30,12 @@ import random
 import re
 from typing import Iterable
 
+from django.conf import settings
+
+# The one company name used in generated copy, matching the frontend's
+# brand.fullName and the Organization schema ("NOKS Chemical Division").
+COMPANY = f"{settings.BRAND['name']} {settings.BRAND['division']}".strip()
+
 # ── Delivery footprint ────────────────────────────────────────────────
 # Named explicitly because "East Africa" on its own does not win the search
 # that a buyer in Nakuru or Kampala actually types.
@@ -1185,20 +1191,18 @@ def build_description(product) -> str:
 
     existing = (product.description or "").strip()
     # Drop any previously generated tail so re-running does not stack copies.
-    existing = existing.split("\n\nNOKS Solutions Ltd supplies")[0].strip()
+    existing = existing.split(f"\n\n{COMPANY} supplies")[0].strip()
     opening = existing or (
-        f"{name} is {role} supplied by NOKS Solutions Ltd — Chemical Division"
+        f"{name} is {role} supplied by {COMPANY}"
         f"{f' ({identity})' if identity else ''}."
     )
 
     paras = [opening]
 
     paras.append(
-        f"NOKS Solutions Ltd supplies {name} to manufacturers, water utilities, "
+        f"{COMPANY} supplies {name} to manufacturers, water utilities, "
         f"processors and laboratories across Kenya and the wider East African region. "
-        f"It sits in our {cat.lower()} range and is held ex-stock at our Nairobi "
-        f"warehouse on Enterprise Road, Industrial Area, so orders ship without "
-        f"waiting on an import cycle."
+        f"It sits in our {cat.lower()} range."
     )
 
     top = apps[:5]
