@@ -24,7 +24,7 @@ normalize_product_name = normalize_name
 class Category(ContentTimeStampedModel, SluggedModel, UniquelyNamedModel, SEOModel, OrderedModel):
     """Self-nesting product taxonomy (Industrial Chemicals → Acids → …)."""
 
-    CONTENT_FIELDS = ("name", "slug", "description", "parent_id", "is_published", "noindex")
+    CONTENT_FIELDS = ("name", "slug", "description", "parent_id", "is_published", "noindex", "image", "meta_title", "meta_description", "canonical_url", "og_image")
 
     parent = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE, related_name="children"
@@ -76,7 +76,7 @@ class ProductQuerySet(models.QuerySet):
 
     def with_relations(self):
         return self.select_related("category", "manufacturer").prefetch_related(
-            "industries", "images"
+            "industries", "images", "secondary_categories"
         )
 
 
@@ -113,6 +113,7 @@ class Product(ContentTimeStampedModel, SluggedModel, UniquelyNamedModel, SEOMode
     category = models.ForeignKey(
         Category, on_delete=models.PROTECT, related_name="products"
     )
+    secondary_categories = models.ManyToManyField(Category, blank=True, related_name="secondary_products")
     industries = models.ManyToManyField(Industry, blank=True, related_name="products")
     manufacturer = models.ForeignKey(
         Manufacturer, null=True, blank=True, on_delete=models.SET_NULL, related_name="products"
@@ -179,7 +180,7 @@ class Product(ContentTimeStampedModel, SluggedModel, UniquelyNamedModel, SEOMode
         "safety_information", "hazard_class", "cas_number", "chemical_formula", "hs_code",
         "purity", "grade", "category_id", "manufacturer_id", "availability", "unit",
         "min_order_quantity", "price_on_request", "indicative_price", "currency",
-        "lead_time", "is_published", "noindex", "meta_title", "meta_description",
+        "lead_time", "is_published", "noindex", "meta_title", "meta_description", "canonical_url", "og_image", "synonyms",
     )
 
     class Meta:

@@ -5,6 +5,7 @@
 
 import { isVerified, nap, toE164 } from "./business";
 import { absoluteImageUrl, schemaImages } from "./images";
+import { hasPublicPrice } from "./pricing";
 import { cleanPath } from "./indexing";
 import { absoluteUrl, brand, contact, seo, siteUrl, social } from "./site";
 import type { FAQ, Industry, PostDetail, ProductDetail } from "@/types";
@@ -204,7 +205,7 @@ export const productSchema = (product: ProductDetail) => {
   // rich results — advertising "0" for price-on-request products is
   // inaccurate structured data (a guideline violation, not just unhelpful),
   // so those products omit `offers` entirely rather than fabricate a price.
-  const hasRealPrice = !product.price_on_request && !!product.indicative_price;
+  const hasRealPrice = hasPublicPrice(product);
 
   return {
     "@context": "https://schema.org",
@@ -215,7 +216,7 @@ export const productSchema = (product: ProductDetail) => {
     // The long description is the substantive one; short_description is a
     // one-liner written for cards.
     description: product.description || product.short_description,
-    category: product.category_name,
+    category: [product.category_name, ...(product.secondary_categories ?? []).map((c) => c.name)].filter(Boolean).join(", "),
     url: absoluteUrl(`/products/${product.slug}`),
     // Every gallery image, absolute and validated. `schemaImages` returns
     // undefined when nothing is publishable, so a product with no photograph
@@ -243,12 +244,10 @@ export const productSchema = (product: ProductDetail) => {
             url: absoluteUrl(`/products/${product.slug}`),
             priceCurrency: product.currency,
             price: product.indicative_price,
-            availability:
-              product.availability === "out_of_stock"
-                ? "https://schema.org/OutOfStock"
-                : product.availability === "made_to_order"
-                  ? "https://schema.org/PreOrder"
-                  : "https://schema.org/InStock",
+            ...(isVerified("stock-status") ? { availability:
+              product.availability === "out_of_stock" ? "https://schema.org/OutOfStock"
+              : product.availability === "made_to_order" ? "https://schema.org/PreOrder"
+              : "https://schema.org/InStock" } : {}),
             seller: { "@id": `${siteUrl}/#organization` },
             areaServed: areaServed(),
           },

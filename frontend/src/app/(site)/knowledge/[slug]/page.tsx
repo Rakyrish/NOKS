@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PostCard } from "@/components/blog/post-card";
+import { ArticleBuyingLinks, ArticleReferences } from "@/components/blog/article-buying-links";
 import { ProductCard } from "@/components/catalog/product-card";
 import { CtaBand } from "@/components/home/cta-band";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -121,9 +122,12 @@ export default async function ArticlePage({ params }: Params) {
               {post.excerpt}
             </p>
 
+            <ArticleBuyingLinks slug={post.slug} />
+
             <div className="prose-noks">
               <Markdown body={post.body} />
             </div>
+            <ArticleReferences slug={post.slug} />
 
             {/* Tags */}
             {post.tag_list?.length > 0 && (
@@ -220,7 +224,7 @@ export default async function ArticlePage({ params }: Params) {
             <div className="rounded-2xl bg-navy-900 p-6 text-white">
               <p className="font-display text-[15px] font-bold">Need a quotation?</p>
               <p className="mt-2 text-[13.5px] leading-relaxed text-white/65">
-                Send us your specification and volume — written quote within one business day.
+                Send us your specification, quantity and delivery location to confirm pricing and availability.
               </p>
               <Link
                 href="/quote"

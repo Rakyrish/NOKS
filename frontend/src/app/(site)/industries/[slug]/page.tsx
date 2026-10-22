@@ -11,13 +11,14 @@ import { Section, SectionHeading } from "@/components/shared/section";
 import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
 import { industryTitle, notFoundMetadata, pageMetadata } from "@/lib/metadata";
+import { pageHref, parsePage } from "@/lib/pagination";
 import { serviceSchema } from "@/lib/schema";
 import { brand, contact } from "@/lib/site";
 import Link from "next/link";
 
 export const revalidate = 900;
 
-type Params = { params: Promise<{ slug: string }> };
+type Params = { params: Promise<{ slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
 
 async function loadIndustry(slug: string) {
   try {
@@ -28,18 +29,21 @@ async function loadIndustry(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: Params): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Params): Promise<Metadata> {
   const { slug } = await params;
   const industry = await loadIndustry(slug);
   if (!industry) return notFoundMetadata(`/industries/${slug}`, "Industry");
+  const query = await searchParams;
+  const page = parsePage(query.page) ?? 1;
 
   return pageMetadata({
-    title: industryTitle(industry.name, contact.country),
+    title: page > 1 ? `${industryTitle(industry.name, contact.country)} — Page ${page}` : industryTitle(industry.name, contact.country),
     description:
       industry.seo?.description ||
       `${brand.fullName} supplies chemicals for ${industry.name.toLowerCase()} in Kenya and across East Africa. ${industry.tagline}`,
     path: `/industries/${industry.slug}`,
-    canonicalOverride: industry.seo?.canonical,
+    canonicalOverride: page === 1 ? industry.seo?.canonical : undefined,
+    searchParams: query,
     keywords: industry.seo?.keywords,
     image: industry.image,
     imageAlt: industry.name,
@@ -47,16 +51,24 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   });
 }
 
-export default async function IndustryPage({ params }: Params) {
+export default async function IndustryPage({ params, searchParams }: Params) {
   const { slug } = await params;
   const industry = await loadIndustry(slug);
   if (!industry) notFound();
 
-  const products = await api.products({ industry: slug, page_size: 12 });
+  const query = await searchParams;
+  const page = parsePage(query.page);
+  if (page === null) notFound();
+  const products = await api.products({ industry: slug, page, page_size: 12 }).catch((error: unknown) => {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    throw error;
+  });
+  const path = `/industries/${industry.slug}`;
 
   const crumbs = [
     { name: "Industries", url: "/industries" },
     { name: industry.name, url: `/industries/${industry.slug}` },
+    ...(page > 1 ? [{ name: `Page ${page}`, url: pageHref(path, page) }] : []),
   ];
 
   return (
@@ -67,14 +79,14 @@ export default async function IndustryPage({ params }: Params) {
 
       <PageHero
         eyebrow="Industry"
-        title={`Chemicals for ${industry.name}`}
+        title={`Chemicals for ${industry.name}${page > 1 ? ` — Page ${page}` : ""}`}
         description={industry.tagline}
         crumbs={crumbs}
       >
         <div className="mt-8 flex flex-wrap gap-3">
           <Button asChild className="bg-white text-navy-900 hover:bg-brand-50">
-            <Link href={`/products?industry=${industry.slug}`}>
-              Browse {industry.product_count ?? 0} products
+            <Link href="#industry-products">
+              Browse {products.count} products
             </Link>
           </Button>
           <Button asChild variant="glass">
@@ -96,9 +108,9 @@ export default async function IndustryPage({ params }: Params) {
             <p className="mt-4 text-[15.5px] leading-relaxed text-slate-600">
               {isVerified("documents-with-every-batch")
                 ? "Every delivery arrives with a batch Certificate of Analysis and Safety Data Sheet. "
-                : "Ask for the Certificate of Analysis and Safety Data Sheet for any product here and we will send the current version with your quotation. "}
-              Our technical team supports dosing selection and compatibility checks — before
-              and after you order.
+                : "Request the relevant Certificate of Analysis and Safety Data Sheet when enquiring; document availability must be confirmed for the quoted product. "}
+              Confirm the grade, concentration and required approvals for your intended
+              application before purchasing. A catalogue association alone does not establish specialised suitability.
             </p>
           </div>
 
@@ -122,12 +134,12 @@ export default async function IndustryPage({ params }: Params) {
 
       {/* Products */}
       {products.results.length > 0 && (
-        <Section tone="muted" size="sm">
+        <Section tone="muted" size="sm" id="industry-products">
           <div className="container-noks">
             <SectionHeading
               align="left"
-              eyebrow="Recommended"
-              title={`Products for ${industry.name.toLowerCase()}`}
+              eyebrow="Catalogue"
+              title={`Products listed under ${industry.name.toLowerCase()}`}
             />
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {products.results.map((product, index) => (
@@ -135,14 +147,15 @@ export default async function IndustryPage({ params }: Params) {
               ))}
             </div>
 
-            {products.count > products.results.length && (
-              <div className="mt-10 text-center">
-                <Button asChild variant="outline">
-                  <Link href={`/products?industry=${industry.slug}`}>
-                    View all {products.count} products
+            {products.num_pages > 1 && (
+              <nav aria-label="Pagination" className="mt-10 flex flex-wrap justify-center gap-2">
+                {Array.from({ length: products.num_pages }, (_, index) => index + 1).map((number) => (
+                  <Link key={number} href={pageHref(path, number)} aria-current={number === page ? "page" : undefined}
+                    className="grid size-10 place-items-center rounded-full border border-line bg-white text-sm font-semibold text-navy-900 hover:bg-brand-50">
+                    {number}
                   </Link>
-                </Button>
-              </div>
+                ))}
+              </nav>
             )}
           </div>
         </Section>
@@ -150,7 +163,7 @@ export default async function IndustryPage({ params }: Params) {
 
       <CtaBand
         title={`Supplying ${industry.name.toLowerCase()} in East Africa`}
-        description="Tell us your process, volumes and delivery location — we'll quote with specifications and lead times within one business day."
+        description="Tell us your intended use, grade, quantity and delivery location. Request a quotation with packaging, documentation and availability confirmed."
       />
     </>
   );

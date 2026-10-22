@@ -67,7 +67,7 @@ export const Footer = () => {
             </Link>
 
             <p className="mt-4 text-xs sm:text-sm leading-relaxed text-silver-300">
-              {brand.mission || "Authorized distributor of industrial chemicals, laboratory reagents, and specialty ingredients across Kenya and East Africa. Ex-stock Nairobi with certified COA and MSDS."}
+              {brand.mission || "Industrial chemicals, laboratory reagents and specialty ingredients for Kenya and East Africa. Contact us to confirm grade, availability and documentation."}
             </p>
 
             <div className="mt-5 space-y-2.5 text-xs text-silver-300">
@@ -77,7 +77,7 @@ export const Footer = () => {
               </div>
               <div className="flex items-center gap-2.5">
                 <ShieldCheck className="size-4 shrink-0 text-teal-400" />
-                <span>KEBS & ISO Standard Certified Supply</span>
+                <span>Ask about product specifications and documentation</span>
               </div>
             </div>
           </div>
@@ -166,7 +166,7 @@ export const Footer = () => {
                     rel="noopener noreferrer"
                     className="mt-0.5 inline-flex items-center gap-1.5 font-bold text-[#25D366] hover:underline"
                   >
-                    <span>Chat with Sales Chemist</span>
+                    <span>Chat with Sales</span>
                   </a>
                 </div>
               )}

@@ -73,7 +73,7 @@ class AdminProductSerializer(serializers.ModelSerializer):
         fields = [
             "id", "name", "slug", "sku",
             "chemical_formula", "cas_number", "hs_code", "synonyms", "grade", "purity",
-            "category", "category_name", "industries", "industries_names", "manufacturer",
+            "category", "category_name", "secondary_categories", "industries", "industries_names", "manufacturer",
             "short_description", "description", "applications", "benefits",
             "specifications", "packaging_options", "storage_handling",
             "safety_information", "hazard_class",

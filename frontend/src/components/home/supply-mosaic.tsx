@@ -81,7 +81,7 @@ const tiles = (facts: CatalogFacts): Tile[] => [
     title: "Nairobi warehouse",
     caption: isVerified("same-day-dispatch")
       ? "Industrial Area stock holding, repacking and same-day dispatch across the city."
-      : "Enterprise Road, Industrial Area — stock holding and repacking, with a written lead time on every line.",
+      : "Enterprise Road, Industrial Area — contact our team to confirm collection and delivery arrangements.",
     image: "/images/sections/warehouse-drums.jpg",
     icon: Warehouse,
     href: "/about",
@@ -105,9 +105,9 @@ export const SupplyMosaic = ({ facts }: { facts: CatalogFacts }) => (
           </h2>
 
           <p className="mt-5 text-[15.5px] leading-relaxed text-steel-700">
-            NOKS holds real stock in Nairobi — not a catalogue of promises. We import,
-            warehouse, repack and deliver industrial, food-grade and laboratory chemicals
-            with the documentation your auditors ask for, on the schedule your plant runs on.
+            NOKS supplies industrial and laboratory chemicals from Nairobi. Share your
+            application, grade, quantity and delivery location so our team can confirm
+            availability, packaging and the documentation needed for your order.
           </p>
 
           {/* Counts, not claims. "4 EAC countries served" contradicted the 8 in
@@ -158,6 +158,7 @@ export const SupplyMosaic = ({ facts }: { facts: CatalogFacts }) => (
                     src={tile.image}
                     alt={tile.title}
                     fill
+                    quality={65}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"
                     className="media-tile-img object-cover group-hover:scale-[1.07]"
                   />

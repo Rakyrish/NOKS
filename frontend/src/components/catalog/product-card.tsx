@@ -67,6 +67,7 @@ export const ProductCard = ({
     return (
       <>
         <motion.article
+          data-product-slug={product.slug}
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: Math.min(index * 0.03, 0.3) }}
@@ -142,6 +143,8 @@ export const ProductCard = ({
             <ProductContactActions
               productName={product.name}
               casNumber={product.cas_number}
+              productSlug={product.slug}
+              grade={product.grade_display}
               className="mt-3"
               size="sm"
             />
@@ -156,6 +159,7 @@ export const ProductCard = ({
   return (
     <>
       <motion.article
+        data-product-slug={product.slug}
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, delay: Math.min(index * 0.04, 0.35) }}
@@ -243,6 +247,8 @@ export const ProductCard = ({
           <ProductContactActions
             productName={product.name}
             casNumber={product.cas_number}
+              productSlug={product.slug}
+              grade={product.grade_display}
             className="mt-2"
             size="sm"
           />

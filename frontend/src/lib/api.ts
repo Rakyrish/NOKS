@@ -114,7 +114,7 @@ async function request<T>(path: string, options: FetchOptions = {}): Promise<T> 
         ...(init.headers ?? {}),
       },
       ...(isServer && init.method === undefined
-        ? { next: { revalidate: revalidate === false ? undefined : revalidate } }
+        ? { next: { revalidate: revalidate === false ? 0 : revalidate, tags: ["cms"] } }
         : {}),
     }),
     path,
@@ -135,7 +135,7 @@ async function request<T>(path: string, options: FetchOptions = {}): Promise<T> 
   }
 
   if (response.status === 204) return undefined as T;
-  return (await response.json()) as T;
+  return await withTimeout(response.json() as Promise<T>, path);
 }
 
 const qs = (params: Record<string, string | number | boolean | undefined | string[]>) => {
@@ -154,9 +154,9 @@ async function safe<T>(promise: Promise<T>, fallback: T): Promise<T> {
   try {
     return await promise;
   } catch (error) {
-    if (process.env.NODE_ENV !== "production") {
-      console.warn("[api] falling back:", (error as Error).message);
-    }
+    // Never publish an empty catalogue as a successful production page.
+    if (isServer && process.env.NODE_ENV === "production") throw error;
+    console.warn("[api] unavailable:", (error as Error).name);
     return fallback;
   }
 }
@@ -282,8 +282,9 @@ export const api = {
     delivery_location?: string;
     source?: string;
     items: QuoteItemInput[];
-  }) =>
+  }, submissionKey?: string) =>
     request<{ reference: string }>("/quotes/", {
+      headers: submissionKey ? { "Idempotency-Key": submissionKey } : {},
       method: "POST",
       body: JSON.stringify(payload),
     }),
@@ -296,7 +297,7 @@ export const api = {
     topic?: string;
     subject?: string;
     message: string;
-  }) => request<unknown>("/inquiries/", { method: "POST", body: JSON.stringify(payload) }),
+  }, submissionKey?: string) => request<unknown>("/inquiries/", { method: "POST", headers: submissionKey ? { "Idempotency-Key": submissionKey } : {}, body: JSON.stringify(payload) }),
 
   subscribe: (email: string, source = "footer") =>
     request<{ detail: string }>("/newsletter/", {

@@ -55,7 +55,8 @@ def category_product_counts():
     """
     counted = (
         Product.objects.filter(is_published=True)
-        .filter(Q(category=OuterRef("pk")) | Q(category__parent=OuterRef("pk")))
+        .filter(Q(category=OuterRef("pk")) | Q(category__parent=OuterRef("pk"))
+                | Q(secondary_categories=OuterRef("pk")) | Q(secondary_categories__parent=OuterRef("pk")))
         .order_by()
         # Collapse to a single row: group every match under one constant key so
         # the subquery returns one count rather than one row per group.

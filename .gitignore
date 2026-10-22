@@ -17,3 +17,6 @@ coverage/
 # Local helper for running manage.py against the live DB from the working tree.
 backend/.dev-manage.sh
 backend/.dev-manage-clone.sh
+
+# Restricted local production backups and investigation artifacts
+.work/

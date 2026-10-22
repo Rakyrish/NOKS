@@ -35,7 +35,7 @@ export const IndustriesGrid = ({ industries = [] }: { industries?: Industry[] })
               Industries Supplied Across East Africa
             </h2>
             <p className="mt-2 text-sm text-steel-700 max-w-2xl">
-              From continuous municipal water plants to batch pharmaceutical formulation, we stock and deliver certified raw materials tailored to exact application demands.
+              Browse chemicals by application, then confirm the required grade and supporting documentation with our team.
             </p>
           </div>
           <Link

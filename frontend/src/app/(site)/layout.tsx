@@ -6,11 +6,15 @@ import { FloatingContacts } from "@/components/layout/floating-contacts";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { Providers } from "@/components/shared/providers";
+import { AnalyticsConsent } from "@/components/shared/analytics-consent";
 import { JsonLd } from "@/components/shared/json-ld";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import { brand, colors, seo, siteUrl } from "@/lib/site";
 
 import "../globals.css";
+
+// Render with live data; explicit API revalidation still caches successful reads.
+export const revalidate = 0;
 
 const inter = Inter({
   subsets: ["latin"],
@@ -129,6 +133,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
           <FloatingContacts />
           <AssistantWidget />
+          {process.env.NEXT_PUBLIC_ANALYTICS_ENABLED === "true" && <AnalyticsConsent />}
         </Providers>
       </body>
     </html>

@@ -8,6 +8,7 @@ import * as React from "react";
 import { Input, Label, Textarea } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
+import { trackLead } from "@/lib/analytics";
 import { useWishlist } from "@/lib/use-wishlist";
 
 type Line = {
@@ -33,6 +34,8 @@ export const QuoteBuilder = () => {
   const { items: saved } = useWishlist();
 
   const [lines, setLines] = React.useState<Line[]>([newLine()]);
+  const submissionKey = React.useRef<string>("");
+  const submitting = React.useRef(false);
   const [state, setState] = React.useState<"idle" | "sending" | "sent" | "error">("idle");
   const [reference, setReference] = React.useState("");
   const [error, setError] = React.useState("");
@@ -53,7 +56,7 @@ export const QuoteBuilder = () => {
             slug: product.slug,
             name: product.name,
             unit: product.unit,
-            quantity: String(product.min_order_quantity),
+            quantity: "",
           }),
         ]),
       )
@@ -88,7 +91,7 @@ export const QuoteBuilder = () => {
             slug: product.slug,
             name: product.name,
             unit: product.unit,
-            quantity: String(product.min_order_quantity),
+            quantity: "",
           }),
         ),
     ]);
@@ -96,6 +99,8 @@ export const QuoteBuilder = () => {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submitting.current) return;
+    submissionKey.current ||= crypto.randomUUID();
     const form = new FormData(event.currentTarget);
 
     const items = lines
@@ -103,7 +108,7 @@ export const QuoteBuilder = () => {
       .map((line) => ({
         product_slug: line.slug,
         product_name: line.name.trim(),
-        quantity: line.quantity || "1",
+        quantity: line.quantity,
         unit: line.unit || "kg",
         packaging: line.packaging,
       }));
@@ -114,6 +119,7 @@ export const QuoteBuilder = () => {
       return;
     }
 
+    submitting.current = true;
     setState("sending");
     setError("");
 
@@ -128,12 +134,16 @@ export const QuoteBuilder = () => {
         message: String(form.get("message") ?? ""),
         source: "website",
         items,
-      });
+      }, submissionKey.current);
       setReference(response.reference);
+      submissionKey.current = "";
       setState("sent");
+      trackLead(response.reference, items.length === 1 ? items[0].product_slug : undefined);
     } catch {
       setState("error");
       setError("We couldn't submit that request. Please check your details and try again.");
+    } finally {
+      submitting.current = false;
     }
   };
 
@@ -148,7 +158,7 @@ export const QuoteBuilder = () => {
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-emerald-800">
           Your reference is <strong>{reference}</strong>. A confirmation is on its way to
-          your inbox, and a technical sales specialist will respond within one business day.
+          your inbox, and a technical sales specialist will review your request.
         </p>
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Button asChild variant="outline">
@@ -168,7 +178,7 @@ export const QuoteBuilder = () => {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form onSubmit={onSubmit} onChange={() => { if (!submitting.current) submissionKey.current = ""; }} className="space-y-6">
       {/* Products */}
       <section className="rounded-2xl border border-line bg-white p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">

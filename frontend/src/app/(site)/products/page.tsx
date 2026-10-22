@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { CatalogView } from "@/components/catalog/catalog-view";
@@ -6,8 +7,9 @@ import { CtaBand } from "@/components/home/cta-band";
 import { JsonLd } from "@/components/shared/json-ld";
 import { PageHero } from "@/components/shared/page-hero";
 import { Skeleton } from "@/components/ui";
-import { api, type ProductQuery } from "@/lib/api";
+import { ApiError, api, type ProductQuery } from "@/lib/api";
 import { pageMetadata } from "@/lib/metadata";
+import { parsePage } from "@/lib/pagination";
 import { itemListSchema } from "@/lib/schema";
 import { brand } from "@/lib/site";
 
@@ -30,7 +32,8 @@ export async function generateMetadata({
       ? category.replace(/-/g, " ")
       : "Industrial & Laboratory Chemicals";
 
-  const title = term || category ? `${label} — Chemical Catalogue` : "Buy Industrial & Lab Chemicals in Kenya";
+  const pageNumber = typeof params.page === "string" ? Number(params.page) : 1;
+  const title = pageNumber > 1 && !term && !category ? `Industrial & Lab Chemicals — Page ${pageNumber}` : term || category ? `${label} — Chemical Catalogue` : "Buy Industrial & Lab Chemicals in Kenya";
 
   // The robots directive and the canonical both come from lib/indexing.ts.
   // The old rule here excluded only `?q=` and left every other facet
@@ -60,6 +63,9 @@ export default async function ProductsPage({
 }) {
   const params = await searchParams;
 
+  const pageNumber = parsePage(params.page);
+  if (pageNumber === null) notFound();
+
   const query: ProductQuery = {
     q: first(params.q),
     category: first(params.category),
@@ -71,11 +77,14 @@ export default async function ProductsPage({
     package_size: first(params.package_size),
     application: first(params.application),
     ordering: first(params.ordering),
-    page: Number(first(params.page) ?? 1) || 1,
+    page: pageNumber,
     page_size: 12,
   };
 
-  const [page, facets] = await Promise.all([api.products(query), api.facets(query)]);
+  const [page, facets] = await Promise.all([api.products(query), api.facets(query)]).catch((error: unknown) => {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    throw error;
+  });
 
   return (
     <>
@@ -111,7 +120,7 @@ export default async function ProductsPage({
 
       <CtaBand
         title="Can't find what you need?"
-        description="We source specialty and hard-to-find chemicals through a verified global manufacturer network. Send us the name, CAS number or specification."
+        description="Send us the product name, CAS number or specification so we can check sourcing options, documentation and availability."
       />
     </>
   );

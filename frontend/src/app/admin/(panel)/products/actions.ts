@@ -53,6 +53,7 @@ function buildProductInput(formData: FormData): AdminProductInput {
     category: Number(formData.get("category")) || null,
     manufacturer: formData.get("manufacturer") ? Number(formData.get("manufacturer")) : null,
     industries,
+    secondary_categories: formData.getAll("secondary_categories").map(Number).filter(Boolean),
     chemical_formula: String(formData.get("chemical_formula") || ""),
     cas_number: String(formData.get("cas_number") || ""),
     hs_code: String(formData.get("hs_code") || ""),

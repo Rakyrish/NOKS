@@ -17,3 +17,5 @@ certbot
 
 # NOTE: `.env` is intentionally NOT ignored — the frontend builder stage needs
 # it to inline NEXT_PUBLIC_* values. It is confined to the builder stage.
+
+.work/

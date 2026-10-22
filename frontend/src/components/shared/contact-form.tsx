@@ -6,6 +6,7 @@ import * as React from "react";
 import { Input, Label, Select, Textarea } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
+import { trackLead } from "@/lib/analytics";
 
 const TOPICS = [
   { value: "general", label: "General enquiry" },
@@ -16,12 +17,17 @@ const TOPICS = [
 ] as const;
 
 export const ContactForm = () => {
+  const submissionKey = React.useRef<string>("");
+  const submitting = React.useRef(false);
   const [state, setState] = React.useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = React.useState("");
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submitting.current) return;
+    submissionKey.current ||= crypto.randomUUID();
     const form = new FormData(event.currentTarget);
+    submitting.current = true;
     setState("sending");
     setError("");
 
@@ -34,11 +40,15 @@ export const ContactForm = () => {
         topic: String(form.get("topic") ?? "general"),
         subject: String(form.get("subject") ?? ""),
         message: String(form.get("message") ?? ""),
-      });
+      }, submissionKey.current);
+      trackLead(submissionKey.current);
+      submissionKey.current = "";
       setState("sent");
     } catch {
       setState("error");
       setError("We couldn't send that. Please try again or call us directly.");
+    } finally {
+      submitting.current = false;
     }
   };
 
@@ -48,9 +58,9 @@ export const ContactForm = () => {
         <span className="mx-auto grid size-12 place-items-center rounded-full bg-[var(--brand-emerald)] text-white">
           <Check className="size-6" />
         </span>
-        <p className="mt-4 font-display text-lg font-bold text-emerald-900">Message sent</p>
+        <p className="mt-4 font-display text-lg font-bold text-emerald-900">Message received</p>
         <p className="mt-2 text-[14.5px] text-emerald-800">
-          Thank you — our team will respond within one business day.
+          Thank you — our team will review your request.
         </p>
         <Button variant="outline" size="sm" className="mt-5" onClick={() => setState("idle")}>
           Send another message
@@ -60,7 +70,7 @@ export const ContactForm = () => {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-7 space-y-5">
+    <form onSubmit={onSubmit} onChange={() => { if (!submitting.current) submissionKey.current = ""; }} className="mt-7 space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <Label htmlFor="contact-name" required>

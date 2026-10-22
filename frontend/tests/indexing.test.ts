@@ -11,14 +11,18 @@ import { cleanPath, indexingFor, isFilteredUrl } from "@/lib/indexing";
  * is a duplicate.
  */
 describe("filtered, sorted and paginated URLs stay out of the index", () => {
+  it("indexes industry pagination separately from search and filters", () => {
+    expect(indexingFor("/industries/manufacturing", { page: "2" })).toMatchObject({ canonicalPath: "/industries/manufacturing?page=2", noindex: false });
+    expect(indexingFor("/industries/manufacturing", { page: "2", q: "acetone" }).noindex).toBe(true);
+  });
   const cases: [string, Record<string, string>][] = [
     ["/products", { category: "water-treatment-chemicals" }],
     ["/products", { industry: "mining" }],
     ["/products", { q: "caustic soda" }],
     ["/products", { grade: "food", availability: "in_stock", ordering: "name" }],
-    ["/products", { page: "3" }],
     ["/knowledge", { category: "water-treatment" }],
-    ["/knowledge", { page: "2" }],
+    ["/knowledge", { tag: "water", page: "2" }],
+    ["/knowledge", { search: "acetone" }],
     ["/quote", { product: "calcium-propionate" }],
   ];
 
@@ -90,5 +94,16 @@ describe("canonical paths are one canonical form", () => {
 
   it("roots a path that arrives without a leading slash", () => {
     expect(cleanPath("products/x")).toBe("/products/x");
+  });
+});
+
+describe("genuine pagination", () => {
+  it("self-canonicalises page two and leaves it indexable", () => {
+    expect(indexingFor("/products", { page: "2" })).toMatchObject({ canonicalPath: "/products?page=2", noindex: false });
+    expect(indexingFor("/products", { page: "1" }).canonicalPath).toBe("/products");
+  });
+  it("keeps search and filter pagination separate", () => {
+    expect(indexingFor("/products", { page: "2", q: "acetone" }).noindex).toBe(true);
+    expect(indexingFor("/products", { page: "0" }).noindex).toBe(true);
   });
 });

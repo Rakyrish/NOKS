@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { PostCard } from "@/components/blog/post-card";
 import { CtaBand } from "@/components/home/cta-band";
 import { RevealGroup, RevealItem } from "@/components/shared/motion";
 import { PageHero } from "@/components/shared/page-hero";
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 import { pageMetadata } from "@/lib/metadata";
+import { parsePage } from "@/lib/pagination";
 import { brand } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -19,14 +21,14 @@ export async function generateMetadata({
 }: {
   searchParams: Promise<SearchParams>;
 }): Promise<Metadata> {
-  // `?category=` and `?page=` are filtered views of this same index, so they
-  // canonicalise here and stay out of the index. Every article they can reach
-  // is linked from the unfiltered first page and listed in the sitemap.
+  const params = await searchParams;
+  const page = parsePage(params.page) ?? 1;
+  // Unfiltered pagination is self-canonical; category filters remain noindex.
   return pageMetadata({
-    title: "Chemical Guides & Technical Articles — Knowledge Centre",
+    title: page > 1 ? `Chemical Guides — Page ${page}` : "Chemical Guides & Technical Articles — Knowledge Centre",
     description: `Technical guidance from ${brand.fullName}: water treatment practice, food grade compliance, laboratory science, chemical safety and buying guides for East African industry.`,
     path: "/knowledge",
-    searchParams: await searchParams,
+    searchParams: params,
     image: "/images/pages/knowledge.jpg",
   });
 }
@@ -38,14 +40,20 @@ export default async function KnowledgePage({
 }) {
   const params = await searchParams;
   const category = typeof params.category === "string" ? params.category : undefined;
-  const page = Number(typeof params.page === "string" ? params.page : 1) || 1;
+  const tag = typeof params.tag === "string" ? params.tag : undefined;
+  const search = typeof params.search === "string" ? params.search : undefined;
+  const page = parsePage(params.page);
+  if (page === null) notFound();
 
   const [posts, categories] = await Promise.all([
-    api.posts({ page, category__slug: category }),
+    api.posts({ page, category__slug: category, tag, search }),
     api.blogCategories(),
-  ]);
+  ]).catch((error: unknown) => {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    throw error;
+  });
 
-  const featured = page === 1 && !category ? posts.results[0] : undefined;
+  const featured = page === 1 && !category && !tag && !search ? posts.results[0] : undefined;
   const rest = featured ? posts.results.slice(1) : posts.results;
 
   return (
@@ -53,8 +61,8 @@ export default async function KnowledgePage({
       <PageHero
         eyebrow="Knowledge centre"
         title="Chemical expertise, written for practitioners"
-        description="Guides and briefings from our applications chemists — coagulant selection,
-                     food grade compliance, safe handling and procurement practice."
+        description="Practical guides on chemical selection, documentation,
+                     safe handling and purchasing."
         crumbs={[{ name: "Knowledge", url: "/knowledge" }]}
         image="/images/pages/knowledge.jpg"
       />
@@ -68,7 +76,7 @@ export default async function KnowledgePage({
                 href="/knowledge"
                 className={cn(
                   "rounded-full border px-4 py-2 text-[13px] font-semibold transition-colors",
-                  !category
+                  !category && !tag && !search
                     ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white"
                     : "border-line bg-white text-slate-600 hover:border-brand-300 hover:bg-brand-50",
                 )}
@@ -142,7 +150,7 @@ export default async function KnowledgePage({
           ) : (
             !featured && (
               <p className="mt-16 text-center text-slate-500">
-                No articles published in this category yet.
+                No articles match this selection.
               </p>
             )
           )}
@@ -155,7 +163,7 @@ export default async function KnowledgePage({
                   key={number}
                   href={{
                     pathname: "/knowledge",
-                    query: { ...(category ? { category } : {}), ...(number > 1 ? { page: number } : {}) },
+                    query: { ...(category ? { category } : {}), ...(tag ? { tag } : {}), ...(search ? { search } : {}), ...(number > 1 ? { page: number } : {}) },
                   }}
                   aria-current={number === posts.page ? "page" : undefined}
                   className={cn(
@@ -175,7 +183,7 @@ export default async function KnowledgePage({
 
       <CtaBand
         title="Need advice on a specific application?"
-        description="Our chemists answer technical questions directly — dosing, compatibility, storage and compliance."
+        description="Tell us the product, grade and intended application so we can discuss specifications, packaging and documentation availability."
       />
     </>
   );

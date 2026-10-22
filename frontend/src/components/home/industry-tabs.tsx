@@ -188,6 +188,8 @@ export const IndustryTabs = ({ products = [] }: IndustryTabsProps) => {
                   <ProductContactActions
                     productName={product.name}
                     casNumber={product.cas_number}
+              productSlug={product.slug}
+              grade={product.grade_display}
                     size="sm"
                   />
                 </div>

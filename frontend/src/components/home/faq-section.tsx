@@ -54,7 +54,7 @@ export const FaqSection = ({
                   Still have a question?
                 </p>
                 <p className="mt-0.5 text-[13.5px] text-slate-500">
-                  Our technical team replies within one business day.
+                  Share your product, grade and quantity with our team.
                 </p>
               </div>
             </div>

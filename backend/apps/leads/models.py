@@ -1,11 +1,21 @@
 """Quotation requests, inquiries and newsletter capture."""
 
+import uuid
+
 from django.db import models
 
 from apps.core.models import TimeStampedModel
 
 
-class QuoteRequest(TimeStampedModel):
+class SubmissionModel(TimeStampedModel):
+    idempotency_key = models.UUIDField(null=True, blank=True, unique=True, editable=False)
+    submission_digest = models.CharField(max_length=64, blank=True, editable=False, db_default="")
+
+    class Meta:
+        abstract = True
+
+
+class QuoteRequest(SubmissionModel):
     class Status(models.TextChoices):
         NEW = "new", "New"
         REVIEWING = "reviewing", "Reviewing"
@@ -52,9 +62,8 @@ class QuoteRequest(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         if not self.reference:
-            # Sequential, human-quotable reference: NOKS-Q-000123
-            last = QuoteRequest.objects.order_by("-id").values_list("id", flat=True).first()
-            self.reference = f"NOKS-Q-{(last or 0) + 1:06d}"
+            # Random references avoid collisions between simultaneous submissions.
+            self.reference = f"NOKS-Q-{uuid.uuid4().hex[:16].upper()}"
         super().save(*args, **kwargs)
 
     @property
@@ -70,6 +79,8 @@ class QuoteItem(TimeStampedModel):
     product_name = models.CharField(
         max_length=250, blank=True, help_text="Free-text when the product isn't in the catalog."
     )
+    product_grade = models.CharField(max_length=80, blank=True, db_default="")
+    product_url = models.URLField(max_length=500, blank=True, db_default="")
     quantity = models.DecimalField(max_digits=12, decimal_places=2, default=1)
     unit = models.CharField(max_length=30, default="kg")
     packaging = models.CharField(max_length=80, blank=True)
@@ -84,7 +95,7 @@ class QuoteItem(TimeStampedModel):
         super().save(*args, **kwargs)
 
 
-class Inquiry(TimeStampedModel):
+class Inquiry(SubmissionModel):
     class Topic(models.TextChoices):
         GENERAL = "general", "General enquiry"
         TECHNICAL = "technical", "Technical support"
@@ -120,3 +131,20 @@ class NewsletterSubscriber(TimeStampedModel):
 
     def __str__(self):
         return self.email
+
+
+class LeadNotification(TimeStampedModel):
+    """Durable delivery state; lead records remain the authoritative receipt."""
+    quote = models.OneToOneField(QuoteRequest, null=True, blank=True, on_delete=models.CASCADE)
+    inquiry = models.OneToOneField(Inquiry, null=True, blank=True, on_delete=models.CASCADE)
+    sales_sent_at = models.DateTimeField(null=True, blank=True)
+    acknowledgement_sent_at = models.DateTimeField(null=True, blank=True)
+    attempts = models.PositiveIntegerField(default=0)
+    next_attempt_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    last_error = models.CharField(max_length=80, blank=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(
+            condition=(models.Q(quote__isnull=False, inquiry__isnull=True)
+                       | models.Q(quote__isnull=True, inquiry__isnull=False)),
+            name="notification_has_one_lead")]

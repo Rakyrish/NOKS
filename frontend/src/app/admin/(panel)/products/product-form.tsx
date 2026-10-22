@@ -228,6 +228,7 @@ export function ProductForm({
   const [draft, setDraft] = useState<Draftable>(toDraftable(product));
   const [confidenceNote, setConfidenceNote] = useState("");
   const [fromAi, setFromAi] = useState(false);
+  const [secondaryCategoryIds, setSecondaryCategoryIds] = useState<number[]>(product?.secondary_categories ?? []);
   const [industryIds, setIndustryIds] = useState<number[]>(product?.industries ?? []);
 
   const flatCategories = categories.flatMap((c) => [c, ...(c.children ?? [])]);
@@ -323,6 +324,18 @@ export function ProductForm({
           </div>
         </div>
         <div>
+          <Label>Secondary application categories</Label>
+          <p className="text-sm text-slate-500">Choose documented applications and verify any specialised suitability.</p>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {categories.filter((c) => c.id !== categoryId).map((c) => (
+              <label key={c.id} className="flex items-center gap-2 text-sm">
+                <input type="checkbox" name="secondary_categories" value={c.id}
+                  checked={secondaryCategoryIds.includes(c.id)}
+                  onChange={(e) => setSecondaryCategoryIds((prev) => e.target.checked ? [...prev, c.id] : prev.filter((id) => id !== c.id))} />
+                {c.name}
+              </label>
+            ))}
+          </div>
           <Label>Industries</Label>
           <div className="flex flex-wrap gap-2">
             {industries.map((i) => (

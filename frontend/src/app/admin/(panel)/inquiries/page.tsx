@@ -30,6 +30,10 @@ export default async function AdminInquiriesPage() {
               </div>
               <HandledToggle id={inq.id} isHandled={inq.is_handled} />
             </div>
+            <p className="mt-2 text-xs text-muted-fg">
+              Email: {inq.delivery_status?.state === "delivered" ? "Sent to mail service" : inq.delivery_status?.state === "pending" ? "Pending delivery" : "Historical: untracked"}
+              {inq.delivery_status?.error && ` — ${inq.delivery_status.error}`}
+            </p>
             {inq.subject && <p className="mt-3 text-sm font-semibold text-ink">{inq.subject}</p>}
             <p className="mt-1 text-sm text-muted-fg">{inq.message}</p>
             <p className="mt-3 text-xs text-muted-fg">{new Date(inq.created_at).toLocaleString()}</p>

@@ -2,14 +2,14 @@ from django.contrib import admin
 from django.utils.html import format_html
 from import_export.admin import ExportMixin
 
-from .models import Inquiry, NewsletterSubscriber, QuoteItem, QuoteRequest
+from .models import Inquiry, LeadNotification, NewsletterSubscriber, QuoteItem, QuoteRequest
 
 
 class QuoteItemInline(admin.TabularInline):
     model = QuoteItem
     extra = 0
     autocomplete_fields = ("product",)
-    fields = ("product", "product_name", "quantity", "unit", "packaging", "notes")
+    fields = ("product", "product_name", "product_grade", "product_url", "quantity", "unit", "packaging", "notes")
 
 
 @admin.register(QuoteRequest)
@@ -89,3 +89,13 @@ class NewsletterSubscriberAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ("email", "is_active", "source", "created_at")
     list_filter = ("is_active", "source")
     search_fields = ("email",)
+
+
+@admin.register(LeadNotification)
+class LeadNotificationAdmin(admin.ModelAdmin):
+    list_display = ("id", "quote_id", "inquiry_id", "sales_sent_at", "acknowledgement_sent_at", "attempts", "last_error", "next_attempt_at")
+    list_filter = ("last_error",)
+    readonly_fields = ("quote", "inquiry", "sales_sent_at", "acknowledgement_sent_at", "attempts", "last_error", "created_at", "updated_at")
+
+    def has_add_permission(self, request):
+        return False

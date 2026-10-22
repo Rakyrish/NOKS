@@ -80,13 +80,13 @@ class ProductAdmin(ImportExportModelAdmin):
     list_display_links = ("thumbnail", "name")
     list_filter = (
         "is_published", "is_featured", "is_bestseller",
-        "availability", "grade", "category", "industries", "manufacturer",
+        "availability", "grade", "category", "secondary_categories", "industries", "manufacturer",
     )
     search_fields = ("name", "sku", "cas_number", "synonyms", "chemical_formula")
     list_editable = ("is_published", "is_featured")
     prepopulated_fields = {"slug": ("name",)}
     autocomplete_fields = ("category", "manufacturer")
-    filter_horizontal = ("industries", "related_products", "frequently_bought_together")
+    filter_horizontal = ("secondary_categories", "industries", "related_products", "frequently_bought_together")
     readonly_fields = ("view_count", "quote_count", "created_at", "updated_at")
     list_per_page = 30
     save_on_top = True
@@ -99,7 +99,7 @@ class ProductAdmin(ImportExportModelAdmin):
                 ("chemical_formula", "hs_code"), ("grade", "purity"), "synonyms",
             )
         }),
-        ("Classification", {"fields": ("category", "industries", "manufacturer")}),
+        ("Classification", {"fields": ("category", "secondary_categories", "industries", "manufacturer")}),
         ("Content", {
             "fields": (
                 "short_description", "description", "applications",

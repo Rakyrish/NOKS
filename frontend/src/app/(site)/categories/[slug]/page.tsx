@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       // The old default asserted "a Certificate of Analysis and Safety Data
       // Sheet on every batch" on all 40 category pages. There are zero
       // documents in the system — see CLAIMS["documents-with-every-batch"].
-      `${brand.fullName} supplies ${category.name.toLowerCase()} in Kenya and across East Africa. Specification, grade and packaging published for every product; written quotation within one business day.`,
+      `${brand.fullName} supplies ${category.name.toLowerCase()} in Kenya and across East Africa. Specification, grade and packaging published for every product; request a written quotation with availability and delivery details.`,
     path: `/categories/${category.slug}`,
     canonicalOverride: category.seo?.canonical,
     keywords: category.seo?.keywords,
@@ -104,12 +104,12 @@ export default async function CategoryPage({ params }: Params) {
         </div>
       </PageHero>
 
-      {category.children && category.children.length > 0 && (
+      {category.children && category.children.some((child) => (child.product_count ?? 0) > 0) && (
         <Section size="sm">
           <div className="container-noks">
             <SectionHeading align="left" eyebrow="Browse" title={`${category.name} subcategories`} />
             <div className="mt-8 flex flex-wrap gap-3">
-              {category.children.map((child) => (
+              {category.children.filter((child) => (child.product_count ?? 0) > 0).map((child) => (
                 <Link
                   key={child.id}
                   href={`/categories/${child.slug}`}
@@ -159,7 +159,7 @@ export default async function CategoryPage({ params }: Params) {
 
       <CtaBand
         title={`Supplying ${category.name.toLowerCase()} in East Africa`}
-        description="Tell us your specification, volumes and delivery location — we'll quote with lead times within one business day."
+        description="Tell us your specification, volumes and delivery location — we'll confirm price, availability and delivery details in your quotation."
       />
     </>
   );

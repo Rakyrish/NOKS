@@ -29,7 +29,8 @@ class ProductFilter(filters.FilterSet):
         """Match the category or any of its children, by slug."""
         return queryset.filter(
             Q(category__slug__iexact=value) | Q(category__parent__slug__iexact=value)
-        )
+            | Q(secondary_categories__slug__iexact=value) | Q(secondary_categories__parent__slug__iexact=value)
+        ).distinct()
 
     def filter_application(self, queryset, name, value):
         return queryset.filter(applications__icontains=value)

@@ -115,7 +115,14 @@ class ProductListSerializer(serializers.ModelSerializer):
         return [i.slug for i in obj.industries.all()]
 
 
+class DiscoveryCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["name", "slug"]
+
+
 class ProductDetailSerializer(SEOFieldsMixin, ProductListSerializer):
+    secondary_categories = DiscoveryCategorySerializer(many=True, read_only=True)
     images = ProductImageSerializer(many=True, read_only=True)
     documents = serializers.SerializerMethodField()
     industries = IndustrySerializer(many=True, read_only=True)
@@ -131,7 +138,7 @@ class ProductDetailSerializer(SEOFieldsMixin, ProductListSerializer):
             "packaging_options", "faqs", "storage_handling", "safety_information",
             "hazard_class", "hs_code", "synonyms", "min_order_quantity",
             "images", "documents", "industries", "manufacturer", "category",
-            "related", "bought_together", "package_sizes", "seo", "updated_at",
+            "related", "bought_together", "package_sizes", "seo", "updated_at", "secondary_categories",
         ]
 
     def get_documents(self, obj):

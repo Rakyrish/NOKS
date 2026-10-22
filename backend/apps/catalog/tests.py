@@ -315,3 +315,21 @@ class CuratedCopyTests(SimpleTestCase):
                 for faq in fields["faqs"]:
                     self.assertEqual(set(faq), {"question", "answer"}, f"{name}:{slug}")
                     self.assertTrue(faq["question"].endswith("?"), f"{name}:{slug}")
+
+
+class SecondaryCategoryDiscoveryTests(TestCase):
+    def test_secondary_category_matches_counts_without_duplicate_rows(self):
+        from apps.catalog.filters import ProductFilter
+        from apps.core.seo import category_product_counts
+        root = Category.objects.create(name="Water Treatment Test")
+        child = Category.objects.create(name="Water pH Test", parent=root)
+        primary = Category.objects.create(name="Industrial Test")
+        product = Product.objects.create(name="Test Alkali", sku="TEST-SECONDARY", category=primary, short_description="Test")
+        product.secondary_categories.add(child)
+        product.secondary_categories.add(root)
+        self.assertEqual(ProductFilter({"category":root.slug},queryset=Product.objects.published()).qs.count(),1)
+        counted=Category.objects.annotate(product_count=category_product_counts()).get(pk=root.pk)
+        self.assertEqual(counted.product_count,1)
+        product.is_published=False;product.save()
+        counted=Category.objects.annotate(product_count=category_product_counts()).get(pk=root.pk)
+        self.assertEqual(counted.product_count,0)

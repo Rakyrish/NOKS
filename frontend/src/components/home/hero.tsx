@@ -161,19 +161,6 @@ export const Hero = () => {
           </motion.div>
         </AnimatePresence>
 
-        {/* Warm the next slide while the current one is on screen. Without this
-            the carousel advances to an image that has not been fetched yet and
-            flashes bare navy for a beat — only slide 0 gets `priority`. */}
-        <div className="pointer-events-none absolute size-px opacity-0" aria-hidden>
-          <Image
-            key={`preload-${SLIDES[(current + 1) % SLIDES.length].id}`}
-            src={SLIDES[(current + 1) % SLIDES.length].image}
-            alt=""
-            fill
-            sizes="100vw"
-          />
-        </div>
-
         {/* Legibility scrims. Dense behind the headline, then released across
             the midpoint — enough to hold white text without flattening the
             photograph into a navy panel. */}

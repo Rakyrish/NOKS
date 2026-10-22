@@ -99,6 +99,7 @@ export interface AdminProduct {
   purity: string;
   category: number | null;
   category_name: string;
+  secondary_categories?: number[];
   industries: number[];
   industries_names: string[];
   manufacturer: number | null;
@@ -168,8 +169,12 @@ export interface ProductDraft {
   duplicate_of: { id: number; name: string; sku: string } | null;
 }
 
+export type LeadDeliveryStatus = { state: "delivered" | "pending" | "historical_untracked"; sales_sent?: boolean; acknowledgement_sent?: boolean; attempts?: number; error?: string };
+
 export interface AdminQuoteItem {
   product_name: string;
+  product_grade?: string;
+  product_url?: string;
   quantity: string;
   unit: string;
   packaging: string;
@@ -177,6 +182,7 @@ export interface AdminQuoteItem {
 }
 
 export interface AdminQuote {
+  delivery_status?: LeadDeliveryStatus;
   id: number;
   reference: string;
   full_name: string;
@@ -200,6 +206,7 @@ export interface AdminQuote {
 }
 
 export interface AdminInquiry {
+  delivery_status?: LeadDeliveryStatus;
   id: number;
   full_name: string;
   email: string;

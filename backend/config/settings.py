@@ -148,6 +148,9 @@ CELERY_TASK_EAGER_PROPAGATES = TESTING
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
+CELERY_BEAT_SCHEDULE = {
+    "recover-lead-notifications": {"task": "apps.leads.tasks.recover_notifications", "schedule": 60.0},
+}
 CELERY_TIMEZONE = env("DJANGO_TIME_ZONE", default="Africa/Nairobi")
 
 # ─────────────────────────────── AUTH ─────────────────────────────
@@ -244,6 +247,7 @@ CORS_ALLOW_CREDENTIALS = True
 # ─────────────────────────────── EMAIL ────────────────────────────
 EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
 EMAIL_HOST = env("EMAIL_HOST", default="")
+EMAIL_TIMEOUT = 15
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
@@ -335,7 +339,9 @@ OPENAI_IMAGE_MAX_PX = env.int("OPENAI_IMAGE_MAX_PX", default=1024)
 # GOOGLE_INDEXING_ENABLED is False and apps.catalog.google_indexing.submit_url
 # is a silent no-op — see apps.catalog.tasks.
 GOOGLE_INDEXING_CREDENTIALS_JSON = env("GOOGLE_INDEXING_CREDENTIALS_JSON", default="")
-GOOGLE_INDEXING_ENABLED = bool(GOOGLE_INDEXING_CREDENTIALS_JSON)
+# Google supports only JobPosting and BroadcastEvent, not chemical products.
+# Preserve credentials but never submit ineligible product pages.
+GOOGLE_INDEXING_ENABLED = False
 
 # ─────────────────────────────── BRAND (shared with frontend) ─────
 # Read straight from the same NEXT_PUBLIC_* keys the Next.js app uses, so the

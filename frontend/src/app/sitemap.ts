@@ -123,12 +123,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [...staticRoutes, ...products, ...categories, ...industries, ...posts];
   } catch (error) {
-    // A crawler hitting /sitemap.xml while the backend is briefly unreachable
-    // should still get the core pages, not a 500 — the same "degrade, don't
-    // fail" principle api.ts applies through `safe()`.
-    if (process.env.NODE_ENV !== "production") {
-      console.warn("[sitemap] inventory unreachable, serving core routes only:", (error as Error).message);
-    }
-    return staticRoutes;
+    // A transient failure must not advertise that the catalogue disappeared.
+    console.error("[sitemap] inventory unavailable", (error as Error).name);
+    throw error;
   }
 }

@@ -72,7 +72,6 @@ describe("Product schema publishes only what the page shows", () => {
       priceCurrency: "KES",
       price: "4500.00",
       url: `${SITE}/products/calcium-propionate`,
-      availability: "https://schema.org/InStock",
     });
   });
 
@@ -216,5 +215,15 @@ describe("Organization and LocalBusiness", () => {
 
   it("invents no price band", () => {
     expect((localBusinessSchema() as Record<string, unknown>).priceRange).toBeUndefined();
+  });
+});
+
+
+describe("quotation-price integrity", () => {
+  it("never emits a zero or invalid placeholder offer", () => {
+    for (const price of ["0", "0.00", "-1", "NaN"]) {
+      const schema = productSchema(product({ price_on_request: false, indicative_price: price })) as { offers?: unknown };
+      expect(schema.offers).toBeUndefined();
+    }
   });
 });

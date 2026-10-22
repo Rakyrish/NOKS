@@ -27,6 +27,7 @@ function grep(pattern: string): string[] {
         "--exclude-dir=node_modules",
         "--exclude-dir=.next",
         "--exclude-dir=.git",
+        "--exclude-dir=.work",
         "--exclude-dir=__pycache__",
         "--exclude-dir=docs",
         "--exclude-dir=tests",

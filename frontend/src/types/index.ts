@@ -103,6 +103,7 @@ export interface Product {
 }
 
 export interface ProductDetail extends Product {
+  secondary_categories?: { name: string; slug: string }[];
   description: string;
   applications: string[];
   benefits: string[];

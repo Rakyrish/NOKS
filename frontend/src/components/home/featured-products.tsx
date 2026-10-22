@@ -17,7 +17,7 @@ export const FeaturedProducts = ({ products }: { products: Product[] }) => {
           <SectionHeading
             align="left"
             eyebrow="Featured products"
-            title="Ex-stock chemicals, ready to dispatch"
+            title="Featured chemicals — request availability"
             description="Our most requested industrial, laboratory and food grade products —
                          each with full specifications and batch documentation."
             className="max-w-2xl"

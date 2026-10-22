@@ -46,13 +46,12 @@ const NEVER_INDEXABLE = ["/compare", "/admin"] as const;
  * Query keys that change *which* products are shown, i.e. produce a filtered
  * view of a page that already exists in its own right.
  *
- * `page` is here deliberately. Every product has its own URL in the sitemap and
- * is linked from its category, so paginated slices add no discovery value —
- * they only add near-duplicate URLs. `follow` still applies, so crawling
- * through them costs nothing.
+ * Genuine pagination is handled separately with a self-referencing canonical.
  */
 const FILTER_KEYS = new Set([
   "q",
+  "tag",
+  "search",
   "category",
   "industry",
   "manufacturer",
@@ -123,6 +122,17 @@ export function indexingFor(
   }
   if (NEVER_INDEXABLE.some((prefix) => canonicalPath === prefix || canonicalPath.startsWith(`${prefix}/`))) {
     return { canonicalPath, noindex: true, reason: "route is never indexable" };
+  }
+  const pageValue = params instanceof URLSearchParams
+    ? params.get("page")
+    : params?.page;
+  const page = typeof pageValue === "string" && /^[1-9]\d*$/.test(pageValue)
+    ? Number(pageValue) : null;
+  if ((["/products", "/knowledge"].includes(canonicalPath) || /^\/industries\/[a-z0-9-]+$/.test(canonicalPath))
+      && page && Number.isSafeInteger(page)
+      && !keysOf(params).some((key) => key !== "page" && FILTER_KEYS.has(key))) {
+    return { canonicalPath: page === 1 ? canonicalPath : `${canonicalPath}?page=${page}`,
+      noindex: false, reason: "genuine pagination" };
   }
   if (isFilteredUrl(params)) {
     // Canonical points at the clean route, not at a "best guess" clean

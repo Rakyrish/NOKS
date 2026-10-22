@@ -16,6 +16,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ProductCard } from "@/components/catalog/product-card";
+import { ProductBuyingDetails } from "@/components/catalog/product-buying-details";
 import { ProductGallery } from "@/components/catalog/product-gallery";
 import { ProductQuoteBox } from "@/components/catalog/product-quote-box";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -28,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api";
 import { isVerified } from "@/lib/business";
 import { notFoundMetadata, pageMetadata, productTitle } from "@/lib/metadata";
+import { PRODUCT_REFERENCES } from "@/lib/product-references";
 import { faqSchema, productSchema } from "@/lib/schema";
 import { brand, contact } from "@/lib/site";
 
@@ -68,6 +70,7 @@ export default async function ProductPage({ params }: Params) {
   const { slug } = await params;
   const product = await loadProduct(slug);
   if (!product) notFound();
+  const applicationReference = PRODUCT_REFERENCES[product.slug];
 
   const crumbs = [
     { name: "Products", url: "/products" },
@@ -160,6 +163,20 @@ export default async function ProductPage({ params }: Params) {
               </div>
             </Panel>
 
+            <ProductBuyingDetails product={product} />
+
+            {!!product.secondary_categories?.length && (
+              <Panel title="Related product categories">
+                <div className="flex flex-wrap gap-3">
+                  {product.secondary_categories.map((category) => (
+                    <Link key={category.slug} href={`/categories/${category.slug}`} className="text-brand-600 underline">
+                      {category.name}
+                    </Link>
+                  ))}
+                </div>
+              </Panel>
+            )}
+
             {/* Specifications */}
             {specs.length > 0 && (
               <Panel title="Technical specifications" icon={FileText}>
@@ -249,7 +266,7 @@ export default async function ProductPage({ params }: Params) {
                   {isVerified("minimum-order-quantity")
                     ? `Minimum order quantity: ${product.min_order_quantity} ${product.unit}. `
                     : "Minimum order quantity confirmed with your quotation. "}
-                  Custom packaging and private labelling available on request.
+                  Ask our team to confirm whether your requested container can be supplied.
                 </p>
               </Panel>
             )}
@@ -304,6 +321,14 @@ export default async function ProductPage({ params }: Params) {
             {(product.cas_number || product.manufacturer?.website) && (
               <Panel title="References & further reading" icon={ExternalLink}>
                 <ul className="space-y-2.5 text-[14px]">
+                  {applicationReference && (
+                    <li>
+                      <a href={applicationReference.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-600 underline">
+                        {applicationReference.name}
+                      </a>
+                      <span className="block text-[13px] text-slate-500">General application reference. Confirm the specification for the grade offered in your quotation.</span>
+                    </li>
+                  )}
                   {product.cas_number && (
                     <li>
                       <a
@@ -388,7 +413,7 @@ export default async function ProductPage({ params }: Params) {
                   <p className="text-[14px] text-slate-600">
                     {isVerified("documents-with-every-batch")
                       ? "Technical datasheet, Safety Data Sheet and Certificate of Analysis are issued with every quotation and delivery."
-                      : "Ask for the technical datasheet, Safety Data Sheet or Certificate of Analysis for this product and we will send the current version with your quotation."}
+                      : "Request the technical datasheet, Safety Data Sheet or Certificate of Analysis for this product. Confirm document availability with your quotation."}
                   </p>
                   <Button asChild size="sm" variant="outline" className="mt-3">
                     <Link href={`/quote?product=${product.slug}`} rel="nofollow">Request documentation</Link>
@@ -415,11 +440,11 @@ export default async function ProductPage({ params }: Params) {
 
             <div className="mt-4 rounded-2xl border border-line bg-white p-5">
               <p className="text-[11px] font-bold tracking-[0.12em] text-slate-400 uppercase">
-                Talk to a specialist
+                Discuss your requirements
               </p>
               <p className="mt-2 text-[13.5px] leading-relaxed text-slate-600">
-                Unsure which grade or dosage suits your process? Our chemists will advise
-                before you order.
+                Share your application and required specification so our team can
+                confirm the product and documentation available for your order.
               </p>
               <div className="mt-4 flex flex-col gap-2">
                 {contact.phone && (

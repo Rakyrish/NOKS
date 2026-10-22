@@ -81,7 +81,7 @@ export const HowWeWorkTeaser = () => {
                 Need a Custom Chemical Quotation?
               </h3>
               <p className="mt-2 text-xs sm:text-sm text-silver-300 leading-relaxed">
-                Whether you need a one-time trial sample, recurring monthly LTL deliveries, or emergency replacement stock in Nairobi, our team responds within 2 business hours.
+                Whether you need a one-time trial sample, recurring monthly LTL deliveries, or emergency replacement stock in Nairobi, send your requirements to our team for a written quotation.
               </p>
 
               <div className="mt-6 flex flex-col gap-3">

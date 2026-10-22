@@ -1,0 +1,9 @@
+services:
+  frontend:
+    image: noks-rollback-frontend:20261009
+  backend:
+    image: noks-rollback-backend:20261009
+  worker:
+    image: noks-rollback-worker:20261009
+  beat:
+    image: noks-rollback-beat:20261009

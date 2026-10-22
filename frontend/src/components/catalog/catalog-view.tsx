@@ -2,7 +2,7 @@
 
 import { PackageSearch } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,6 @@ export const CatalogView = ({
   page: Paginated<Product>;
   facets: Facets;
 }) => {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [view, setView] = React.useState<"grid" | "list">("grid");
@@ -35,12 +34,12 @@ export const CatalogView = ({
     window.localStorage.setItem("noks.catalog.view", next);
   };
 
-  const goToPage = (next: number) => {
+  const pageHref = (next: number) => {
     const params = new URLSearchParams(searchParams.toString());
     if (next <= 1) params.delete("page");
     else params.set("page", String(next));
     const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
+    return query ? `${pathname}?${query}` : pathname;
   };
 
   return (
@@ -105,17 +104,17 @@ export const CatalogView = ({
                   className="mt-12 flex items-center justify-center gap-2"
                   aria-label="Pagination"
                 >
-                  <button
-                    type="button"
-                    onClick={() => goToPage(page.page - 1)}
-                    disabled={!page.has_previous}
+                  <Link
+                    href={pageHref(page.page - 1)}
+                    rel="prev"
+                    aria-disabled={!page.has_previous}
                     className="h-10 rounded-full border border-line bg-white px-4 text-[13px]
                                font-semibold text-navy-900 transition-colors
                                hover:border-brand-300 hover:bg-brand-50
-                               disabled:pointer-events-none disabled:opacity-40"
+                               aria-disabled:pointer-events-none aria-disabled:opacity-40"
                   >
                     Previous
-                  </button>
+                  </Link>
 
                   {buildPageList(page.page, page.num_pages).map((item, index) =>
                     item === "…" ? (
@@ -123,10 +122,9 @@ export const CatalogView = ({
                         …
                       </span>
                     ) : (
-                      <button
+                      <Link
                         key={item}
-                        type="button"
-                        onClick={() => goToPage(item)}
+                        href={pageHref(item)}
                         aria-current={item === page.page ? "page" : undefined}
                         className={cn(
                           "size-10 rounded-full text-[13px] font-semibold transition-colors",
@@ -136,21 +134,21 @@ export const CatalogView = ({
                         )}
                       >
                         {item}
-                      </button>
+                      </Link>
                     ),
                   )}
 
-                  <button
-                    type="button"
-                    onClick={() => goToPage(page.page + 1)}
-                    disabled={!page.has_next}
+                  <Link
+                    href={pageHref(page.page + 1)}
+                    rel="next"
+                    aria-disabled={!page.has_next}
                     className="h-10 rounded-full border border-line bg-white px-4 text-[13px]
                                font-semibold text-navy-900 transition-colors
                                hover:border-brand-300 hover:bg-brand-50
-                               disabled:pointer-events-none disabled:opacity-40"
+                               aria-disabled:pointer-events-none aria-disabled:opacity-40"
                   >
                     Next
-                  </button>
+                  </Link>
                 </nav>
               )}
 

@@ -6,12 +6,19 @@ import * as React from "react";
 import { Input, Label, Select, Textarea } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
+import { trackLead, trackEvent } from "@/lib/analytics";
 import { useCompare } from "@/lib/use-compare";
 import { useWishlist } from "@/lib/use-wishlist";
+import { absoluteUrl } from "@/lib/site";
+import { hasPublicPrice } from "@/lib/pricing";
+import { nap } from "@/lib/business";
+import { ProductContactActions } from "./product-contact-actions";
 import { cn } from "@/lib/utils";
 import type { ProductDetail } from "@/types";
 
 export const ProductQuoteBox = ({ product }: { product: ProductDetail }) => {
+  const submissionKey = React.useRef<string>("");
+  const submitting = React.useRef(false);
   const [state, setState] = React.useState<"idle" | "sending" | "sent" | "error">("idle");
   const [reference, setReference] = React.useState("");
   const [error, setError] = React.useState("");
@@ -21,9 +28,13 @@ export const ProductQuoteBox = ({ product }: { product: ProductDetail }) => {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submitting.current) return;
+    submissionKey.current ||= crypto.randomUUID();
     const form = new FormData(event.currentTarget);
+    submitting.current = true;
     setState("sending");
     setError("");
+    trackEvent("request_quote_click", product.slug);
 
     try {
       const response = await api.submitQuote({
@@ -43,12 +54,16 @@ export const ProductQuoteBox = ({ product }: { product: ProductDetail }) => {
             packaging: String(form.get("packaging") ?? ""),
           },
         ],
-      });
+      }, submissionKey.current);
       setReference(response.reference);
+      trackLead(response.reference, product.slug);
+      submissionKey.current = "";
       setState("sent");
     } catch {
       setState("error");
       setError("We couldn't submit that. Please check your details and try again.");
+    } finally {
+      submitting.current = false;
     }
   };
 
@@ -63,7 +78,7 @@ export const ProductQuoteBox = ({ product }: { product: ProductDetail }) => {
         </p>
         <p className="mt-2 text-[14px] leading-relaxed text-emerald-800">
           Your reference is <strong>{reference}</strong>. A technical sales specialist will
-          respond within one business day.
+          review your request.
         </p>
         <Button
           variant="outline"
@@ -82,11 +97,21 @@ export const ProductQuoteBox = ({ product }: { product: ProductDetail }) => {
       <div className="bg-navy-900 px-6 py-5 text-white">
         <p className="font-display text-lg font-bold">Request a quotation</p>
         <p className="mt-1 text-[13px] text-white/60">
-          Pricing is quotation-based. Response within one business day.
+          {hasPublicPrice(product)
+            ? `Indicative price: ${product.currency} ${product.indicative_price} per ${product.unit}. Confirm your order details with our team.`
+            : "Pricing is quotation-based. Confirm price and availability with our team."}
         </p>
       </div>
 
-      <form onSubmit={onSubmit} className="space-y-4 p-6">
+      <div className="px-6 pt-5">
+        <ProductContactActions productName={product.name} productSlug={product.slug}
+          grade={product.grade_display} casNumber={product.cas_number} />
+        {nap.email && <a className="mt-3 block text-sm text-brand-600 underline"
+          href={`mailto:${nap.email}?subject=${encodeURIComponent(`Quotation: ${product.name}`)}&body=${encodeURIComponent(`${product.name} — ${product.grade_display}\n${absoluteUrl(`/products/${product.slug}`)}\nQuantity:\nPackaging:\nDelivery location:`)}`}>
+          Enquire about this product by email
+        </a>}
+      </div>
+      <form onSubmit={onSubmit} onChange={() => { if (!submitting.current) submissionKey.current = ""; }} className="space-y-4 p-6">
         <div>
           <Label htmlFor="quote-name" required>
             Full name
@@ -121,9 +146,9 @@ export const ProductQuoteBox = ({ product }: { product: ProductDetail }) => {
               id="quote-quantity"
               name="quantity"
               type="number"
-              min={product.min_order_quantity}
+              min="0.01"
               step="any"
-              defaultValue={product.min_order_quantity}
+              placeholder="Required quantity"
               required
             />
           </div>

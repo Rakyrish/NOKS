@@ -11,7 +11,7 @@ import { contact } from "@/lib/site";
 
 export const CtaBand = ({
   title = "Ready to Streamline Your Chemical Supply?",
-  description = "Send us your product list, CAS number, required purity, and delivery schedule. You'll receive a competitive formal commercial quotation backed by certified manufacturer COA.",
+  description = "Send us your product list, CAS number, required grade, quantity and delivery location. Request pricing, availability and batch documentation in your quotation.",
 }: {
   title?: string;
   description?: string;
@@ -86,9 +86,9 @@ export const CtaBand = ({
       <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-silver-400 border-t border-white/10 pt-6 max-w-xl mx-auto">
         <span>Nairobi Warehouse • Enterprise Road</span>
         <span>•</span>
-        <span>Same-Day Dispatch</span>
+        <span>Confirm Delivery Lead Time</span>
         <span>•</span>
-        <span>COA & MSDS Included</span>
+        <span>Request COA & SDS</span>
       </div>
     </Reveal>
   </section>
